@@ -140,13 +140,19 @@
 </template>
 
 <script>
+
+
 export default {
   name: 'HomeView',
   mounted() {
-    let kakaoScript = document.createElement('script');
-    kakaoScript.setAttribute('src', '//dapi.kakao.com/v2/maps/sdk.js?appkey=46d97694c5e976ec8af172aebc94c130&libraries=services');
-    document.head.appendChild(kakaoScript);
- 
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = { 
+        center: new kakao.maps.LatLng(37.56813070741759, 126.97899146359276), // 지도의 중심좌표
+        level: 7 // 지도의 확대 레벨
+    };
+
+    // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption); 
   }
 }
 </script>
