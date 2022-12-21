@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container is-fluid">
         <div class="container is-fluid tabs is-boxed mt-5">
             <ul>
                 <li v-for="(value, key) in manuals" :class="{'is-active': currentComponent === key}">
