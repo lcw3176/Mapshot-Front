@@ -3,7 +3,7 @@
         <div class="column is-half">
 
             <div class="media-content mt-5">
-                <p class="title is-5">출력</p>
+                <p class="title is-5">회사 설정</p>
                 <p>출력될 지도의 종류입니다.</p>
             </div>
 
@@ -24,11 +24,6 @@
                 <div class="media-content mt-5">
                     <p class="subtitle is-5">카카오</p>
                     <p>출력 결과물이 카카오 지도를 통해서 생성됩니다.</p>
-                </div>
-
-                <div class="media-content mt-5">
-                    <p class="subtitle is-5">구글</p>
-                    <p>출력 결과물이 구글 지도를 통해서 생성됩니다.</p>
                 </div>
 
             </div>
