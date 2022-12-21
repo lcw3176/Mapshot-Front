@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="container tabs is-boxed mt-5">
+        <div class="container is-fluid tabs is-boxed mt-5">
             <ul>
                 <li v-for="(value, key) in manuals" :class="{'is-active': currentComponent === key}">
                     <a @click="swapComponent(key)">{{ value }}</a>
@@ -8,7 +8,7 @@
             </ul>
         </div>
 
-        <div class="container card">
+        <div class="container is-fluid card">
             <BeforeUseVue class="container is-fluid" v-if="currentComponent === '0'"/>
             <CapturePoint class="container is-fluid" v-if="currentComponent === '1'"/>
             <ChooseRange class="container is-fluid" v-if="currentComponent === '2'"/>
