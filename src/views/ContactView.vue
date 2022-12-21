@@ -2,7 +2,7 @@
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script type="text/javascript" th:src="@{/js/contact.js}"></script> -->
 
-    <form class="container mt-6" id="contact-form">
+    <form class="container is-fluid mt-6" id="contact-form">
         <input type="hidden" name="contact_number">
         <div class="field">
             <label class="label">카테고리</label>
