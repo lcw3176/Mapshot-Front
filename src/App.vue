@@ -6,7 +6,6 @@
 <script>
 // @ is an alias to /src
 import NavbarView from './views/NavbarView'
-import NavbarFunction from './assets/js/navbar.js'
 
 export default {
   components: {

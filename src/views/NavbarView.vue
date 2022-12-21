@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import NavbarFunction from '@/assets/js/navbar.js'
+
 export default {
     name: 'NavbarView'
 }
