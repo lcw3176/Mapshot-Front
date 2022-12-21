@@ -1,24 +1,6 @@
 # mapshot-front
+맵샷 프론트 서버
 
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 기술 스택
+- Vue 3
+- Cloudflare pages(아마도?)
