@@ -87,10 +87,10 @@
             </p>
             <ul class="menu-list">
               <li class="menu-seperator"></li>
-              <li><a class="zoom" onclick="setZoomLevel(1, this)">1km</a></li>
-              <li><a class="zoom" onclick="setZoomLevel(2, this)">2km</a></li>
-              <li><a class="zoom" onclick="setZoomLevel(5, this)">5km</a></li>
-              <li><a class="zoom" id="default_click_level" onclick="setZoomLevel(10, this)">10km</a></li>
+              <li><a class="zoom" @click="mapStore.changeRadius(1, $event)">1km</a></li>
+              <li><a class="zoom" @click="mapStore.changeRadius(2, $event)">2km</a></li>
+              <li><a class="zoom" @click="mapStore.changeRadius(5, $event)">5km</a></li>
+              <li><a class="zoom" id="default_click_level" @click="mapStore.changeRadius(10, $event)">10km</a></li>
             </ul>
             <p class="title is-6 mt-2 mb-1">
               종류
@@ -179,10 +179,3 @@ export default {
 <style scoped>
 @import "../assets/css/map.css";
 </style>
-
-  <!-- <script type="text/javascript" th:src="@{/js/canvas-toBlob.js}"></script>
-  <script type="text/javascript" th:src="@{/js/mapshot.min.js}"></script>
-  <script type="text/javascript" th:src="@{/js/app.js}"></script>
-  <script type="text/javascript" th:src="@{/js/map.js}"></script>
-  <script type="text/javascript" th:src="@{/js/sock.min.js}"></script>
-  <script type="text/javascript" th:src="@{/js/stomp.min.js}"></script> -->

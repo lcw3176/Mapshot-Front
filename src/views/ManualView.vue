@@ -2,7 +2,7 @@
     <div class="container is-fluid">
         <div class="container is-fluid tabs is-boxed mt-5">
             <ul>
-                <li v-for="(value, key) in manuals" :class="{'is-active': currentComponent === key}">
+                <li v-for="(value, key) in manuals" :key="key" :class="{'is-active': currentComponent === key}">
                     <a @click="swapComponent(key)">{{ value }}</a>
                 </li>
             </ul>
@@ -64,10 +64,6 @@ export default {
         swapComponent: function (component) {
             this.currentComponent = component;
         },
-
-        activate: function(obj){
-            console.log(obj);
-        }
     }
 }
 </script>

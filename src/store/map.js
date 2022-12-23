@@ -1,11 +1,9 @@
 import { defineStore } from "pinia";
+import { NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js"
 
 
-
-// defineStore() 의 첫번째 인자는 스토어의 고유한 ID
 export const useMapStore = defineStore("map", {
 
-  // state
   state: () => ({
     map: '',
     markers: [],
@@ -16,31 +14,39 @@ export const useMapStore = defineStore("map", {
     lng: 126.97899146359276,
     roadAddress: '',
     bunziAddress: '',
+    coor: '',
+    rectangle: null,
+    naverTile: '',
+    mapRadius: '',
   }),
 
-  // getters
+
   getters: {
     getLat() {
       return this.lat;
     },
 
     getLng() {
-      // 다른 getter 를 참조
       return this.lng;
     },
 
-    getRoadAddress(){
+    getRoadAddress() {
       return this.roadAddress;
     },
 
-    getBunziAddress(){
+    getBunziAddress() {
       return this.bunziAddress;
+    },
+
+    getRadius(){
+      return this.mapRadius;
     }
+
   },
 
-  // actions
   actions: {
     async init() {
+
       let mapContainer = document.getElementById('map'),
         mapOption = {
           center: new kakao.maps.LatLng(this.lat, this.lng),
@@ -54,6 +60,74 @@ export const useMapStore = defineStore("map", {
       this.ps = new kakao.maps.services.Places();
       this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 
+      this.naverTile = new NaverTile();
+      this.coor = new LatLng();
+      this.mapRadius = Radius.One;
+
+    },
+
+    async mapOnClick(mouseEvent) {
+
+      // 클릭한 위도, 경도 정보를 가져옵니다 
+      let latlng = mouseEvent.latLng;
+
+      this.lat = latlng.getLat();
+      this.lng = latlng.getLng();
+      this.coor.init(this.lat, this.lng);
+
+      this.searchDetailAddrFromCoords(mouseEvent.latLng, this.insertAddressStr);
+
+
+      if (this.rectangle != null) {
+        this.rectangle.setMap(null);
+      }
+
+      this.naverTile.setLevel(this.mapRadius);
+      // proxyProfile.setCenter(coor);
+
+      let sw = this.naverTile.getSW(this.mapRadius, this.coor);
+      let ne = this.naverTile.getNE(this.mapRadius, this.coor);
+
+      this.rectangle = new kakao.maps.Rectangle({
+        bounds: new kakao.maps.LatLngBounds(new kakao.maps.LatLng(sw.getY(), sw.getX()), new kakao.maps.LatLng(ne.getY(), ne.getX())),
+        strokeWeight: 4,
+        strokeColor: '#FF3DE5',
+        strokeOpacity: 1,
+        strokeStyle: 'shortdashdot',
+        fillColor: '#FF8AEF',
+        fillOpacity: 0.8
+      });
+
+      this.rectangle.setMap(this.map);
+
+    },
+
+    async insertAddressStr(result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        this.roadAddress = !!result[0].road_address ? result[0].road_address.address_name : '';
+        this.bunziAddress = result[0].address.address_name;
+
+      }
+    },
+
+    async changeRadius(numberOfRadius, event){
+      switch(numberOfRadius){
+        case 1:
+          this.mapRadius = Radius.One;
+          break;
+        case 2:
+          this.mapRadius = Radius.Two;
+          break;
+        case 5:
+          this.mapRadius = Radius.Five;
+          break;
+        case 10:
+          this.mapRadius = Radius.Ten;
+          break;
+        default:
+          break;
+
+      }
     },
 
     placesSearchCB(data, status, pagination) {
@@ -218,25 +292,6 @@ export const useMapStore = defineStore("map", {
         this.markers[i].setMap(null);
       }
       this.markers = [];
-    },
-
-    async mapOnClick(mouseEvent) {
-
-      // 클릭한 위도, 경도 정보를 가져옵니다 
-      var latlng = mouseEvent.latLng;
-
-      this.lat = latlng.getLat();
-      this.lng = latlng.getLng();
-
-      this.searchDetailAddrFromCoords(mouseEvent.latLng, this.insertAddressStr);
-    },
-
-    async insertAddressStr(result, status){
-      if (status === kakao.maps.services.Status.OK) {
-        this.roadAddress = !!result[0].road_address ? result[0].road_address.address_name : '';
-        this.bunziAddress = result[0].address.address_name;
-      
-      }   
     },
 
     searchAddrFromCoords(coords, callback) {
