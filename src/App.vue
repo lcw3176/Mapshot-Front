@@ -1,6 +1,6 @@
 <template>
   <NavbarView/>
-  <router-view class="container is-fluid"/>
+  <router-view/>
 </template>
 
 <script>
