@@ -10,8 +10,8 @@ export const useMapStore = defineStore("map", {
     ps: '',
     infowindow: '',
     geocoder: '',
-    lat: 37.56813070741759,
-    lng: 126.97899146359276,
+    lat: '',
+    lng: '',
     roadAddress: '',
     bunziAddress: '',
     coor: '',
@@ -38,7 +38,7 @@ export const useMapStore = defineStore("map", {
       return this.bunziAddress;
     },
 
-    getRadius(){
+    getRadius() {
       return this.mapRadius;
     }
 
@@ -49,12 +49,13 @@ export const useMapStore = defineStore("map", {
 
       let mapContainer = document.getElementById('map'),
         mapOption = {
-          center: new kakao.maps.LatLng(this.lat, this.lng),
+          center: new kakao.maps.LatLng(37.56813070741759, 126.97899146359276),
           level: 7
         };
 
       this.map = new kakao.maps.Map(mapContainer, mapOption);
       this.map.addListener('click', this.mapOnClick);
+      this.map.addListener('rightclick', this.removeRectangle);
       this.geocoder = new kakao.maps.services.Geocoder();
       this.markers = [];
       this.ps = new kakao.maps.services.Places();
@@ -66,8 +67,13 @@ export const useMapStore = defineStore("map", {
 
     },
 
-    async mapOnClick(mouseEvent) {
+    async removeRectangle(){
+      if(this.rectangle != null){
+        this.rectangle.setMap(null);
+      }
+    },
 
+    async mapOnClick(mouseEvent) {
       // 클릭한 위도, 경도 정보를 가져옵니다 
       let latlng = mouseEvent.latLng;
 
@@ -110,24 +116,8 @@ export const useMapStore = defineStore("map", {
       }
     },
 
-    async changeRadius(numberOfRadius, event){
-      switch(numberOfRadius){
-        case 1:
-          this.mapRadius = Radius.One;
-          break;
-        case 2:
-          this.mapRadius = Radius.Two;
-          break;
-        case 5:
-          this.mapRadius = Radius.Five;
-          break;
-        case 10:
-          this.mapRadius = Radius.Ten;
-          break;
-        default:
-          break;
-
-      }
+    async changeRadius(rad, event) {
+      this.mapRadius = rad;
     },
 
     placesSearchCB(data, status, pagination) {

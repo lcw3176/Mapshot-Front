@@ -7,7 +7,7 @@
           <div class="field">
             <!-- 지도 -->
             <div class="map_wrap">
-              <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+              <div id="map" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
 
               <div id="menu_wrap" class="bg_white">
                 <div class="option">
@@ -87,10 +87,10 @@
             </p>
             <ul class="menu-list">
               <li class="menu-seperator"></li>
-              <li><a class="zoom" @click="mapStore.changeRadius(1, $event)">1km</a></li>
-              <li><a class="zoom" @click="mapStore.changeRadius(2, $event)">2km</a></li>
-              <li><a class="zoom" @click="mapStore.changeRadius(5, $event)">5km</a></li>
-              <li><a class="zoom" id="default_click_level" @click="mapStore.changeRadius(10, $event)">10km</a></li>
+              <li  v-for="(value, key) in RadiusObj" :key="key">
+                <a @click="mapStore.changeRadius(value, $event)" :class="{'is-active': mapStore.getRadius === value}">{{ key }}km</a>
+              </li>
+
             </ul>
             <p class="title is-6 mt-2 mb-1">
               종류
@@ -141,6 +141,7 @@
 
 <script>
 import {useMapStore} from '../store/map.js'
+import {Radius} from '../assets/js/mapshot.min.js'
 
 export default {
   name: 'MapView',
@@ -155,6 +156,13 @@ export default {
       markers: [],
       ps: '',
       infowindow: '',
+      RadiusObj: {
+        1: Radius.One,
+        2: Radius.Two,
+        5: Radius.Five,
+        10: Radius.Ten,
+
+      },
     }
   },
 
