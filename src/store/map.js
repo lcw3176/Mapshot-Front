@@ -18,6 +18,13 @@ export const useMapStore = defineStore("map", {
     rectangle: null,
     naverTile: '',
     mapRadius: '',
+    RadiusObj: {
+      1: Radius.One,
+      2: Radius.Two,
+      5: Radius.Five,
+      10: Radius.Ten,
+
+    },
   }),
 
 

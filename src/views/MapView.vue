@@ -87,7 +87,7 @@
             </p>
             <ul class="menu-list">
               <li class="menu-seperator"></li>
-              <li  v-for="(value, key) in RadiusObj" :key="key">
+              <li  v-for="(value, key) in mapStore.RadiusObj" :key="key">
                 <a @click="mapStore.changeRadius(value, $event)" :class="{'is-active': mapStore.getRadius === value}">{{ key }}km</a>
               </li>
 
@@ -141,30 +141,9 @@
 
 <script>
 import {useMapStore} from '../store/map.js'
-import {Radius} from '../assets/js/mapshot.min.js'
 
 export default {
   name: 'MapView',
-  mounted() {
-    
-  },
-
-  data(){
-
-    return {
-      map: '',
-      markers: [],
-      ps: '',
-      infowindow: '',
-      RadiusObj: {
-        1: Radius.One,
-        2: Radius.Two,
-        5: Radius.Five,
-        10: Radius.Ten,
-
-      },
-    }
-  },
 
   mounted(){
     this.mapStore.init();
