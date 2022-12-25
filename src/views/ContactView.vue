@@ -47,9 +47,6 @@
         <div class="field is-grouped">
             <div class="control">
                 <button id="submitButton" type="submit" class="button is-link">전송하기</button>
-                <p class="help is-danger">Internet Explorer 에서는 작동하지 않습니다.</p>
-                <p class="help is-danger">다른 브라우저를 이용하여 주시거나,</p>
-                <p class="help is-danger"><strong>chanwoo3176@naver.com</strong> 으로 메일을 보내주세요.</p>
             </div>
         </div>
 
