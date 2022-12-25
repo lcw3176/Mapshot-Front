@@ -5,7 +5,6 @@
             <div class="media-content mt-5">
                 <p class="title is-5">반경 설정</p>
                 <p>지도가 수집될 범위의 반경입니다.</p>
-                <p>기본값은 10km로 설정됩니다.</p>
                 <p>이 값은 <strong>네이버</strong> 기준입니다. 카카오와 구글은 정확한 추정이 어렵습니다.</p>
             </div>
 
