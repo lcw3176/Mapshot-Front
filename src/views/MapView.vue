@@ -87,7 +87,7 @@
             </p>
             <ul class="menu-list">
               <li class="menu-seperator"></li>
-              <li  v-for="(value, key) in mapStore.RadiusObj" :key="key">
+              <li  v-for="(value, key) in mapStore.radiusArr" :key="key">
                 <a @click="mapStore.changeRadius(value, $event)" :class="{'is-active': mapStore.getRadius === value}">{{ key }}km</a>
               </li>
 
@@ -97,9 +97,9 @@
             </p>
             <ul class="menu-list">
               <li class="menu-seperator"></li>
-              <li><a class="map" onclick="setBaseMap('basic', this)">일반</a></li>
-              <li><a class="map" id="default_click_map" onclick="setBaseMap('satellite_base', this)">위성</a></li>
-              <li><a class="map" onclick="setBaseMap('satellite', this)">하이브리드</a></li>
+                 <li  v-for="(value, key) in mapStore.baseMapArr" :key="key">
+                <a @click="mapStore.changeBaseMap(value, $event)" :class="{'is-active': mapStore.getBaseMap === value}">{{ key }}</a>
+              </li>
             </ul>
 
             <p class="title is-6 mt-2 mb-1">
@@ -107,8 +107,9 @@
             </p>
             <ul class="menu-list">
               <li class="menu-seperator"></li>
-              <li><a id="naver" class="company" onclick="setCompany('naver')">네이버</a></li>
-              <li><a id="kakao" class="company" onclick="setCompany('kakao')">카카오</a></li>
+              <li  v-for="(value, key) in mapStore.companyArr" :key="key">
+                <a @click="mapStore.changeCompany(value, $event)" :class="{'is-active': mapStore.getCompany === value}">{{ key }}</a>
+              </li>
             </ul>
 
             <p class="title is-6 mt-2 mb-1">
@@ -117,8 +118,8 @@
 
             <ul class="menu-list">
               <li class="menu-seperator"></li>
-              <li><a id="setTrace" onclick="setTraceMode(this)">흔적 남기기</a></li>
-              <li><a id="setLayer" onclick="setLayerMode(this)">지적 편집도</a></li>
+              <li><a @click="mapStore.changeTraceMode" :class="{'is-active': mapStore.isTradeMode}">흔적 남기기</a></li>
+              <li><a @click="mapStore.changeLayerMode" :class="{'is-active': mapStore.isLayerMode}">지적 편집도</a></li>
             </ul>
 
 

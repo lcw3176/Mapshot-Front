@@ -18,13 +18,29 @@ export const useMapStore = defineStore("map", {
     rectangle: null,
     naverTile: '',
     mapRadius: '',
-    RadiusObj: {
+    baseMap: '',
+    company: '',
+    layerMode: false,
+    tradeMode: false,
+
+    radiusArr: {
       1: Radius.One,
       2: Radius.Two,
       5: Radius.Five,
       10: Radius.Ten,
-
     },
+
+    baseMapArr: {
+      '일반': 'basic',
+      '위성': 'satellite_base',
+      '하이브리드': 'satellite',
+    },
+
+    companyArr: {
+      '네이버': 'naver',
+      '카카오': 'kakao',
+    }
+
   }),
 
 
@@ -47,6 +63,22 @@ export const useMapStore = defineStore("map", {
 
     getRadius() {
       return this.mapRadius;
+    },
+
+    getBaseMap() {
+      return this.baseMap;
+    },
+
+    getCompany(){
+      return this.company;
+    },
+
+    isLayerMode(){
+      return this.layerMode;
+    },
+
+    isTradeMode(){
+      return this.tradeMode;
     }
 
   },
@@ -70,12 +102,12 @@ export const useMapStore = defineStore("map", {
 
       this.naverTile = new NaverTile();
       this.coor = new LatLng();
-      this.mapRadius = Radius.One;
-
+      this.mapRadius = Radius.Two;
+      this.baseMap = this.baseMapArr['위성'];
     },
 
-    async removeRectangle(){
-      if(this.rectangle != null){
+    async removeRectangle() {
+      if (this.rectangle != null) {
         this.rectangle.setMap(null);
       }
     },
@@ -127,6 +159,32 @@ export const useMapStore = defineStore("map", {
       this.mapRadius = rad;
     },
 
+    async changeBaseMap(map, event) {
+      this.baseMap = map;
+    },
+
+    async changeCompany(company, event){
+      this.company = company;
+
+      if(this.company !== this.companyArr['카카오'] && this.layerMode){
+        this.layerMode = false;
+      }
+    },
+
+    async changeTraceMode(){
+      this.tradeMode = !this.tradeMode;
+    },
+    
+    async changeLayerMode(){
+      if(this.company !== this.companyArr['카카오']){
+        alert("지적 편집도는 카카오 지도만 사용 가능합니다");
+        return;
+      }
+      
+      this.layerMode = !this.layerMode;
+    },
+
+    // 이하 카카오 지도 api 문서 코드
     placesSearchCB(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
 
@@ -155,8 +213,7 @@ export const useMapStore = defineStore("map", {
       let listEl = document.getElementById('placesList'),
         menuEl = document.getElementById('menu_wrap'),
         fragment = document.createDocumentFragment(),
-        bounds = new kakao.maps.LatLngBounds(),
-        listStr = '';
+        bounds = new kakao.maps.LatLngBounds();
 
       // 검색 결과 목록에 추가된 항목들을 제거합니다
       this.removeAllChildNods(listEl);
