@@ -14,10 +14,7 @@
                 <div class="media-content mt-5">
                     <p class="title is-5">확인된 호환 브라우저</p>
                     <ul>
-                        <li>Google Chrome</li>
-                        <li>Microsoft Edge</li>
-                        <li>Firefox</li>
-                        <li>삼성 인터넷</li>
+                        <li v-for="(item, index) in support" :key="index">{{ item }}</li>
                     </ul>
                 </div>
             </figure>
@@ -26,9 +23,7 @@
                 <div class="media-content mt-5">
                     <p class="title is-5 has-text-danger">지원하지 않는 브라우저</p>
                     <ul>
-                        <li>Internet Explorer(제한적 지원)</li>
-                        <li>Safari Mobile</li>
-                        <li>Kakao InAppBrowser</li>
+                        <li v-for="(item, index) in noSupported" :key="index">{{ item }}</li>
                     </ul>
                 </div>
 
@@ -40,6 +35,14 @@
 
 <script>
 export default {
-    name: 'BeforeUse'
+    name: 'BeforeUse',
+
+    data() {
+        return{
+            noSupported: ["인터넷 익스플로러", "사파리 모바일", "카카오 인앱 브라우저"],
+            support: ["구글 크롬", "마이크로소프트 엣지", "파이어폭스", "삼성 모바일 인터넷"],
+        }
+      
+    }
 }
 </script>
