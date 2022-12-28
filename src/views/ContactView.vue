@@ -2,7 +2,7 @@
     <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <script type="text/javascript" th:src="@{/js/contact.js}"></script> -->
 
-    <form class="container is-fluid mt-6" id="contact-form">
+    <form class="container mt-5" id="contact-form">
         <input type="hidden" name="contact_number">
         <div class="field">
             <label class="label">카테고리</label>
@@ -29,18 +29,9 @@
         </div>
 
         <div class="field">
-            <div class="control">
-                <label class="checkbox">
-                    <input type="checkbox" name="no_reply">
-                    답장을 받지 않겠습니다.
-                </label>
-            </div>
-        </div>
-
-        <div class="field">
             <label class="label">내용</label>
             <div class="control">
-                <textarea class="textarea" placeholder="내용을 적어주세요" name="message"></textarea>
+                <textarea class="textarea" rows="10" placeholder="내용을 적어주세요" name="message"></textarea>
             </div>
         </div>
 
