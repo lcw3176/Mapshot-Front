@@ -1,6 +1,6 @@
 <template>
 
-  <div class="container is-fluid mt-5">
+  <div :class="$isMobile() ? 'container is-fluid' : 'container'">
     <div class="columns">
       <div class="column is-three-quarters">
         <div class="box">

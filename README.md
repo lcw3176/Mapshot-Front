@@ -38,7 +38,6 @@
 ### Infra
 - Cloud Flare(https, domain)
 - CloudFlare Pages
-- Whatap
 
 ## 결과 샘플
 ```

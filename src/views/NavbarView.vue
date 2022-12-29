@@ -1,6 +1,6 @@
 <template>
-    <nav class="navbar is-light">
-        <div class="container is-fluid" id="navbar">
+    <nav class="navbar is-light mb-6">
+        <div class="container" id="navbar">
             <div class="navbar-brand">
                 <router-link class="navbar-item" to="/">
                     <p class="title is-4">MAPSHOT</p>
@@ -25,6 +25,10 @@
 
                     <router-link class="navbar-item" to="/contact">
                         문의
+                    </router-link>
+
+                    <router-link class="navbar-item" to="/preview">
+                        미리보기
                     </router-link>
                 </div>
             </div>
