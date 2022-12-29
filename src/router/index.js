@@ -23,6 +23,12 @@ const routes = [
     name: 'notice',
     component: () => import(/* webpackChunkName: "manual" */ '../views/NoticeView.vue')
   },
+
+  {
+    path: '/preview',
+    name: 'preview',
+    component: () => import(/* webpackChunkName: "preview" */ '../views/PreviewView.vue')
+  }
 ]
 
 const router = createRouter({
