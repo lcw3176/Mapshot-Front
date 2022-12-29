@@ -2,20 +2,24 @@
     <div>
         <div class="card-image columns">
             <figure class="image is-256x256 column is-half">
+                <p class="title is-5">좌표 탐색</p>
+                <img :src="coor">
                 <div class="media-content mt-5">
-                    <p class="title is-5">좌표 탐색</p>
+                    
                     <p>지도에 원하는 위치를 클릭하면 해당 지점이 사진의 중심 좌표로 지정되며, 보라색으로 사진이 캡쳐될 범위가 표시됩니다</p>
                 </div>
-                <img :src="coor">
+                
 
             </figure>
 
             <figure class="image is-256x256 column">
+                <p class="title is-5">위치 검색</p>
+                <img :src="location">
                 <div class="media-content mt-5">
-                    <p class="title is-5">위치 검색</p>
+                    
                     <p>키워드를 통해 원하는 장소를 찾거나, 임의로 지도를 움직여 탐색도 가능합니다.</p>
                 </div>
-                <img :src="location">
+                
 
             </figure>
         </div>

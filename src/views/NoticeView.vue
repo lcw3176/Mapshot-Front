@@ -1,12 +1,6 @@
 <template>
-    <div class="container mt-5">
-        <NoticeListPage/>
-        <NoticeListPage/>
-        <NoticeListPage/>
-        <NoticeListPage/>
-        <NoticeListPage/>
-
-        <Pagination/>
+    <div :class="$isMobile() ? 'container is-fluid' : 'container'">
+        <NoticeSummary/>
     </div>
    
 </template>
@@ -19,13 +13,7 @@ export default {
     name: 'NoticeView',
     components: {
         NoticeSummary,
-        Pagination,
+        Pagination
     }
 }
 </script>
-
-
-<style scoped>
-@import "@/assets/css/bulma-list.css";
-
-</style>

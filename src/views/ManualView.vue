@@ -1,6 +1,6 @@
 <template>
-    <div class="container ">
-        <div class="container tabs is-boxed mt-5">
+    <div :class="$isMobile() ? 'container is-fluid' : 'container'">
+        <div class="tabs mt-5">
             <ul>
                 <li v-for="(value, key) in manuals" :key="key" :class="{'is-active': currentComponent === key}">
                     <a @click="swapComponent(key)">{{ value }}</a>
@@ -8,14 +8,14 @@
             </ul>
         </div>
 
-        <div class="container is-fluid card">
-            <BeforeUseVue class="container is-fluid" v-if="currentComponent === '0'"/>
-            <CapturePoint class="container is-fluid" v-if="currentComponent === '1'"/>
-            <ChooseRange class="container is-fluid" v-if="currentComponent === '2'"/>
-            <ChooseMapType class="container is-fluid" v-if="currentComponent === '3'"/>
-            <ChooseCompany class="container is-fluid" v-if="currentComponent === '4'"/>
-            <Option class="container is-fluid" v-if="currentComponent === '5'"/>
-            <PrintResult class="container is-fluid" v-if="currentComponent === '6'"/>
+        <div>
+            <BeforeUseVue v-if="currentComponent === '0'"/>
+            <CapturePoint v-if="currentComponent === '1'"/>
+            <ChooseRange v-if="currentComponent === '2'"/>
+            <ChooseMapType v-if="currentComponent === '3'"/>
+            <ChooseCompany v-if="currentComponent === '4'"/>
+            <ExternalOption v-if="currentComponent === '5'"/>
+            <PrintResult v-if="currentComponent === '6'"/>
         </div>
 
     </div>
@@ -29,7 +29,7 @@ import CapturePoint from '@/components/manual/CapturePoint.vue'
 import ChooseRange from '@/components/manual/ChooseRange.vue'
 import ChooseMapType from '@/components/manual/ChooseMapType.vue'
 import ChooseCompany from '@/components/manual/ChooseCompany.vue'
-import Option from '@/components/manual/Option.vue'
+import ExternalOption from '@/components/manual/ExternalOption.vue'
 import PrintResult from '@/components/manual/PrintResult.vue'
 
 export default {
@@ -40,7 +40,7 @@ export default {
         ChooseRange,
         ChooseMapType,
         ChooseCompany,
-        Option,
+        ExternalOption,
         PrintResult
     },
 
