@@ -20,14 +20,15 @@ const routes = [
 
   {
     path: '/notice',
-    name: 'notice',
-    component: () => import(/* webpackChunkName: "manual" */ '../views/NoticeView.vue')
+    name: 'noticeSummary',
+    component: () => import(/* webpackChunkName: "noticeSummary" */ '../views/NoticeView.vue')
   },
 
   {
-    path: '/preview',
-    name: 'preview',
-    component: () => import(/* webpackChunkName: "preview" */ '../views/PreviewView.vue')
+    path: '/notice/detail/:postNumber',
+    name: 'noticeDetail',
+    component: () => import(/* webpackChunkName: "noticeDetail" */ '../views/NoticeDetailView.vue'),
+    props: true
   }
 ]
 

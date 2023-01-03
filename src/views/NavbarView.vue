@@ -27,9 +27,6 @@
                         문의
                     </router-link>
 
-                    <router-link class="navbar-item" to="/preview">
-                        미리보기
-                    </router-link>
                 </div>
             </div>
         </div>
