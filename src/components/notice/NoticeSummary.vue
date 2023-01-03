@@ -2,17 +2,22 @@
 
     <div class="container is-fluid">
 
-        <div class="tile is-ancestor" v-for="notice in notices" v-bind:key="notice.id">
+        <div class="tile is-ancestor" v-for="notice in noticeSummaryStore.getNotices" v-bind:key="notice.id">
             <div class="tile is-vertical">
                 <div class="tile">
                     <div class="tile is-parent is-vertial">
-                        <article class="tile is-child notification">
-                            <p :class="notice.category == '업데이트' ? 'title has-text-info' : 'title has-text-danger'">
-                                {{ notice.category}}
-                            </p>
-                            <p class="subtitle">{{ notice.title }}</p>
-                            <p>{{ notice.date }}</p>
-                        </article>
+                        <router-link v-bind:to="{ path: `/notice/detail/${notice.id}` }" class="tile is-child notification"
+                        style="text-decoration: none; color: inherit;">
+                            <article>
+                                <p
+                                    :class="notice.noticeType == '업데이트' ? 'title has-text-info' : 'title has-text-danger'">
+                                    {{ notice.noticeType }}
+                                </p>
+                                <p class="subtitle">{{ notice.title }}</p>
+                                <p>{{ formatDate(notice.createdDate) }}</p>
+                            </article>
+                        </router-link>
+
                     </div>
                 </div>
             </div>
@@ -20,7 +25,7 @@
         </div>
     </div>
 
-    <InfiniteLoading @infinite="infiniteHandler" />
+    <InfiniteLoading @infinite="noticeSummaryStore.infiniteHandler" />
 
 </template>
 
@@ -28,7 +33,9 @@
 
 <script>
 import InfiniteLoading from 'v3-infinite-loading';
-
+import { useNoticeSummaryStore } from '@/store/noticeSummary';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko'
 
 export default {
     name: 'NoticeSummary',
@@ -43,51 +50,24 @@ export default {
         InfiniteLoading
     },
 
-    methods: {
+    setup() {
+        const noticeSummaryStore = useNoticeSummaryStore();
 
-        testData() {
-            let dataArr = [];
-            for (let i = 0; i < 10; i++) {
-                let data = new Object();
+        dayjs.locale('ko')
 
-                if (i % 2 === 0) {
-                    data.id = this.loadNum;
-                    data.category = '업데이트';
-                    data.title = '사이트 개편 안내';
-                    data.date = '12.12.29';
-
-                } else {
-                    data.id = this.loadNum;
-                    data.category = '점검예정';
-                    data.title = '서비스 점검 안내';
-                    data.date = '12.12.12';
-
-                }
-
-
-                dataArr.push(data);
-            }
-
-
-            return dataArr;
-        },
-
-        async infiniteHandler($state) {
-            let data = this.testData();
-            if (this.loadNum < 100) {
-
-                data.forEach(element => {
-                    this.notices.push(element);
-                });
-
-                this.loadNum++;
-                console.log(this.loadNum);
-                $state.loaded();
-            } else {
-                $state.complete();
-            }
-
+        return {
+            noticeSummaryStore
         }
+    },
+
+    methods: {
+        formatDate(dateString) {
+            const date = dayjs(dateString);
+
+            return date.format('YYYY.MM.DD hh:ss');
+        }
+
     }
+
 }
 </script>
