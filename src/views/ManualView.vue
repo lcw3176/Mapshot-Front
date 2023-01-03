@@ -1,6 +1,6 @@
 <template>
     <div :class="$isMobile() ? 'container is-fluid' : 'container'">
-        <div class="tabs mt-5">
+        <div class="tabs">
             <ul>
                 <li v-for="(value, key) in manuals" :key="key" :class="{'is-active': currentComponent === key}">
                     <a @click="swapComponent(key)">{{ value }}</a>
