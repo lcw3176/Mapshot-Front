@@ -6,11 +6,10 @@
             <div class="tile is-vertical">
                 <div class="tile">
                     <div class="tile is-parent is-vertial">
-                        <router-link v-bind:to="{ path: `/notice/detail/${notice.id}` }" class="tile is-child notification"
-                        style="text-decoration: none; color: inherit;">
+                        <router-link v-bind:to="{ path: `/notice/detail/${notice.id}` }"
+                            class="tile is-child notification" style="text-decoration: none; color: inherit;">
                             <article>
-                                <p
-                                    :class="notice.noticeType == '업데이트' ? 'title has-text-info' : 'title has-text-danger'">
+                                <p :class="getNoticeTypeClass(`${notice.noticeType}`)">
                                     {{ notice.noticeType }}
                                 </p>
                                 <p class="subtitle">{{ notice.title }}</p>
@@ -65,7 +64,18 @@ export default {
             const date = dayjs(dateString);
 
             return date.format('YYYY.MM.DD hh:ss');
-        }
+        },
+
+        getNoticeTypeClass(noticeType) {
+            switch (noticeType) {
+                case '업데이트':
+                    return 'tag is-info mb-2';
+                case '점검예정':
+                    return 'tag is-warning mb-2';
+                case '오류수정':
+                    return 'tag is-danger mb-2';
+            }
+        },
 
     }
 

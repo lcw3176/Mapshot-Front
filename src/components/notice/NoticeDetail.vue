@@ -4,7 +4,7 @@
         <article class="media">
             <div class="media-content">
                 <div class="content">
-                    <small :class="noticeDetailStore.getNotice.noticeType == '업데이트' ? 'tag is-info' : 'tag is-danger'">
+                    <small :class="getNoticeTypeClass(noticeDetailStore.getNotice.noticeType)">
                         {{ noticeDetailStore.getNotice.noticeType }}
                     </small>
                     <strong class="ml-3">{{ noticeDetailStore.getNotice.title }} </strong>   
@@ -61,7 +61,21 @@ export default {
             const date = dayjs(dateString);
 
             return date.format('YYYY.MM.DD hh:ss');
-        }
+        },
+
+        
+        getNoticeTypeClass(noticeType) {
+            switch (noticeType) {
+                case '업데이트':
+                    return 'tag is-info mb-2';
+                case '점검예정':
+                    return 'tag is-warning mb-2';
+                case '오류수정':
+                    return 'tag is-danger mb-2';
+            }
+        },
+
+        
     }
 
 
