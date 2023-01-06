@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js"
+import { Naver, NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js"
 
 
 export const useMapStore = defineStore("map", {
@@ -21,7 +21,13 @@ export const useMapStore = defineStore("map", {
     baseMap: '',
     company: '',
     layerMode: false,
-    tradeMode: false,
+    traceMode: false,
+    inProgress: false,
+    mapDownloadLink: '',
+    mapDownloadName: '',
+    statusMessage: '',
+    error: false,
+    naverProfile: '',
 
     radiusArr: {
       1: Radius.One,
@@ -39,8 +45,10 @@ export const useMapStore = defineStore("map", {
     companyArr: {
       '네이버': 'naver',
       '카카오': 'kakao',
-    }
+    },
 
+    progressBarValue: 0,
+    progressBarMax: 100,
   }),
 
 
@@ -69,17 +77,29 @@ export const useMapStore = defineStore("map", {
       return this.baseMap;
     },
 
-    getCompany(){
+    getCompany() {
       return this.company;
     },
 
-    isLayerMode(){
+    isLayerMode() {
       return this.layerMode;
     },
 
-    isTradeMode(){
-      return this.tradeMode;
-    }
+    isTraceMode() {
+      return this.traceMode;
+    },
+
+    isError(){
+      return this.error;
+    },
+
+    getProgressBarValue(){
+      return this.progressBarValue;
+    },
+
+    getProgressBarMax(){
+      return this.progressBarMax;
+    },
 
   },
 
@@ -93,18 +113,76 @@ export const useMapStore = defineStore("map", {
         };
 
       this.map = new kakao.maps.Map(mapContainer, mapOption);
-      this.map.addListener('click', this.mapOnClick);
-      this.map.addListener('rightclick', this.removeRectangle);
       this.geocoder = new kakao.maps.services.Geocoder();
       this.markers = [];
       this.ps = new kakao.maps.services.Places();
       this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
-
+      
       this.naverTile = new NaverTile();
       this.coor = new LatLng();
       this.mapRadius = Radius.Two;
       this.baseMap = this.baseMapArr['위성'];
+
+      this.naverProfile = new Naver();
+      this.naverProfile.setKey("ny5d4sdo0e");
+      this.naverProfile.setMapType(this.baseMap);
+
     },
+
+    async startCapture() {
+
+      if (this.traceMode) {
+        let traceRec = new kakao.maps.Rectangle({
+            bounds: this.rectangle.getBounds(),
+            strokeWeight: 4,
+            strokeColor: '#000000',
+            strokeOpacity: 1,
+            strokeStyle: 'shortdot',
+            fillColor: '#ecf4f3',
+            fillOpacity: 0.8
+        });
+        traceRec.setMap(this.map);
+    }
+
+      if (this.company === "naver") {
+        this.naverCapture();
+      }
+    },
+
+    async naverTileOnLoadStart(event){
+      this.progressBarMax = event.detail.total;
+      this.progressBarValue = 0;
+    },
+
+    async naverTileOnProgress(){
+      this.progressBarValue += 1;
+      this.statusMessage = this.progressBarValue + "/" + this.progressBarMax + " 수집 완료";
+    },
+
+
+    async naverTileOnError(){
+      this.error = true;
+      this.naverTileOnProgress();
+    },
+
+
+    async naverCapture() {
+      this.inProgress = true;
+      this.naverProfile.setLevel(this.mapRadius);
+      let fileName = this.bunziAddress;
+
+      this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
+        canvas.toBlob((blob) => {
+          this.mapDownloadLink = URL.createObjectURL(blob);
+          this.mapDownloadName = "mapshot_" + fileName + ".jpg";
+          this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
+          
+          this.inProgress = false;
+        }, "image/jpeg");
+
+      });
+    },
+    
 
     async removeRectangle() {
       if (this.rectangle != null) {
@@ -161,26 +239,27 @@ export const useMapStore = defineStore("map", {
 
     async changeBaseMap(map, event) {
       this.baseMap = map;
+      this.naverProfile.setMapType(map);
     },
 
-    async changeCompany(company, event){
+    async changeCompany(company, event) {
       this.company = company;
 
-      if(this.company !== this.companyArr['카카오'] && this.layerMode){
+      if (this.company !== this.companyArr['카카오'] && this.layerMode) {
         this.layerMode = false;
       }
     },
 
-    async changeTraceMode(){
-      this.tradeMode = !this.tradeMode;
+    async changeTraceMode() {
+      this.traceMode = !this.traceMode;
     },
-    
-    async changeLayerMode(){
-      if(this.company !== this.companyArr['카카오']){
+
+    async changeLayerMode() {
+      if (this.company !== this.companyArr['카카오']) {
         alert("지적 편집도는 카카오 지도만 사용 가능합니다");
         return;
       }
-      
+
       this.layerMode = !this.layerMode;
     },
 

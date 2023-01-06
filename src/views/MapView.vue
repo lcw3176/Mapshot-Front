@@ -59,18 +59,18 @@
 
         </div>
 
-        <progress class="progress is-success" id="progressBar" value="0" max="100"></progress>
+        <progress :class="mapStore.isError ? 'progress is-danger' : 'progress is-info'" :value="mapStore.getProgressBarValue" :max="mapStore.getProgressBarMax"></progress>
 
 
         <nav class="breadcrumb" aria-label="breadcrumbs">
           <ul class="columns">
-            <li class="column is-four-fifths"><span id="captureStatus"></span></li>
+            <li class="column is-four-fifths"><span>{{ mapStore.statusMessage }}</span></li>
             <li class="column">
-              <a href="" id="resultHref">
-                <span class="icon is-small">
+              <span class="icon is-small ml-2">
                   <i class="fas fa-link"></i>
-                </span>
-                <span id="resultSpan"></span>
+              </span>
+              <a :href="mapStore.mapDownloadLink" :download="mapStore.mapDownloadName">
+                <span>{{ mapStore.mapDownloadName }}</span>
               </a>
             </li>
           </ul>
@@ -118,7 +118,7 @@
 
             <ul class="menu-list">
               <li class="menu-seperator"></li>
-              <li><a @click="mapStore.changeTraceMode" :class="{'is-active': mapStore.isTradeMode}">흔적 남기기</a></li>
+              <li><a @click="mapStore.changeTraceMode" :class="{'is-active': mapStore.isTraceMode}">흔적 남기기</a></li>
               <li><a @click="mapStore.changeLayerMode" :class="{'is-active': mapStore.isLayerMode}">지적 편집도</a></li>
             </ul>
 
@@ -129,7 +129,7 @@
 
             <ul class="menu-list">
               <li class="menu-seperator"></li>
-              <button class="button is-outlined" onclick="startCapture()">작업 시작</button>
+              <button class="button is-outlined" @click="mapStore.startCapture">작업 시작</button>
             </ul>
           </div>
         </div>
@@ -146,9 +146,6 @@ import {useMapStore} from '../store/map.js'
 export default {
   name: 'MapView',
 
-  mounted(){
-    this.mapStore.init();
-  },
 
   setup(){
     const mapStore = useMapStore();
@@ -158,9 +155,24 @@ export default {
     }
   },
 
-  methods: {
+  mounted() {
+    this.mapStore.init();
+    this.mapStore.map.addListener('click', this.mapStore.mapOnClick);
+    this.mapStore.map.addListener('rightclick', this.mapStore.removeRectangle);
 
-  }
+    document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+    document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+    document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+  },
+
+  beforeDestroy() {
+    this.mapStore.map.removeListener('click', this.mapStore.mapOnClick);
+    this.mapStore.map.removeListener('rightclick', this.mapStore.removeRectangle);
+
+    document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+    document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+    document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+  },
 }
 </script>
 
