@@ -58,8 +58,9 @@
           </div>
 
         </div>
-
-        <progress :class="mapStore.isError ? 'progress is-danger' : 'progress is-info'" :value="mapStore.getProgressBarValue" :max="mapStore.getProgressBarMax"></progress>
+        
+        <progress v-if="!mapStore.isProgressLoading" :class="mapStore.isError ? 'progress is-danger' : 'progress is-info'" :value="mapStore.getProgressBarValue" :max="mapStore.getProgressBarMax"></progress>
+        <progress v-else max="100" class="progress is-info"></progress>
 
 
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -163,6 +164,7 @@ export default {
     document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
     document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
     document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+    document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 
   beforeDestroy() {
@@ -172,6 +174,7 @@ export default {
     document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
     document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
     document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+    document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 }
 </script>
