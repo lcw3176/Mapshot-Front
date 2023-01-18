@@ -4,13 +4,13 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko'
 
 async function getContent(id) {
-  const response = await axios.get('https://port-0-mapshot-api-ngsnp25lbunrwi4.gksl2.cloudtype.app/api/notice/detail/' + id);
+  const response = await axios.get('https://api.kmapshot.com/notice/detail/' + id);
   return response.data;
 }
 
 
 async function getSummary(id){
-    const response = await axios.get('https://port-0-mapshot-api-ngsnp25lbunrwi4.gksl2.cloudtype.app/api/notice/summary/' + id);
+    const response = await axios.get('https://api.kmapshot.com/notice/summary/' + id);
     return response.data;
 }
 
