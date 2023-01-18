@@ -237,7 +237,9 @@ export const useMapStore = defineStore("map", {
 
       this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
       let data = await requsetImage(this.proxyProfile.getQueryString());
-
+      this.progressBarLoading = false;
+      this.progressBarMax = 100;
+      
       for (let i = 0; i < data.length; i++) {
         let json = data[i];
 
@@ -258,7 +260,7 @@ export const useMapStore = defineStore("map", {
 
                 this.progressBarValue = 100;
                 this.inProgress = false;
-                expectedEndTime = null;
+                
               }, "image/jpeg");
             }
           })
