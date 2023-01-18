@@ -237,10 +237,9 @@ export const useMapStore = defineStore("map", {
 
       this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
       let data = await requsetImage(this.proxyProfile.getQueryString());
-      let jsonArr = JSON.parse(data);
 
-      for (let i = 0; i < jsonArr.length; i++) {
-        let json = jsonArr[i];
+      for (let i = 0; i < data.length; i++) {
+        let json = data[i];
 
         this.proxyTile.requestImage(this.proxyProfile, json.uuid, (loadedImage) => {
           ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.width,
