@@ -241,27 +241,30 @@ export const useMapStore = defineStore("map", {
       for (let i = 0; i < data.length; i++) {
         let json = data[i];
 
-        this.proxyTile.requestImage(this.proxyProfile, json.uuid, (loadedImage) => {
-          ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.width,
-            json.x, json.y, defaultBlockSize, defaultBlockSize);
-          count++;
-          this.statusMessage = parseInt((count / maxCount) * 100).toString() + " / 100";
-          this.progressBarValue = count / maxCount * 100;
+        ((_json) =>{
+          
+          this.proxyTile.requestImage(this.proxyProfile, _json.uuid, (loadedImage) => {
+            ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.width,
+              _json.x, _json.y, defaultBlockSize, defaultBlockSize);
+            count++;
+            this.statusMessage = parseInt((count / maxCount) * 100).toString() + " / 100";
+            this.progressBarValue = count / maxCount * 100;
 
-          if (count === maxCount) {
-            canvas.toBlob((blob) => {
-              this.mapDownloadLink = URL.createObjectURL(blob);
-              this.mapDownloadName = "mapshot_" + fileName + ".jpg";
-              this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
+            if (count === maxCount) {
+              canvas.toBlob((blob) => {
+                this.mapDownloadLink = URL.createObjectURL(blob);
+                this.mapDownloadName = "mapshot_" + fileName + ".jpg";
+                this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
 
-              this.progressBarValue = 100;
-              this.inProgress = false;
-              expectedEndTime = null;
-              sock.close();
+                this.progressBarValue = 100;
+                this.inProgress = false;
+                expectedEndTime = null;
+              }, "image/jpeg");
+            }
+          })
+        })(json);
 
-            }, "image/jpeg");
-          }
-        })
+
 
       }
     },
