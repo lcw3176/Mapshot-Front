@@ -149,6 +149,11 @@ export const useMapStore = defineStore("map", {
     },
 
     async startCapture() {
+      if(this.inProgress){
+        alert("현재 작업이 진행중입니다.");
+        return;
+      }
+      
       this.error = false;
 
       if (this.traceMode) {
