@@ -17,6 +17,7 @@
     "vue-mobile-detection": "^2.0.1",
     "vue-router": "^4.0.3",
     "vue-showdown": "^4.0.0",
+    "vue-spinner": "^1.0.4",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
