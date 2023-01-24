@@ -962,6 +962,11 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     "to-fast-properties" "^2.0.0"
 
+"@emailjs/browser@^3.10.0":
+  "integrity" "sha512-pregUOBkSjjctQoAgn8DcSaeY4ypHjXAJEzWlJysM3RkQXw1ulavfHva3YYeAkxfJ7qbIhpyvRmhyQlgNG4GVg=="
+  "resolved" "https://registry.npmjs.org/@emailjs/browser/-/browser-3.10.0.tgz"
+  "version" "3.10.0"
+
 "@eslint/eslintrc@^0.4.3":
   "integrity" "sha512-J6KFFz5QCYUJq3pf0mjEcCJVERbzv71PUIDczuh9JkwGEzced6CO5ADLHB1rbf/+oPBtoPfMYNOpGDzCANlbXw=="
   "resolved" "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-0.4.3.tgz"
