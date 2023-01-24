@@ -173,7 +173,6 @@ export const useMapStore = defineStore("map", {
       this.error = false;
       this.inProgress = true;
 
-      let isSuccess = false;
       let fileName = this.bunziAddress;
 
       if (this.traceMode) {
@@ -181,18 +180,26 @@ export const useMapStore = defineStore("map", {
       }
 
       if (this.company === "naver") {
-        isSuccess = await this.naverCapture();
+        this.naverCapture().then(isSuccess => {
+          if(isSuccess){
+            this.mapDownloadName = "mapshot_" + fileName + ".jpg";
+            this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
+            this.inProgress = false;
+          }
+        });
       }
 
       if (this.company === "kakao") {
-        isSuccess = await this.kakaoCapture();
+        this.kakaoCapture().then(isSuccess => {
+          if(isSuccess){
+            this.mapDownloadName = "mapshot_" + fileName + ".jpg";
+            this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
+            this.inProgress = false;
+            this.progressBarValue = 100;
+          }
+        });
       }
-
-      if(isSuccess){
-        this.mapDownloadName = "mapshot_" + fileName + ".jpg";
-        this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
-        this.inProgress = false;
-      }
+      
    
     },
 
@@ -292,10 +299,8 @@ export const useMapStore = defineStore("map", {
             if (count === maxCount) {
               canvas.toBlob((blob) => {
                 this.mapDownloadLink = URL.createObjectURL(blob);
-                this.progressBarValue = 100;
                 
-                return true;
-                
+                return true;                
               }, "image/jpeg");
             }
           })
