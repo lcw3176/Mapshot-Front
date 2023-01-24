@@ -1,5 +1,10 @@
 <template>
     <div class="box">
+        <div v-if="noticeStore.isLoading" class="loading-container">
+            <div class="loading">
+                <Moon-loader />
+            </div>
+        </div>
 
         <article class="media">
             <div class="media-content">
@@ -29,12 +34,14 @@
 <script>
 import { VueShowdown } from 'vue-showdown';
 import { useNoticeStore } from '@/store/notice';
+import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 
 export default {
     name: 'NoticeDetail',
     components: {
         VueShowdown,
+        MoonLoader,
     },
 
     setup() {
@@ -56,3 +63,13 @@ export default {
 
 }
 </script>
+
+<style scoped>
+.loading {
+  z-index: 2;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>

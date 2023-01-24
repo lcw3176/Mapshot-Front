@@ -2,6 +2,12 @@
 
     <div class="container is-fluid">
 
+        <div v-if="noticeStore.isLoading" class="loading-container">
+            <div class="loading">
+                <Moon-loader />
+            </div>
+        </div>
+
         <div class="tile is-ancestor" v-for="notice in noticeStore.getNotices" v-bind:key="notice.id">
             <div class="tile is-vertical">
                 <div class="tile">
@@ -33,7 +39,7 @@
 <script>
 import InfiniteLoading from 'v3-infinite-loading';
 import { useNoticeStore } from '@/store/notice';
-
+import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 export default {
     name: 'NoticeSummary',
@@ -45,7 +51,8 @@ export default {
     },
 
     components: {
-        InfiniteLoading
+        InfiniteLoading,
+        MoonLoader 
     },
 
     setup() {
@@ -60,3 +67,13 @@ export default {
 
 }
 </script>
+
+<style scoped>
+.loading {
+  z-index: 2;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>
