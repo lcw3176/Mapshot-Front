@@ -158,9 +158,8 @@ export default {
 
   mounted() {
     this.mapStore.init();
-    this.mapStore.map.addListener('click', this.mapStore.mapOnClick);
-    this.mapStore.map.addListener('rightclick', this.mapStore.removeRectangle);
-
+    this.mapStore.addListeners();
+    
     document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
     document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
     document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
@@ -168,8 +167,7 @@ export default {
   },
 
   beforeDestroy() {
-    this.mapStore.map.removeListener('click', this.mapStore.mapOnClick);
-    this.mapStore.map.removeListener('rightclick', this.mapStore.removeRectangle);
+    this.mapStore.removeListeners();
 
     document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
     document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);

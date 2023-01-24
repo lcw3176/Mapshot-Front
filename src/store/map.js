@@ -151,6 +151,17 @@ export const useMapStore = defineStore("map", {
       this.proxyProfile.setMapType(this.baseMap);
 
       this.proxyTile = new ProxyTile();
+
+    },
+
+    async addListeners(){
+      this.map.addListener('click', this.mapOnClick);
+      this.map.addListener('rightclick', this.removeRectangle);
+    },
+
+    async removeListeners(){
+      this.map.removeListener('click', this.mapOnClick);
+      this.map.removeListener('rightclick', this.removeRectangle);
     },
 
     async startCapture() {
@@ -160,27 +171,42 @@ export const useMapStore = defineStore("map", {
       }
       
       this.error = false;
+      this.inProgress = true;
+
+      let isSuccess = false;
+      let fileName = this.bunziAddress;
 
       if (this.traceMode) {
-        let traceRec = new kakao.maps.Rectangle({
-          bounds: this.rectangle.getBounds(),
-          strokeWeight: 4,
-          strokeColor: '#000000',
-          strokeOpacity: 1,
-          strokeStyle: 'shortdot',
-          fillColor: '#ecf4f3',
-          fillOpacity: 0.8
-        });
-        traceRec.setMap(this.map);
+        this.makeTrace();
       }
 
       if (this.company === "naver") {
-        this.naverCapture();
+        isSuccess = await this.naverCapture();
       }
 
       if (this.company === "kakao") {
-        this.kakaoCapture();
+        isSuccess = await this.kakaoCapture();
       }
+
+      if(isSuccess){
+        this.mapDownloadName = "mapshot_" + fileName + ".jpg";
+        this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
+        this.inProgress = false;
+      }
+   
+    },
+
+    async makeTrace(){
+      let traceRec = new kakao.maps.Rectangle({
+        bounds: this.rectangle.getBounds(),
+        strokeWeight: 4,
+        strokeColor: '#000000',
+        strokeOpacity: 1,
+        strokeStyle: 'shortdot',
+        fillColor: '#ecf4f3',
+        fillOpacity: 0.8
+      });
+      traceRec.setMap(this.map);
     },
 
     async proxyTileOnError(event) {
@@ -208,30 +234,27 @@ export const useMapStore = defineStore("map", {
 
 
     async naverCapture() {
-      this.inProgress = true;
       this.naverProfile.setLevel(this.mapRadius);
-      let fileName = this.bunziAddress;
 
       this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
         canvas.toBlob((blob) => {
           this.mapDownloadLink = URL.createObjectURL(blob);
-          this.mapDownloadName = "mapshot_" + fileName + ".jpg";
-          this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
-
-          this.inProgress = false;
+          return true;
         }, "image/jpeg");
 
       });
     },
 
     async kakaoCapture() {
-      this.inProgress = true;
       this.progressBarLoading = true;
-      const defaultBlockSize = 1000;
+      let expectedEndTime = new Date();
+      expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 30);
 
+      this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
+
+
+      const defaultBlockSize = 1000;
       this.proxyProfile.setRadius(this.mapRadius);
-      const fileName = this.bunziAddress;
-      this.statusMessage = "서버에 요청중입니다. 잠시 기다려주세요";
 
       let canvas = document.createElement("canvas");
 
@@ -242,18 +265,17 @@ export const useMapStore = defineStore("map", {
       let sideBlockCount = parseInt(this.proxyProfile.getWidth() / defaultBlockSize);
       let maxCount = sideBlockCount * sideBlockCount;
       let count = 0;
-      let expectedEndTime = new Date();
-      expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 30);
 
-      this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
       let data = await requsetImage(this.proxyProfile.getQueryString());
-
-      if(data.length === 0){
-        this.proxyTileOnError();
-      }
 
       this.progressBarLoading = false;
       this.progressBarMax = 100;
+
+      if(data.length === 0){
+        this.proxyTileOnError();
+        return false;
+      }
+
       
       for (let i = 0; i < data.length; i++) {
         let json = data[i];
@@ -270,19 +292,14 @@ export const useMapStore = defineStore("map", {
             if (count === maxCount) {
               canvas.toBlob((blob) => {
                 this.mapDownloadLink = URL.createObjectURL(blob);
-                this.mapDownloadName = "mapshot_" + fileName + ".jpg";
-                this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
-
                 this.progressBarValue = 100;
-                this.inProgress = false;
+                
+                return true;
                 
               }, "image/jpeg");
             }
           })
         })(json);
-
-
-
       }
     },
 
