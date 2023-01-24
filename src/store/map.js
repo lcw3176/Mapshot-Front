@@ -4,6 +4,11 @@ import axios from 'axios';
 
 async function requsetImage(queryString) {
   const response = await axios.get('https://api.kmapshot.com/image/queue' + queryString);
+
+  if(response.status !== 200){
+    return [];
+  }
+
   return response.data;
 }
 
@@ -242,6 +247,11 @@ export const useMapStore = defineStore("map", {
 
       this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
       let data = await requsetImage(this.proxyProfile.getQueryString());
+
+      if(data.length === 0){
+        this.proxyTileOnError();
+      }
+
       this.progressBarLoading = false;
       this.progressBarMax = 100;
       
