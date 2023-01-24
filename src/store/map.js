@@ -173,34 +173,18 @@ export const useMapStore = defineStore("map", {
       this.error = false;
       this.inProgress = true;
 
-      let fileName = this.bunziAddress;
-
       if (this.traceMode) {
         this.makeTrace();
       }
 
       if (this.company === "naver") {
-        this.naverCapture().then(isSuccess => {
-          if(isSuccess){
-            this.mapDownloadName = "mapshot_" + fileName + ".jpg";
-            this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
-            this.inProgress = false;
-          }
-        });
+        this.naverCapture();
       }
 
       if (this.company === "kakao") {
-        this.kakaoCapture().then(isSuccess => {
-          if(isSuccess){
-            this.mapDownloadName = "mapshot_" + fileName + ".jpg";
-            this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
-            this.inProgress = false;
-            this.progressBarValue = 100;
-          }
-        });
+        this.kakaoCapture();
       }
       
-   
     },
 
     async makeTrace(){
@@ -242,11 +226,13 @@ export const useMapStore = defineStore("map", {
 
     async naverCapture() {
       this.naverProfile.setLevel(this.mapRadius);
+      let fileName = this.bunziAddress;
 
       this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
         canvas.toBlob((blob) => {
           this.mapDownloadLink = URL.createObjectURL(blob);
-          return true;
+          this.onCaptureEnded(fileName);
+
         }, "image/jpeg");
 
       });
@@ -254,6 +240,7 @@ export const useMapStore = defineStore("map", {
 
     async kakaoCapture() {
       this.progressBarLoading = true;
+      let fileName = this.bunziAddress;
       let expectedEndTime = new Date();
       expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 30);
 
@@ -280,7 +267,7 @@ export const useMapStore = defineStore("map", {
 
       if(data.length === 0){
         this.proxyTileOnError();
-        return false;
+        return;
       }
 
       
@@ -299,8 +286,9 @@ export const useMapStore = defineStore("map", {
             if (count === maxCount) {
               canvas.toBlob((blob) => {
                 this.mapDownloadLink = URL.createObjectURL(blob);
-                
-                return true;                
+                this.progressBarValue = 100;
+                this.onCaptureEnded(fileName);
+
               }, "image/jpeg");
             }
           })
@@ -308,6 +296,11 @@ export const useMapStore = defineStore("map", {
       }
     },
 
+    async onCaptureEnded(fileName){
+      this.mapDownloadName = "mapshot_" + fileName + ".jpg";
+      this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
+      this.inProgress = false;
+    },
 
     async removeRectangle() {
       if (this.rectangle != null) {
