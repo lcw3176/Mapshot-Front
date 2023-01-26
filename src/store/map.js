@@ -169,6 +169,11 @@ export const useMapStore = defineStore("map", {
         alert("현재 작업이 진행중입니다.");
         return;
       }
+
+      if(this.company === ''){
+        alert("출력 회사를 선택해 주세요.");
+        return;
+      }
       
       this.error = false;
       this.inProgress = true;
