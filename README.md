@@ -6,7 +6,7 @@
 <img src="https://img.shields.io/badge/Service%20begun%20in-2021.02-brigntgreen">
 </p>
 <p align="center">
-  <a href="https://dev.kmapshot.com">https://dev.kmapshot.com</a>
+  <a href="https://kmapshot.com">https://kmapshot.com</a>
 </p>  
 <p align="center">
   <a href="#서비스-소개">서비스 소개</a> •
