@@ -3,13 +3,15 @@ import { Proxy, Naver, NaverTile, ProxyTile, LatLng, Radius } from "../assets/js
 import axios from 'axios';
 
 async function requsetImage(queryString) {
-  const response = await axios.get('https://api.kmapshot.com/image/queue' + queryString);
+  try{
+    const response = await axios.get('https://api.kmapshot.com/image/queue' + queryString);
 
-  if(response.status !== 200){
+    return response.data;
+  } catch(error){
+
     return [];
   }
-
-  return response.data;
+  
 }
 
 
