@@ -30,9 +30,7 @@
 기존 작업 대비 효율적인 업무가 가능합니다. (약 1시간 -> 10초)
 
 ## 방문자 추이
-<div style="text-align: center">
-<img width="600" style="margin:10px;" src="https://hits.seeyoufarm.com/api/count/graph/dailyhits.svg?url=https://kmapshot.com">
-</div>
+![방문](https://hits.seeyoufarm.com/api/count/graph/dailyhits.svg?url=https://kmapshot.com)
 
 ## 기술 스택
 ### FrontEnd
