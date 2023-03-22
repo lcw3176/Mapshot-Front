@@ -167,6 +167,11 @@ export const useMapStore = defineStore("map", {
     },
 
     async startCapture() {
+      if(this.coor.getX() == undefined || this.coor.getY() == undefined){
+        alert("먼저 지도를 클릭해서 좌표 설정을 진행해 주세요");
+        return;
+      }
+
       if(this.inProgress){
         alert("현재 작업이 진행중입니다.");
         return;
