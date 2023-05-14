@@ -31,5 +31,15 @@
 export default {
     name: 'AdsView',
 
+    mounted() {
+      const plugin = document.createElement("script");
+      plugin.setAttribute(
+        "src",
+        "//t1.daumcdn.net/kas/static/ba.min.js"
+      );
+      plugin.async = true;
+      document.head.appendChild(plugin);
+    }
+
 }
 </script>
