@@ -22,12 +22,13 @@
   <meta name="description" content="고화질의 위성 지도를 넓은 범위로 손쉽게 캡쳐합니다.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MapShot</title>
+  <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
     integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
   <script type="text/javascript"
     src="//dapi.kakao.com/v2/maps/sdk.js?appkey=46d97694c5e976ec8af172aebc94c130&libraries=services"></script>
-
+    <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
   <script>
     var agent = window.navigator.userAgent.toLowerCase();
     var appName = window.navigator.appName.toLowerCase();
@@ -43,34 +44,12 @@
     <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
         Please enable it to continue.</strong>
   </noscript>
-  <div id="app"></div>
-  <!-- built files will be auto injected -->
-
-  <div class="container is-fluid mt-5">
-    <div class="columns pr-5 pl-5 has-text-centered">
-
-      <div class="column">
-        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-OPghfSGHOLdGJdlJ" data-ad-width="300"
-          data-ad-height="250"></ins>
-          <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-      </div>
-
-
-      <div class="column">
-        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-1f22sNeH6puxNSbl" data-ad-width="300"
-          data-ad-height="250"></ins>
-          <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-      </div>
-
-      <div class="column">
-        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-HEHh99g6pdekjkfQ" data-ad-width="300"
-          data-ad-height="250"></ins>
-          <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-      </div>
-
-    </div>
+  <div id="app">
 
   </div>
+  <!-- built files will be auto injected -->
+
+  
 
   <a href="https://hits.seeyoufarm.com">
     <img style="display:none;" src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fkmapshot.com&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/>
