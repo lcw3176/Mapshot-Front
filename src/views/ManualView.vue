@@ -1,17 +1,16 @@
 <template>
     <v-container is-fluid>
-        <v-card elevation="0">
-            <v-tabs v-model="tab" color="deep-purple-accent-4" align-tabs="center">
-                <v-tab v-for="(item, i) in manuals" :value="i">
-                    {{ item.title }}
-                </v-tab>
-            </v-tabs>
-            <v-window v-model="tab">
-                <v-window-item v-for="(item, i) in manuals" :value="i">
-                    <component :is=item.page></component>
-                </v-window-item>
-            </v-window>
-        </v-card>
+        <v-navigation-drawer
+        permanent
+        location="left"
+      >
+
+        <v-list nav>
+          <v-list-item v-for="(item, i) in manuals" :value="i" :title="item.title" color="success" @click="nowPage = item.page"></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+
+      <component :is=nowPage></component>
 
     </v-container>
 </template>
@@ -45,6 +44,7 @@ export default {
                 { page: markRaw(PrintResult), title: "결과 출력" },
             ],
 
+            nowPage: markRaw(BeforeUseVue),
             tab: null,
         }
     },

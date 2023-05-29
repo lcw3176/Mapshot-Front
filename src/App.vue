@@ -2,8 +2,15 @@
   <v-layout>
 
 
-    <v-app-bar elevation="1" v-if="!$isMobile()">
+    <v-app-bar elevation="1"  v-if="display.mdAndUp">
+          <v-btn class="font-weight-black font-weight-bold text-h5" to="/">
+              {{ appTitle }}
 
+            </v-btn>
+
+            <v-btn v-for="item in menuItems" :key="item.title" size="large" variant="plain" :to="item.path">
+              {{ item.title }}
+            </v-btn>
       <v-container is-fluid>
         <v-row>
           <v-col>
@@ -12,14 +19,7 @@
 
           <v-col cols="10">
 
-            <v-btn class="font-weight-black font-weight-bold text-h5" to="/">
-              {{ appTitle }}
-
-            </v-btn>
-
-            <v-btn v-for="item in menuItems" :key="item.title" size="large" variant="plain" :to="item.path">
-              {{ item.title }}
-            </v-btn>
+           
 
           </v-col>
 
@@ -55,6 +55,9 @@
 
 import NavbarView from './views/NavbarView'
 import AdsView from './views/AdsView'
+import { useDisplay } from 'vuetify'
+import { ref } from 'vue'
+
 
 export default {
   components: {
@@ -62,7 +65,11 @@ export default {
     AdsView
   },
 
+
+
   data() {
+    const display = ref(useDisplay())
+
     return {
       appTitle: "MAPSHOT",
       sidebar: false,
@@ -70,7 +77,9 @@ export default {
         { title: "사용법", path: "/manual", icon: "mdi-school-outline" },
         { title: "공지사항", path: "/notice", icon: "mdi-bullhorn-outline" },
         { title: "문의", path: "/contact", icon: "mdi-tooltip-question-outline" },
-      ]
+      ],
+
+      display
     };
   },
 }
