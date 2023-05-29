@@ -1,44 +1,37 @@
 <template>
-    <div>
-        <div class="column is-half">
-            <div class="media-content mt-5">
-                <p class="title is-5">옵션</p>
-                <p>부가적인 설정 창입니다.</p>
-                <p>흔적 남기기는 기본으로 설정됩니다.</p>
-            </div>
-        </div>
+    <v-container class="d-flex align-center flex-column">
+        <v-card>
 
-        <div class="card-image columns mt-5">
-            <figure class="image is-256x256 column is-half">
-                <img :src="option">
-                <div class="media-content mt-5">
+            <div class="ma-10">
+                <v-img :src="option" max-height="400px"></v-img>
 
-                </div>
+                <v-card-title>
+                    옵션
+                </v-card-title>
+                <v-card-text>
+                    <p>부가적인 설정 창입니다.</p>
+                </v-card-text>
 
-            </figure>
 
-            <div class="column">
-                <div class="media-content mt-5">
-                    <p class="subtitle is-5">흔적 남기기</p>
+                <v-card-title>
+                    흔적 남기기
+                </v-card-title>
+
+                <v-card-text>
+
                     <p>수집한 위치에 표시를 남깁니다.</p>
-                </div>
+                </v-card-text>
 
-                <div class="media-content mt-5">
-                    <p class="subtitle is-5">지적 편집도</p>
+
+                <v-card-title>
+                    지적 편집도
+                </v-card-title>
+                <v-card-text>
                     <p>지적 편집도를 덧입혀서 불러옵니다. 이 기능은 카카오 지도만 가능합니다.</p>
-                </div>
-
-
+                </v-card-text>
             </div>
-        </div>
-        <div class="card-content">
-
-            <div class="content">
-
-            </div>
-
-        </div>
-    </div>
+        </v-card>
+    </v-container>
 </template>
 
 <script>

@@ -1,51 +1,48 @@
 <template>
-    <div>
-        <div class="column is-half">
+    <v-container class="d-flex align-center flex-column">
+        <v-card>
 
-            <div class="media-content mt-5">
-                <p class="title is-5">지도 종류</p>
-                <p>수집될 지도의 종류입니다.</p>
-                <p>기본값은 위성으로 설정됩니다.</p>
-            </div>
+            <div class="ma-10">
+                <v-img :src="maptypes" max-height="400px"></v-img>
 
-        </div>
+                <v-card-title>
+                    지도 종류
+                </v-card-title>
+                <v-card-text>
+                    수집될 지도의 종류입니다. 기본값은 위성으로 설정됩니다.
+                </v-card-text>
 
-        <div class="card-image columns columns mt-5">
-            <figure class="image is-256x256 column is-half">
-                <img :src="maptypes">
 
-            </figure>
-            <div class="column">
-                <div class="media-content mt-5">
-                    <p class="subtitle is-5">일반</p>
+                <v-card-title>
+                    일반
+                </v-card-title>
+
+                <v-card-text>
                     <p>일반 지도로 설정됩니다.</p>
-                </div>
+                </v-card-text>
 
 
-                <div class="media-content mt-5">
-                    <p class="subtitle is-5">위성</p>
+                <v-card-title>
+                    위성
+                </v-card-title>
+                <v-card-text>
                     <p>위성 지도로 설정됩니다.</p>
                     <p>위치나 지물 명칭이 나오지 않습니다.</p>
-                </div>
+                </v-card-text>
 
-
-                <div class="media-content mt-5">
-                    <p class="subtitle is-5">하이브리드</p>
+                <v-card-title>
+                    하이브리드
+                </v-card-title>
+                <v-card-text>
                     <p>위성 지도로 설정됩니다.</p>
                     <p>위치와 지물 명칭들이 나옵니다.</p>
-                </div>
+                </v-card-text>
 
             </div>
 
-        </div>
-        <div class="card-content">
 
-            <div class="content">
-
-            </div>
-
-        </div>
-    </div>
+        </v-card>
+    </v-container>
 </template>
 
 <script>
