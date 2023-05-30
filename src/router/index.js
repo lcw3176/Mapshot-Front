@@ -18,11 +18,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "manual" */ '../views/ManualView.vue')
   },
 
-  // {
-  //   path: '/notice',
-  //   name: 'noticeSummary',
-  //   component: () => import(/* webpackChunkName: "noticeSummary" */ '../views/NoticeSummaryView.vue')
-  // },
+  {
+    path: '/notice',
+    name: 'noticeSummary',
+    component: () => import(/* webpackChunkName: "noticeSummary" */ '../views/NoticeSummaryView.vue')
+  },
 
   {
     path: '/notice/detail/:postNumber',

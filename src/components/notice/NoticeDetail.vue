@@ -1,34 +1,46 @@
 <template>
-    <div class="box">
+    <v-container is-fluid>
         <div v-if="noticeStore.isLoading" class="loading-container">
             <div class="loading">
                 <Moon-loader />
             </div>
         </div>
 
-        <article class="media">
-            <div class="media-content">
-                <div class="content">
-                    <small :class="noticeStore.getNoticeTypeClass(noticeStore.getNotice.noticeType)">
-                        {{ noticeStore.getNotice.noticeType }}
-                    </small>
-                    <strong class="ml-3">{{ noticeStore.getNotice.title }} </strong>   
-                </div>
 
-                <div class="content">
-                    <small class="tag">작성일</small>
-                    <small class="ml-3">{{ noticeStore.formatDate(noticeStore.getNotice.createdDate) }}</small>
-                </div>
 
-                <div class="content m-5">
-                    <VueShowdown :markdown="noticeStore.getNotice.content"/>
-                </div>
+        <v-row>
+            <v-col>
 
-            </div>
-        </article>
+            </v-col>
 
-    </div>
+            <v-col cols="10">
 
+                <v-sheet class="d-flex flex-wrap mx-auto pa-10" elevation="1">
+                    <div>
+                        <v-chip :color=noticeStore.getNoticeTypeClass(noticeStore.getNotice.noticeType) variant="outlined">
+                            {{ noticeStore.getNotice.noticeType }}
+                        </v-chip>
+                        <h2 class="text-h5 font-weight-black mt-2">{{ noticeStore.getNotice.title }}</h2>
+
+                        <div class="text-h font-weight-medium mt-2"> {{
+                            noticeStore.formatDate(noticeStore.getNotice.createdDate) }}
+                        </div>
+
+
+                        <div class="blockquote text-body-1 ma-5">
+                            <VueShowdown :markdown="noticeStore.getNotice.content" flavor="github" />
+                        </div>
+
+                    </div>
+                </v-sheet>
+
+            </v-col>
+
+            <v-col>
+
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
@@ -66,10 +78,10 @@ export default {
 
 <style scoped>
 .loading {
-  z-index: 2;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+    z-index: 2;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>
