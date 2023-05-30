@@ -141,7 +141,7 @@
       <v-row class="mt-5">
         <v-progress-linear height="15" v-if="!mapStore.inProgress" :color="mapStore.error ? 'error' : 'info'"
           rounded v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax" 
-          :indeterminate="!mapStore.progressBarLoading"/>
+          :indeterminate="mapStore.progressBarLoading"/>
 
         <v-progress-linear v-else height="15" model-value="100" color="info" rounded />
       </v-row>
