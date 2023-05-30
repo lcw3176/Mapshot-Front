@@ -1,6 +1,7 @@
 <template>
     <v-container is-fluid>
         <v-navigation-drawer
+        v-if="display.mdAndUp"
         permanent
         location="left"
       >
@@ -10,8 +11,19 @@
         </v-list>
       </v-navigation-drawer>
 
-      <component :is=nowPage></component>
+      <div v-if="display.mdAndUp">
+        <component :is=nowPage></component>
+    </div>
 
+     
+
+      <div v-else>
+        <v-card v-for="(item, i) in manuals" :value="i" elevation="0">
+            <component :is="item.page"></component>
+            <v-divider class="mb-10"></v-divider>
+        </v-card>
+       
+      </div>
     </v-container>
 </template>
 
@@ -24,13 +36,15 @@ import ChooseMapType from '@/components/manual/ChooseMapType.vue'
 import ChooseCompany from '@/components/manual/ChooseCompany.vue'
 import ExternalOption from '@/components/manual/ExternalOption.vue'
 import PrintResult from '@/components/manual/PrintResult.vue'
-import { markRaw } from 'vue'
+import { markRaw, ref } from 'vue'
+import { useDisplay } from 'vuetify'
 
 export default {
     name: 'ManualView',
 
     
     data() {
+        const display = ref(useDisplay());
 
         return {
             currentComponent: '0',
@@ -46,6 +60,7 @@ export default {
 
             nowPage: markRaw(BeforeUseVue),
             tab: null,
+            display
         }
     },
 
