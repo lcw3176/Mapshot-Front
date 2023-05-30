@@ -37,7 +37,6 @@
 
 <script>
 
-import NavbarView from './views/NavbarView'
 import AdsView from './views/AdsView'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
@@ -45,7 +44,6 @@ import { ref } from 'vue'
 
 export default {
   components: {
-    NavbarView,
     AdsView
   },
 
