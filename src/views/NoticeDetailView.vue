@@ -6,8 +6,6 @@
             </div>
         </div>
 
-
-
         <v-row>
             <v-col>
 
@@ -27,7 +25,7 @@
                         </div>
 
 
-                        <div class="blockquote text-body-1 ma-5">
+                        <div class="blockquote text-body-1">
                             <VueShowdown :markdown="noticeStore.getNotice.content" flavor="github" />
                         </div>
 
