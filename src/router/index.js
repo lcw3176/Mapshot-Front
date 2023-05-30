@@ -2,11 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 
 const routes = [
-  // {
-  //   path: '/',
-  //   name: 'map',
-  //   component: () => import(/* webpackChunkName: "map" */ '../views/MapView.vue')
-  // },
+  {
+    path: '/',
+    name: 'map',
+    component: () => import(/* webpackChunkName: "map" */ '../views/MapView.vue')
+  },
+  
   {
     path: '/contact',
     name: 'contact',
