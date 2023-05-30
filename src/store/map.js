@@ -69,57 +69,6 @@ export const useMapStore = defineStore("map", {
 
 
   getters: {
-    getLat() {
-      return this.lat;
-    },
-
-    getLng() {
-      return this.lng;
-    },
-
-    getRoadAddress() {
-      return this.roadAddress;
-    },
-
-    getBunziAddress() {
-      return this.bunziAddress;
-    },
-
-    getRadius() {
-      return this.mapRadius;
-    },
-
-    getBaseMap() {
-      return this.baseMap;
-    },
-
-    getCompany() {
-      return this.company;
-    },
-
-    isLayerMode() {
-      return this.layerMode;
-    },
-
-    isTraceMode() {
-      return this.traceMode;
-    },
-
-    isError() {
-      return this.error;
-    },
-
-    getProgressBarValue() {
-      return this.progressBarValue;
-    },
-
-    getProgressBarMax() {
-      return this.progressBarMax;
-    },
-
-    isProgressLoading() {
-      return this.progressBarLoading;
-    }
 
   },
 
@@ -141,7 +90,7 @@ export const useMapStore = defineStore("map", {
       this.naverTile = new NaverTile();
       this.coor = new LatLng();
       this.mapRadius = Radius.Two;
-      this.baseMap = this.baseMapArr['위성'];
+      // this.baseMap = this.baseMapArr['위성'];
 
       this.naverProfile = new Naver();
       this.naverProfile.setKey("ny5d4sdo0e");
@@ -172,8 +121,13 @@ export const useMapStore = defineStore("map", {
         return;
       }
 
-      if(this.inProgress){
-        alert("현재 작업이 진행중입니다.");
+      if(this.mapRadius === ''){
+        alert("반경을 선택해 주세요.");
+        return;
+      }
+
+      if(this.baseMap === ''){
+        alert("지도 종류를 선택해 주세요.");
         return;
       }
 
@@ -182,6 +136,12 @@ export const useMapStore = defineStore("map", {
         return;
       }
       
+      if(this.inProgress){
+        alert("현재 작업이 진행중입니다.");
+        return;
+      }
+
+  
       this.error = false;
       this.inProgress = true;
 
@@ -310,7 +270,7 @@ export const useMapStore = defineStore("map", {
 
     async onCaptureEnded(fileName){
       this.mapDownloadName = "mapshot_" + fileName + ".jpg";
-      this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
+      this.statusMessage = "완료되었습니다. 생성된 링크를 확인해 주세요";
       this.inProgress = false;
     },
 
