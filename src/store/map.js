@@ -211,6 +211,9 @@ export const useMapStore = defineStore("map", {
     },
 
     async kakaoCapture() {
+      this.progressBarValue = 0;
+      this.progressBarMax = 100;
+      
       this.progressBarLoading = true;
       let fileName = this.bunziAddress;
       let expectedEndTime = new Date();
@@ -235,7 +238,7 @@ export const useMapStore = defineStore("map", {
       let data = await requsetImage(this.proxyProfile.getQueryString());
 
       this.progressBarLoading = false;
-      this.progressBarMax = 100;
+      
 
       if(data.length === 0){
         this.proxyTileOnError();
