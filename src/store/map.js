@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Proxy, Naver, NaverTile, ProxyTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
+import { Proxy, Naver, Layer, NaverTile, ProxyTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
 import axios from 'axios';
 
 async function requsetImage(queryString) {
@@ -43,6 +43,9 @@ export const useMapStore = defineStore("map", {
     naverProfile: '',
     proxyProfile: '',
     proxyTile: '',
+    layers: [],
+    layerProfile: '',
+    onlyLayers: false,
 
     radiusArr: {
       1: Radius.One,
@@ -103,6 +106,8 @@ export const useMapStore = defineStore("map", {
 
       this.proxyTile = new ProxyTile();
 
+      this.layerProfile = new Layer();
+      this.layerProfile.setUrl("https://pkhb969vta.execute-api.ap-northeast-2.amazonaws.com/default/vworld");
     },
 
     async addListeners(){
@@ -182,6 +187,7 @@ export const useMapStore = defineStore("map", {
     async naverTileOnLoadStart(event) {
       this.progressBarMax = event.detail.total;
       this.progressBarValue = 0;
+      console.log(this.progressBarMax);
     },
 
     async naverTileOnProgress() {
@@ -198,16 +204,43 @@ export const useMapStore = defineStore("map", {
 
     async naverCapture() {
       this.naverProfile.setLevel(this.mapRadius);
+      let addLayers = false;
+
+      if(this.layers.length > 0){
+        addLayers  = true;
+        this.layerProfile.setLayer(this.layers);
+      }
+
       let fileName = this.bunziAddress;
 
-      this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
-        canvas.toBlob((blob) => {
-          this.mapDownloadLink = URL.createObjectURL(blob);
-          this.onCaptureEnded(fileName);
-
-        }, "image/jpeg");
-
-      });
+      if(this.onlyLayers){
+        this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, null, (layerCanvas) => {
+            layerCanvas.toBlob((blob) => {
+              this.mapDownloadLink = URL.createObjectURL(blob);
+              this.onCaptureEnded(fileName);
+    
+            }, "image/jpeg");
+          });
+      } else {
+        this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
+          if(addLayers){
+            this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, canvas, (layerCanvas) => {
+              layerCanvas.toBlob((blob) => {
+                this.mapDownloadLink = URL.createObjectURL(blob);
+                this.onCaptureEnded(fileName);
+      
+              }, "image/jpeg");
+            });
+          } else {
+            canvas.toBlob((blob) => {
+              this.mapDownloadLink = URL.createObjectURL(blob);
+              this.onCaptureEnded(fileName);
+    
+            }, "image/jpeg");
+          }
+        
+        });
+      }
     },
 
     async kakaoCapture() {

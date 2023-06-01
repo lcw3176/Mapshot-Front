@@ -56,23 +56,33 @@
 
         <v-overlay :model-value="overlay" class="align-center justify-center">
           <v-card>
-            <v-card-title>도로계획</v-card-title>
+            <v-container>
+            <v-card-title>도시계획</v-card-title>
             <v-divider></v-divider>
             <v-card-item>
-              <v-checkbox-btn label="여기에 레이어" color="info" />
-              <v-checkbox-btn label="목록들 추가" color="info" />
-
+              <v-checkbox-btn v-model="mapStore.layers" label="도로" color="info" value="lt_c_upisuq151"/>
+              <v-checkbox-btn v-model="mapStore.layers" label="토지이용계획도" color="info" value="lt_c_lhblpn"/>
             </v-card-item>
-            <v-container fluid>
 
+            <v-card-title>토지</v-card-title>
+            <v-divider></v-divider>
+            <v-card-item>
+              <v-checkbox-btn v-model="mapStore.layers" label="연속지적도" color="info" value="lp_pa_cbnd_bubun,lp_pa_cbnd_bonbun"/>
+            </v-card-item>
+            
+            <v-card-actions>
+              <v-btn variant="text" color="info" @click="overlay = !overlay">닫기</v-btn>
+            </v-card-actions>
             </v-container>
           </v-card>
         </v-overlay>
-
+        
         <v-container fluid>
-
           <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'" @click="mapStore.changeLayerMode"
             v-model="mapStore.layerMode" label="지적 편집도" />
+
+          <v-switch density="compact" color="info" v-if="mapStore.company === 'naver'"
+            v-model="mapStore.onlyLayers" label="레이어만 출력하기" />
 
           <v-switch density="compact" color="info" @click="mapStore.changeTraceMode" v-model="mapStore.traceMode"
             label="흔적 남기기" />
@@ -169,6 +179,7 @@
 <script>
 import { useMapStore } from '../store/map.js'
 import "../assets/css/map.css"
+
 
 export default {
   name: 'MapView',
