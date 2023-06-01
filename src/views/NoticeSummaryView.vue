@@ -20,7 +20,7 @@
                             <th class="text-left">
                                 No
                             </th>
-                            <th class="text-left">
+                            <th class="text-left" v-if="display.mdAndUp">
                                 카테고리
                             </th>
 
@@ -28,7 +28,7 @@
                                 제목
                             </th>
 
-                            <th class="text-left">
+                            <th class="text-left" v-if="display.mdAndUp">
                                 작성일
                             </th>
                         </tr>
@@ -37,14 +37,14 @@
                         <tr v-for="notice in noticeStore.getNotices" :key="notice.id">
 
                             <td>{{ notice.id }}</td>
-                            <td>
+                            <td v-if="display.mdAndUp">
                                 <v-chip :color=noticeStore.getNoticeTypeClass(notice.noticeType) variant="outlined">
                                     {{ notice.noticeType }}
                                 </v-chip>
                             </td>
                             <td><v-list-item :to="{ path: `/notice/detail/${notice.id}` }"> {{ notice.title }}</v-list-item>
                             </td>
-                            <td>{{ noticeStore.formatDate(notice.createdDate) }}</td>
+                            <td v-if="display.mdAndUp">{{ noticeStore.formatDate(notice.createdDate) }}</td>
                         </tr>
                     </tbody>
                 </v-table>
@@ -66,13 +66,19 @@
 import InfiniteLoading from 'v3-infinite-loading';
 import { useNoticeStore } from '@/store/notice';
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
+import { ref } from 'vue'
+import { useDisplay } from 'vuetify'
 
 export default {
     name: 'NoticeView',
     data() {
+        const display = ref(useDisplay());
+
+
         return {
             notices: [],
             loadNum: 0,
+            display
 
         }
     },
