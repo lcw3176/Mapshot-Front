@@ -187,7 +187,6 @@ export const useMapStore = defineStore("map", {
     async naverTileOnLoadStart(event) {
       this.progressBarMax = event.detail.total;
       this.progressBarValue = 0;
-      console.log(this.progressBarMax);
     },
 
     async naverTileOnProgress() {
