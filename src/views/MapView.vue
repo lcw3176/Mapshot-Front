@@ -206,22 +206,22 @@ export default {
   },
 
   mounted() {
-    // this.mapStore.init();
-    // this.mapStore.addListeners();
+    this.mapStore.init();
+    this.mapStore.addListeners();
 
-    // document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    // document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    // document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    // document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+    document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+    document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+    document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+    document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 
   beforeDestroy() {
-    // this.mapStore.removeListeners();
+    this.mapStore.removeListeners();
 
-    // document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    // document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    // document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    // document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+    document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+    document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+    document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+    document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 }
 </script>
