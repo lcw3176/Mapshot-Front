@@ -34,7 +34,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="notice in noticeStore.getNotices" :key="notice.id">
+                        <tr v-for="notice in noticeStore.notices" :key="notice.id">
 
                             <td>{{ notice.id }}</td>
                             <td v-if="display.mdAndUp">

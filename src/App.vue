@@ -10,9 +10,6 @@
 
         {{ item.title }}
 
-        <v-badge v-if="item.title === '공지사항'" dot color="success">
-          <v-icon></v-icon>
-        </v-badge>
       </v-btn>
 
     </v-app-bar>
@@ -54,16 +51,17 @@ export default {
       sidebar: false,
       desktop: [
         { title: "사용법", path: "/manual" },
-        { title: "문의", path: "/contact" },
         { title: "공지사항", path: "/notice" },
+        { title: "문의", path: "/contact" },
       ],
 
 
       mobile: [
         { title: "홈", path: "/", icon: "mdi-home-outline" },
         { title: "사용법", path: "/manual", icon: "mdi-school-outline" },
-        { title: "문의", path: "/contact", icon: "mdi-tooltip-question-outline" },
         { title: "공지사항", path: "/notice", icon: "mdi-bullhorn-outline" },
+        { title: "문의", path: "/contact", icon: "mdi-tooltip-question-outline" },
+        
       ],
       display
     };

@@ -1,7 +1,7 @@
 <template>
   <v-container is-fluid>
 
-    <v-navigation-drawer permanent :location="display.mdAndUp ? 'right' : 'bottom'" width="300">
+    <v-navigation-drawer permanent touchless="true" :location="display.mdAndUp ? 'right' : 'bottom'" width="300">
       <v-list nav>
 
         <v-list-subheader>
@@ -78,13 +78,13 @@
         </v-overlay>
         
         <v-container fluid>
-          <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'" @click="mapStore.changeLayerMode"
+          <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'"
             v-model="mapStore.layerMode" label="지적 편집도" />
-
+  
           <v-switch density="compact" color="info" v-if="mapStore.company === 'naver'"
             v-model="mapStore.onlyLayers" label="레이어만 출력하기" />
 
-          <v-switch density="compact" color="info" @click="mapStore.changeTraceMode" v-model="mapStore.traceMode"
+          <v-switch density="compact" color="info" v-model="mapStore.traceMode"
             label="흔적 남기기" />
 
           <v-btn class="outlined" block color="success" @click="mapStore.startCapture">작업 시작</v-btn>
@@ -100,7 +100,7 @@
       <div class="map_wrap">
         <div id="map" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
 
-        <div id="menu_wrap" class="bg_white">
+        <div id="menu_wrap" class="bg_white" v-if="display.mdAndUp">
           <div class="option">
             <div>
               <form id="searchPlaces" @submit.prevent="mapStore.searchPlaces">

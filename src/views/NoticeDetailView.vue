@@ -15,18 +15,18 @@
 
                 <v-sheet class="d-flex flex-wrap mx-auto pa-10" elevation="1">
                     <div>
-                        <v-chip :color=noticeStore.getNoticeTypeClass(noticeStore.getNotice.noticeType) variant="outlined">
-                            {{ noticeStore.getNotice.noticeType }}
+                        <v-chip :color=noticeStore.getNoticeTypeClass(noticeStore.notice.noticeType) variant="outlined">
+                            {{ noticeStore.notice.noticeType }}
                         </v-chip>
-                        <h2 class="text-h5 font-weight-black mt-2">{{ noticeStore.getNotice.title }}</h2>
+                        <h2 class="text-h5 font-weight-black mt-2">{{ noticeStore.notice.title }}</h2>
 
                         <div class="text-h font-weight-medium mt-2"> {{
-                            noticeStore.formatDate(noticeStore.getNotice.createdDate) }}
+                            noticeStore.formatDate(noticeStore.notice.createdDate) }}
                         </div>
 
 
                         <div class="blockquote text-body-1">
-                            <VueShowdown :markdown="noticeStore.getNotice.content" flavor="github" />
+                            <VueShowdown :markdown="noticeStore.notice.content" flavor="github" />
                         </div>
 
                     </div>

@@ -97,12 +97,12 @@ export const useMapStore = defineStore("map", {
 
       this.naverProfile = new Naver();
       this.naverProfile.setKey("ny5d4sdo0e");
-      this.naverProfile.setMapType(this.baseMap);
+      // this.naverProfile.setMapType(this.baseMap);
 
       this.proxyProfile = new Proxy();
       this.proxyProfile.setProxyUrl("https://api.kmapshot.com/image/storage");
       this.proxyProfile.setCompanyType(this.companyArr['카카오']);
-      this.proxyProfile.setMapType(this.baseMap);
+      // this.proxyProfile.setMapType(this.baseMap);
 
       this.proxyTile = new ProxyTile();
 
@@ -256,6 +256,7 @@ export const useMapStore = defineStore("map", {
 
       const defaultBlockSize = 1000;
       this.proxyProfile.setRadius(this.mapRadius);
+      this.proxyProfile.setLayerMode(this.layerMode);
 
       let canvas = document.createElement("canvas");
 
@@ -376,19 +377,6 @@ export const useMapStore = defineStore("map", {
       }
     },
 
-    async changeTraceMode() {
-      this.traceMode = !this.traceMode;
-    },
-
-    async changeLayerMode() {
-      if (this.company !== this.companyArr['카카오']) {
-        alert("지적 편집도는 카카오 지도만 사용 가능합니다");
-        return;
-      }
-
-      this.layerMode = !this.layerMode;
-      this.proxyProfile.setLayerMode(this.layerMode);
-    },
 
     // 이하 카카오 지도 api 문서 코드
     placesSearchCB(data, status, pagination) {

@@ -28,17 +28,7 @@ export const useNoticeStore = defineStore("noticeStore", {
 
 
   getters: {
-    getNotice() {
-      return this.notice;
-    },
 
-    getNotices() {
-      return this.notices;
-    },
-
-    isLoading() {
-      return this.loading;
-    }
   },
 
   actions: {
