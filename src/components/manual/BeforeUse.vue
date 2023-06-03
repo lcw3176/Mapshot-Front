@@ -1,35 +1,47 @@
 <template>
-    <div>
-        <div class="card-content">
+    <v-card elevation="0" class="ml-10">
+        <v-card-title class="text-h5">사용 전</v-card-title>
 
-            <div class="content">
-                <p>현재 지원중인 브라우저 목록입니다.</p>
-                <p>만약 서비스 이용에 어려움이 있다면, 호환 브라우저 목록을 확인해 주세요.</p>
-            </div>
+        <v-card-subtitle>환경</v-card-subtitle>
+        <v-card-text>
+            본 사이트는 데스크탑 환경에 맞게 이루어져 있습니다.
+            원활한 서비스 이용을 위해서는 모바일 사용을 지양해 주세요.
+        </v-card-text>
 
-        </div>
+        <v-card-subtitle>브라우저</v-card-subtitle>
+        <v-card-text>
+            현재 지원중인 브라우저 목록입니다.
+            만약 서비스 이용에 어려움이 있다면, 호환 브라우저 목록을 확인해 주세요.
+        </v-card-text>
 
-        <div class="card-content columns">
-            <figure class="content column is-half">
-                <div class="media-content mt-5">
-                    <p class="title is-5">확인된 호환 브라우저</p>
-                    <ul>
-                        <li v-for="(item, index) in support" :key="index">{{ item }}</li>
-                    </ul>
-                </div>
-            </figure>
+        <v-sheet :max-width="500">
+            <v-table>
+                <thead>
+                    <tr>
+                        <th class="text-left">
+                            이름
+                        </th>
+                        <th class="text-left">
+                            지원 여부
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in browser" :key="item.name">
+                        <td>{{ item.name }}</td>
 
-            <figure class="content column">
-                <div class="media-content mt-5">
-                    <p class="title is-5 has-text-danger">지원하지 않는 브라우저</p>
-                    <ul>
-                        <li v-for="(item, index) in noSupported" :key="index">{{ item }}</li>
-                    </ul>
-                </div>
+                        
+                        <td>
+                            <v-chip :color="item.status === 'O' ? 'info' : 'error'">
+                                {{ item.status }}
+                            </v-chip>
+                               </td>
+                    </tr>
+                </tbody>
+            </v-table>
+        </v-sheet>
 
-            </figure>
-        </div>
-    </div>
+    </v-card>
 </template>
 
 
@@ -38,11 +50,19 @@ export default {
     name: 'BeforeUse',
 
     data() {
-        return{
-            noSupported: ["인터넷 익스플로러", "사파리 모바일", "카카오 인앱 브라우저"],
-            support: ["구글 크롬", "마이크로소프트 엣지", "파이어폭스", "삼성 모바일 인터넷"],
+        return {
+            browser: [
+            { name: "구글 크롬", status: "O" },
+                { name: "마이크로소프트 엣지", status: "O" },
+                { name: "파이어폭스", status: "O" },
+                { name: "삼성 모바일 인터넷", status: "O" },
+                { name: "인터넷 익스플로러", status: "X" },
+                { name: "사파리 모바일", status: "X" },
+                { name: "카카오 인앱 브라우저", status: "X" },
+               
+            ],
         }
-      
+
     }
 }
 </script>

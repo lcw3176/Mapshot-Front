@@ -1,25 +1,30 @@
 <template>
-    <div :class="$isMobile() ? 'container is-fluid' : 'container'">
-        <div class="tabs">
-            <ul>
-                <li v-for="(value, key) in manuals" :key="key" :class="{'is-active': currentComponent === key}">
-                    <a @click="swapComponent(key)">{{ value }}</a>
-                </li>
-            </ul>
-        </div>
+    <v-container is-fluid>
+        <v-navigation-drawer
+        v-if="display.mdAndUp"
+        permanent
+        location="left"
+      >
 
-        <div>
-            <BeforeUseVue v-if="currentComponent === '0'"/>
-            <CapturePoint v-if="currentComponent === '1'"/>
-            <ChooseRange v-if="currentComponent === '2'"/>
-            <ChooseMapType v-if="currentComponent === '3'"/>
-            <ChooseCompany v-if="currentComponent === '4'"/>
-            <ExternalOption v-if="currentComponent === '5'"/>
-            <PrintResult v-if="currentComponent === '6'"/>
-        </div>
+        <v-list nav>
+          <v-list-item v-for="(item, i) in manuals" :value="i" :title="item.title" color="success" @click="nowPage = item.page"></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
 
+      <div v-if="display.mdAndUp">
+        <component :is=nowPage></component>
     </div>
 
+     
+
+      <div v-else>
+        <v-card v-for="(item, i) in manuals" :value="i" elevation="0">
+            <component :is="item.page"></component>
+            <v-divider class="mb-10"></v-divider>
+        </v-card>
+       
+      </div>
+    </v-container>
 </template>
 
 <script>
@@ -31,32 +36,31 @@ import ChooseMapType from '@/components/manual/ChooseMapType.vue'
 import ChooseCompany from '@/components/manual/ChooseCompany.vue'
 import ExternalOption from '@/components/manual/ExternalOption.vue'
 import PrintResult from '@/components/manual/PrintResult.vue'
+import { markRaw, ref } from 'vue'
+import { useDisplay } from 'vuetify'
 
 export default {
     name: 'ManualView',
-    components: {
-        BeforeUseVue,
-        CapturePoint,
-        ChooseRange,
-        ChooseMapType,
-        ChooseCompany,
-        ExternalOption,
-        PrintResult
-    },
 
+    
     data() {
+        const display = ref(useDisplay());
 
         return {
             currentComponent: '0',
-            manuals: {
-                '0': '사용 전',
-                '1': '좌표 탐색',
-                '2': '반경 설정',
-                '3': '지도 종류',
-                '4': '회사 설정',
-                '5': '부가 설정',
-                '6': '결과 출력'
-            }
+            manuals: [
+                { page: markRaw(BeforeUseVue), title: "사용 전", },
+                { page: markRaw(CapturePoint), title: "좌표 탐색" },
+                { page: markRaw(ChooseRange), title: "반경 설정" },
+                { page: markRaw(ChooseMapType), title: "지도 종류" },
+                { page: markRaw(ChooseCompany), title: "회사 설정" },
+                { page: markRaw(ExternalOption), title: "부가 설정" },
+                { page: markRaw(PrintResult), title: "결과 출력" },
+            ],
+
+            nowPage: markRaw(BeforeUseVue),
+            tab: null,
+            display
         }
     },
 

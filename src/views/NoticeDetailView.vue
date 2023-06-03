@@ -1,17 +1,79 @@
 <template>
-    <div :class="$isMobile() ? 'container is-fluid' : 'container'">
-        <NoticeDetail :postNumber="postNumber"/>
-    </div>
-   
+    <v-container is-fluid>
+        <div v-if="noticeStore.isLoading" class="loading-container">
+            <div class="loading">
+                <Moon-loader />
+            </div>
+        </div>
+
+        <v-row>
+            <v-col>
+
+            </v-col>
+
+            <v-col cols="10">
+
+                <v-sheet class="d-flex flex-wrap mx-auto pa-10" elevation="1">
+                    <div>
+                        <v-chip :color=noticeStore.getNoticeTypeClass(noticeStore.notice.noticeType) variant="outlined">
+                            {{ noticeStore.notice.noticeType }}
+                        </v-chip>
+                        <h2 class="text-h5 font-weight-black mt-2">{{ noticeStore.notice.title }}</h2>
+
+                        <div class="text-h font-weight-medium mt-2"> {{
+                            noticeStore.formatDate(noticeStore.notice.createdDate) }}
+                        </div>
+
+
+                        <div class="blockquote text-body-1 noticeContent">
+                            <VueShowdown v-for="item in this.seperateContent()" :markdown="item" flavor="github" class="mt-2"/>
+                        </div>
+
+                    </div>
+                </v-sheet>
+
+            </v-col>
+
+            <v-col>
+
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script>
-import NoticeDetail from '@/components/notice/NoticeDetail.vue';
+import { VueShowdown } from 'vue-showdown';
+import { useNoticeStore } from '@/store/notice';
+import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
+
 
 export default {
     name: 'NoticeDetailView',
     components: {
-        NoticeDetail,
+        VueShowdown,
+        MoonLoader,
+    },
+
+
+    setup() {
+        const noticeStore = useNoticeStore();
+
+        return {
+            noticeStore
+        }
+    },
+
+    created() {
+        this.noticeStore.loadPost(this.postNumber);
+    },
+
+
+    methods : {
+        seperateContent() {
+            let value = this.noticeStore.notice.content;
+
+            return String(value).split("\n");
+        }
     },
 
     props: {
@@ -19,3 +81,15 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.loading {
+    z-index: 2;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+</style>
+

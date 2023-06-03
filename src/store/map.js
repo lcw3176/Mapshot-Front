@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Proxy, Naver, NaverTile, ProxyTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
+import { Proxy, Naver, Layer, NaverTile, ProxyTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
 import axios from 'axios';
 
 async function requsetImage(queryString) {
@@ -43,6 +43,9 @@ export const useMapStore = defineStore("map", {
     naverProfile: '',
     proxyProfile: '',
     proxyTile: '',
+    layers: [],
+    layerProfile: '',
+    onlyLayers: false,
 
     radiusArr: {
       1: Radius.One,
@@ -69,57 +72,6 @@ export const useMapStore = defineStore("map", {
 
 
   getters: {
-    getLat() {
-      return this.lat;
-    },
-
-    getLng() {
-      return this.lng;
-    },
-
-    getRoadAddress() {
-      return this.roadAddress;
-    },
-
-    getBunziAddress() {
-      return this.bunziAddress;
-    },
-
-    getRadius() {
-      return this.mapRadius;
-    },
-
-    getBaseMap() {
-      return this.baseMap;
-    },
-
-    getCompany() {
-      return this.company;
-    },
-
-    isLayerMode() {
-      return this.layerMode;
-    },
-
-    isTraceMode() {
-      return this.traceMode;
-    },
-
-    isError() {
-      return this.error;
-    },
-
-    getProgressBarValue() {
-      return this.progressBarValue;
-    },
-
-    getProgressBarMax() {
-      return this.progressBarMax;
-    },
-
-    isProgressLoading() {
-      return this.progressBarLoading;
-    }
 
   },
 
@@ -141,19 +93,21 @@ export const useMapStore = defineStore("map", {
       this.naverTile = new NaverTile();
       this.coor = new LatLng();
       this.mapRadius = Radius.Two;
-      this.baseMap = this.baseMapArr['위성'];
+      // this.baseMap = this.baseMapArr['위성'];
 
       this.naverProfile = new Naver();
       this.naverProfile.setKey("ny5d4sdo0e");
-      this.naverProfile.setMapType(this.baseMap);
+      // this.naverProfile.setMapType(this.baseMap);
 
       this.proxyProfile = new Proxy();
       this.proxyProfile.setProxyUrl("https://api.kmapshot.com/image/storage");
       this.proxyProfile.setCompanyType(this.companyArr['카카오']);
-      this.proxyProfile.setMapType(this.baseMap);
+      // this.proxyProfile.setMapType(this.baseMap);
 
       this.proxyTile = new ProxyTile();
 
+      this.layerProfile = new Layer();
+      this.layerProfile.setUrl("https://pkhb969vta.execute-api.ap-northeast-2.amazonaws.com/default/vworld");
     },
 
     async addListeners(){
@@ -172,8 +126,13 @@ export const useMapStore = defineStore("map", {
         return;
       }
 
-      if(this.inProgress){
-        alert("현재 작업이 진행중입니다.");
+      if(this.mapRadius === ''){
+        alert("반경을 선택해 주세요.");
+        return;
+      }
+
+      if(this.baseMap === ''){
+        alert("지도 종류를 선택해 주세요.");
         return;
       }
 
@@ -182,6 +141,12 @@ export const useMapStore = defineStore("map", {
         return;
       }
       
+      if(this.inProgress){
+        alert("현재 작업이 진행중입니다.");
+        return;
+      }
+
+  
       this.error = false;
       this.inProgress = true;
 
@@ -238,19 +203,49 @@ export const useMapStore = defineStore("map", {
 
     async naverCapture() {
       this.naverProfile.setLevel(this.mapRadius);
+      let addLayers = false;
+
+      if(this.layers.length > 0){
+        addLayers  = true;
+        this.layerProfile.setLayer(this.layers);
+      }
+
       let fileName = this.bunziAddress;
 
-      this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
-        canvas.toBlob((blob) => {
-          this.mapDownloadLink = URL.createObjectURL(blob);
-          this.onCaptureEnded(fileName);
-
-        }, "image/jpeg");
-
-      });
+      if(this.onlyLayers){
+        this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, null, (layerCanvas) => {
+            layerCanvas.toBlob((blob) => {
+              this.mapDownloadLink = URL.createObjectURL(blob);
+              this.onCaptureEnded(fileName);
+    
+            }, "image/jpeg");
+          });
+      } else {
+        this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
+          if(addLayers){
+            this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, canvas, (layerCanvas) => {
+              layerCanvas.toBlob((blob) => {
+                this.mapDownloadLink = URL.createObjectURL(blob);
+                this.onCaptureEnded(fileName);
+      
+              }, "image/jpeg");
+            });
+          } else {
+            canvas.toBlob((blob) => {
+              this.mapDownloadLink = URL.createObjectURL(blob);
+              this.onCaptureEnded(fileName);
+    
+            }, "image/jpeg");
+          }
+        
+        });
+      }
     },
 
     async kakaoCapture() {
+      this.progressBarValue = 0;
+      this.progressBarMax = 100;
+      
       this.progressBarLoading = true;
       let fileName = this.bunziAddress;
       let expectedEndTime = new Date();
@@ -261,6 +256,7 @@ export const useMapStore = defineStore("map", {
 
       const defaultBlockSize = 1000;
       this.proxyProfile.setRadius(this.mapRadius);
+      this.proxyProfile.setLayerMode(this.layerMode);
 
       let canvas = document.createElement("canvas");
 
@@ -275,7 +271,7 @@ export const useMapStore = defineStore("map", {
       let data = await requsetImage(this.proxyProfile.getQueryString());
 
       this.progressBarLoading = false;
-      this.progressBarMax = 100;
+      
 
       if(data.length === 0){
         this.proxyTileOnError();
@@ -310,7 +306,7 @@ export const useMapStore = defineStore("map", {
 
     async onCaptureEnded(fileName){
       this.mapDownloadName = "mapshot_" + fileName + ".jpg";
-      this.statusMessage = "완료되었습니다. 생성된 링크를 확인하세요";
+      this.statusMessage = "완료되었습니다. 생성된 링크를 확인해 주세요";
       this.inProgress = false;
     },
 
@@ -381,19 +377,6 @@ export const useMapStore = defineStore("map", {
       }
     },
 
-    async changeTraceMode() {
-      this.traceMode = !this.traceMode;
-    },
-
-    async changeLayerMode() {
-      if (this.company !== this.companyArr['카카오']) {
-        alert("지적 편집도는 카카오 지도만 사용 가능합니다");
-        return;
-      }
-
-      this.layerMode = !this.layerMode;
-      this.proxyProfile.setLayerMode(this.layerMode);
-    },
 
     // 이하 카카오 지도 api 문서 코드
     placesSearchCB(data, status, pagination) {

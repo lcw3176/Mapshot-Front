@@ -1,42 +1,32 @@
 <template>
-    <div>
-        <div class="column is-half">
+    <v-card elevation="0" class="ml-10">
+        <v-card-title class="text-h5"> 회사 설정</v-card-title>
+        <v-card-text>
+            출력할 지도의 종류를 설정합니다.
+        </v-card-text>
+        <v-card elevation="0">
+            <v-img :src="company" max-width="300"></v-img>
 
-            <div class="media-content mt-5">
-                <p class="title is-5">회사 설정</p>
-                <p>출력될 지도의 종류입니다.</p>
-            </div>
+        </v-card>
 
-        </div>
+        <v-card-title class="mt-10">
+            네이버
+        </v-card-title>
 
-        <div class="card-image columns columns mt-5">
-            <figure class="image is-256x256 column is-half">
-                <img :src="company">
+        <v-card-text>
 
-            </figure>
-            <div class="column">
-                <div class="media-content mt-5">
-                    <p class="subtitle is-5">네이버</p>
-                    <p>출력 결과물이 네이버 지도를 통해서 생성됩니다.</p>
-                </div>
+            <p>출력 결과물이 네이버 지도를 통해서 생성됩니다.</p>
+        </v-card-text>
 
 
-                <div class="media-content mt-5">
-                    <p class="subtitle is-5">카카오</p>
-                    <p>출력 결과물이 카카오 지도를 통해서 생성됩니다.</p>
-                </div>
+        <v-card-title>
+            카카오
+        </v-card-title>
+        <v-card-text>
+            <p>출력 결과물이 카카오 지도를 통해서 생성됩니다.</p>
+        </v-card-text>
 
-            </div>
-
-        </div>
-        <div class="card-content">
-
-            <div class="content">
-
-            </div>
-
-        </div>
-    </div>
+    </v-card>
 </template>
 
 <script>
@@ -45,7 +35,7 @@ import company from '@/assets/img/manual/4/1.jpg'
 export default {
     name: 'ChooseCompany',
 
-    data(){
+    data() {
         return {
             company: company
         }

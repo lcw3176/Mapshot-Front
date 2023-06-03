@@ -7,6 +7,7 @@ const routes = [
     name: 'map',
     component: () => import(/* webpackChunkName: "map" */ '../views/MapView.vue')
   },
+  
   {
     path: '/contact',
     name: 'contact',

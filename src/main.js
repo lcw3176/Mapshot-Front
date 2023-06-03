@@ -1,9 +1,18 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import { createPinia } from "pinia";
+import { createPinia } from "pinia"
 import VueMobileDetection from 'vue-mobile-detection'
 import * as Sentry from "@sentry/vue";
+
+// Vuetify
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+
 
 Sentry.init({
     App,
@@ -18,4 +27,9 @@ Sentry.init({
     tracesSampleRate: 0.5,
 });
 
-createApp(App).use(createPinia()).use(router).use(VueMobileDetection).mount('#app')
+const vuetify = createVuetify({
+    components,
+    directives,
+})
+
+createApp(App).use(createPinia()).use(router).use(vuetify).use(VueMobileDetection).mount('#app')
