@@ -25,8 +25,8 @@
                         </div>
 
 
-                        <div class="blockquote text-body-1">
-                            <VueShowdown :markdown="noticeStore.notice.content" flavor="github" />
+                        <div class="blockquote text-body-1 noticeContent">
+                            <VueShowdown v-for="item in this.seperateContent()" :markdown="item" flavor="github" class="mt-2"/>
                         </div>
 
                     </div>
@@ -68,6 +68,14 @@ export default {
     },
 
 
+    methods : {
+        seperateContent() {
+            let value = this.noticeStore.notice.content;
+
+            return String(value).split("\n");
+        }
+    },
+
     props: {
         postNumber: Number
     }
@@ -82,5 +90,6 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
 </style>
 

@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import axios from 'axios';
 import dayjs from 'dayjs';
-import 'dayjs/locale/ko'
 
 async function getContent(id) {
   const response = await axios.get('https://api.kmapshot.com/notice/detail/' + id);
@@ -14,7 +13,6 @@ async function getSummary(id) {
   return response.data;
 }
 
-dayjs.locale('ko')
 
 
 export const useNoticeStore = defineStore("noticeStore", {
@@ -69,7 +67,7 @@ export const useNoticeStore = defineStore("noticeStore", {
     formatDate(dateString) {
       const date = dayjs(dateString);
 
-      return date.format('YYYY.MM.DD hh:ss');
+      return date.format('YYYY.MM.DD HH:mm');
     },
 
     getNoticeTypeClass(noticeType) {
