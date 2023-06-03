@@ -5,7 +5,7 @@
             출력할 지도의 종류를 설정합니다.
         </v-card-text>
         <v-card elevation="0">
-            <v-img :src="company" max-width="500"></v-img>
+            <v-img :src="company" max-width="300"></v-img>
 
         </v-card>
 

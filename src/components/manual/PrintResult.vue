@@ -19,7 +19,7 @@
         </v-card-text>
 
         <v-card-text>
-            <p>작업이 완료되면 mapshot_result 로 시작하는 이미지 링크가 생성됩니다.</p>
+            <p>작업이 완료되면 mapshot_ 으로 시작하는 이미지 링크가 생성됩니다.</p>
         </v-card-text>
 
 

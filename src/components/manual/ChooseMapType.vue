@@ -5,7 +5,7 @@
             수집할 지도의 종류를 설정합니다. 기본값은 위성으로 설정됩니다.
         </v-card-text>
         <v-card elevation="0">
-            <v-img :src="maptypes" max-width="500"></v-img>
+            <v-img :src="maptypes" max-width="300"></v-img>
 
         </v-card>
         <v-card-title class="mt-10">

@@ -9,7 +9,7 @@
             지도가 수집될 범위의 반경을 설정합니다.
         </v-card-text>
         <v-card elevation="0">
-            <v-img :src="zoom" max-width="500"></v-img>
+            <v-img :src="zoom" max-width="300"></v-img>
 
         </v-card>
         <v-card-title class="mt-10">
