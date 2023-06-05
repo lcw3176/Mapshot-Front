@@ -218,7 +218,7 @@ export const useMapStore = defineStore("map", {
               this.mapDownloadLink = URL.createObjectURL(blob);
               this.onCaptureEnded(fileName);
     
-            }, "image/jpeg");
+            }, "image/png");
           });
       } else {
         this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
