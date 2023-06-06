@@ -10,7 +10,7 @@
 
         <v-divider></v-divider>
         <v-list-item v-for="(value, key) in mapStore.radiusArr" :key="key" :value="value" active-color="info"
-          @click="mapStore.changeRadius(value, $event)" density="compact" :active="value === mapStore.mapRadius ">
+          @click="mapStore.changeRadius(value, $event)" density="compact" :active="value === mapStore.mapRadius">
           {{ key }}km
         </v-list-item>
       </v-list>
@@ -57,35 +57,40 @@
         <v-overlay :model-value="overlay" class="align-center justify-center">
           <v-card>
             <v-container>
-            <v-card-title>도시계획</v-card-title>
-            <v-divider></v-divider>
-            <v-card-item>
-              <v-checkbox-btn v-model="mapStore.layers" label="도로" color="info" value="lt_c_upisuq151"/>
-              <v-checkbox-btn v-model="mapStore.layers" label="토지이용계획도" color="info" value="lt_c_lhblpn"/>
-            </v-card-item>
+              <v-card-title>도시계획</v-card-title>
+              <v-divider></v-divider>
+              <v-card-item>
+                <v-checkbox-btn v-model="mapStore.layers" label="도로" color="info" value="lt_c_upisuq151" />
+                <v-checkbox-btn v-model="mapStore.layers" label="토지이용계획도" color="info" value="lt_c_lhblpn" />
+              </v-card-item>
 
-            <v-card-title>토지</v-card-title>
-            <v-divider></v-divider>
-            <v-card-item>
-              <v-checkbox-btn v-model="mapStore.layers" label="연속지적도" color="info" value="lp_pa_cbnd_bubun,lp_pa_cbnd_bonbun"/>
-            </v-card-item>
-            
-            <v-card-actions>
-              <v-btn variant="text" color="info" @click="overlay = !overlay">닫기</v-btn>
-            </v-card-actions>
+              <v-card-title>토지</v-card-title>
+              <v-divider></v-divider>
+              <v-card-item>
+                <v-checkbox-btn v-model="mapStore.layers" label="연속지적도" color="info"
+                  value="lp_pa_cbnd_bubun,lp_pa_cbnd_bonbun" />
+              </v-card-item>
+
+              <v-card-actions>
+                <v-btn variant="text" color="info" @click="overlay = !overlay">닫기</v-btn>
+              </v-card-actions>
             </v-container>
           </v-card>
         </v-overlay>
-        
-        <v-container fluid>
-          <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'"
-            v-model="mapStore.layerMode" label="지적 편집도" />
-  
-          <v-switch density="compact" color="info" v-if="mapStore.company === 'naver'"
-            v-model="mapStore.onlyLayers" label="레이어만 출력하기" />
 
-          <v-switch density="compact" color="info" v-model="mapStore.traceMode"
-            label="흔적 남기기" />
+        <v-container fluid>
+          <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'" v-model="mapStore.layerMode"
+            label="지적 편집도" />
+
+          <v-switch density="compact" color="info" v-if="mapStore.company === 'naver'" v-model="mapStore.onlyLayers"
+            label="레이어만 출력하기" />
+
+          <v-radio-group v-if="mapStore.onlyLayers" inline v-model="mapStore.layerExtension">
+            <v-radio label="PNG" value="image/png"></v-radio>
+            <v-radio label="JPG" value="image/jpeg"></v-radio>
+          </v-radio-group>
+          
+          <v-switch density="compact" color="info" v-model="mapStore.traceMode" label="흔적 남기기" />
 
           <v-btn class="outlined" block color="success" @click="mapStore.startCapture">작업 시작</v-btn>
         </v-container>
@@ -149,9 +154,9 @@
         </v-row>
       </v-container>
       <v-row class="mt-5">
-        <v-progress-linear height="15" v-if="mapStore.inProgress" :color="mapStore.error ? 'error' : 'info'"
-          rounded v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax" 
-          :indeterminate="mapStore.progressBarLoading"/>
+        <v-progress-linear height="15" v-if="mapStore.inProgress" :color="mapStore.error ? 'error' : 'info'" rounded
+          v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
+          :indeterminate="mapStore.progressBarLoading" />
 
         <v-progress-linear v-else height="15" model-value="0" color="info" rounded />
       </v-row>
@@ -165,7 +170,8 @@
           <v-breadcrumbs-divider v-if="mapStore.statusMessage !== ''" />
 
           <v-breadcrumbs-item>
-            <v-btn v-if="mapStore.mapDownloadLink !== ''" prepend-icon="mdi-link" variant="plain" :href="mapStore.mapDownloadLink" :download="mapStore.mapDownloadName">
+            <v-btn v-if="mapStore.mapDownloadLink !== ''" prepend-icon="mdi-link" variant="plain"
+              :href="mapStore.mapDownloadLink" :download="mapStore.mapDownloadName">
               {{ mapStore.mapDownloadName }}
             </v-btn>
           </v-breadcrumbs-item>
@@ -206,22 +212,22 @@ export default {
   },
 
   mounted() {
-    this.mapStore.init();
-    this.mapStore.addListeners();
+    // this.mapStore.init();
+    // this.mapStore.addListeners();
 
-    document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+    // document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+    // document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+    // document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+    // document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 
   beforeDestroy() {
-    this.mapStore.removeListeners();
+    // this.mapStore.removeListeners();
 
-    document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+    // document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+    // document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+    // document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+    // document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 }
 </script>

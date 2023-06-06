@@ -46,6 +46,7 @@ export const useMapStore = defineStore("map", {
     layers: [],
     layerProfile: '',
     onlyLayers: false,
+    layerExtension: 'image/jpeg',
 
     radiusArr: {
       1: Radius.One,
@@ -213,12 +214,19 @@ export const useMapStore = defineStore("map", {
       let fileName = this.bunziAddress;
 
       if(this.onlyLayers){
+        let imageExtension = this.layerExtension;
+
         this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, null, (layerCanvas) => {
             layerCanvas.toBlob((blob) => {
               this.mapDownloadLink = URL.createObjectURL(blob);
-              this.onCaptureEnded(fileName);
+              
+              if(imageExtension === "image/png"){
+                this.onCaptureEnded(fileName, "png");
+              } else {
+                this.onCaptureEnded(fileName, "jpg");
+              }
     
-            }, "image/png");
+            }, imageExtension);
           });
       } else {
         this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
@@ -226,14 +234,14 @@ export const useMapStore = defineStore("map", {
             this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, canvas, (layerCanvas) => {
               layerCanvas.toBlob((blob) => {
                 this.mapDownloadLink = URL.createObjectURL(blob);
-                this.onCaptureEnded(fileName);
+                this.onCaptureEnded(fileName, "jpg");
       
               }, "image/jpeg");
             });
           } else {
             canvas.toBlob((blob) => {
               this.mapDownloadLink = URL.createObjectURL(blob);
-              this.onCaptureEnded(fileName);
+              this.onCaptureEnded(fileName, "jpg");
     
             }, "image/jpeg");
           }
@@ -295,7 +303,7 @@ export const useMapStore = defineStore("map", {
               canvas.toBlob((blob) => {
                 this.mapDownloadLink = URL.createObjectURL(blob);
                 this.progressBarValue = 100;
-                this.onCaptureEnded(fileName);
+                this.onCaptureEnded(fileName, "jpg");
 
               }, "image/jpeg");
             }
@@ -304,8 +312,8 @@ export const useMapStore = defineStore("map", {
       }
     },
 
-    async onCaptureEnded(fileName){
-      this.mapDownloadName = "mapshot_" + fileName + ".jpg";
+    async onCaptureEnded(fileName, type){
+      this.mapDownloadName = "mapshot_" + fileName + "." + type;
       this.statusMessage = "완료되었습니다. 생성된 링크를 확인해 주세요";
       this.inProgress = false;
     },
