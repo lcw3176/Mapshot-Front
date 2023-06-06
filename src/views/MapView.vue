@@ -89,7 +89,7 @@
             <v-radio label="PNG" value="image/png"></v-radio>
             <v-radio label="JPG" value="image/jpeg"></v-radio>
           </v-radio-group>
-          
+
           <v-switch density="compact" color="info" v-model="mapStore.traceMode" label="흔적 남기기" />
 
           <v-btn class="outlined" block color="success" @click="mapStore.startCapture">작업 시작</v-btn>
@@ -212,22 +212,22 @@ export default {
   },
 
   mounted() {
-    // this.mapStore.init();
-    // this.mapStore.addListeners();
+    this.mapStore.init();
+    this.mapStore.addListeners();
 
-    // document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    // document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    // document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    // document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+    document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+    document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+    document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+    document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 
   beforeDestroy() {
-    // this.mapStore.removeListeners();
+    this.mapStore.removeListeners();
 
-    // document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    // document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    // document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    // document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+    document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+    document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+    document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+    document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 }
 </script>
