@@ -158,7 +158,7 @@
           v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
           :indeterminate="mapStore.progressBarLoading" />
 
-        <v-progress-linear v-else height="15" model-value="100" max="100" color="info" rounded />
+        <v-progress-linear v-else height="15" model-value="0" color="info" rounded />
       </v-row>
 
       <v-row>
