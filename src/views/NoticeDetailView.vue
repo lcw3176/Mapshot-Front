@@ -26,7 +26,7 @@
 
 
                         <div class="blockquote text-body-1 noticeContent">
-                            <VueShowdown v-for="item in this.seperateContent()" :markdown="item" flavor="github" class="mt-2"/>
+                            <QuillEditor v-model:content="noticeStore.notice.content" theme="bubble" readOnly="true" contentType="html"/>
                         </div>
 
                     </div>
@@ -42,15 +42,16 @@
 </template>
 
 <script>
-import { VueShowdown } from 'vue-showdown';
 import { useNoticeStore } from '@/store/notice';
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.bubble.css';
 
 export default {
     name: 'NoticeDetailView',
     components: {
-        VueShowdown,
+        QuillEditor,
         MoonLoader,
     },
 
@@ -69,11 +70,7 @@ export default {
 
 
     methods : {
-        seperateContent() {
-            let value = this.noticeStore.notice.content;
 
-            return String(value).split("\n");
-        }
     },
 
     props: {
