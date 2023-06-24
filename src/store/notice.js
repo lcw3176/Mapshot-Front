@@ -9,7 +9,7 @@ async function getContent(id) {
 
 
 async function getSummary(id) {
-  const response = await axios.get('https://api.kmapshot.com/notice/summary/' + id);
+  const response = await axios.get('https://api.kmapshot.com/notice/list/' + id);
   return response.data;
 }
 
