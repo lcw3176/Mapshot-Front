@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-app-bar elevation="1" v-if="display.mdAndUp">
-      <v-btn class="font-weight-black font-weight-bold text-h5" to="/">
+      <v-btn class="font-weight-black font-weight-bold text-h5" variant="plain" to="/">
         {{ appTitle }}
 
       </v-btn>
