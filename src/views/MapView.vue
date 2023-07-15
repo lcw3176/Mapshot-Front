@@ -1,7 +1,87 @@
 <template>
-  <v-container is-fluid>
+  <v-container fluid>
 
-    <v-navigation-drawer permanent touchless="true" :location="display.mdAndUp ? 'right' : 'bottom'" width="300">
+    <v-container fluid>
+      <!-- 지도 -->
+      <div class="map_wrap">
+        <div id="map" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+
+        <div id="menu_wrap" class="bg_white" v-if="display.mdAndUp">
+          <div class="option">
+            <div>
+              <form id="searchPlaces" @submit.prevent="mapStore.searchPlaces">
+                키워드 : <input type="text" id="keyword" size="15">
+                <button type="submit">검색하기</button>
+              </form>
+            </div>
+          </div>
+          <hr>
+          <ul id="placesList"></ul>
+          <div id="pagination"></div>
+        </div>
+      </div>
+      <!-- 지도 끝 -->
+
+
+      <v-container fluid>
+
+
+        <v-row>
+          <v-col>
+            <div>
+              <p class="text-center text-overline">위도</p>
+              <p class="text-center text-body-1">{{ mapStore.lat }}</p>
+            </div>
+          </v-col>
+
+          <v-col>
+            <div>
+              <p class="text-center text-overline">경도</p>
+              <p class="text-center text-body-1">{{ mapStore.lng }}</p>
+            </div>
+          </v-col>
+
+          <v-col>
+            <p class="text-center text-overline">도로명주소</p>
+            <p class="text-center text-body-1">{{ mapStore.roadAddress }}</p>
+          </v-col>
+
+          <v-col>
+            <div>
+              <p class="text-center text-overline">지번주소</p>
+              <p class="text-center text-body-1">{{ mapStore.bunziAddress }}</p>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+      <v-row class="mt-5">
+        <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" rounded
+          v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
+          :indeterminate="mapStore.progressBarLoading" />
+
+        <v-progress-linear v-else height="15" model-value="0" color="info" rounded />
+      </v-row>
+
+      <v-row>
+        <v-breadcrumbs divider="/">
+          <v-breadcrumbs-item>
+            {{ mapStore.statusMessage }}
+          </v-breadcrumbs-item>
+
+          <v-breadcrumbs-divider v-if="mapStore.statusMessage !== ''" />
+
+          <v-breadcrumbs-item>
+            <v-btn v-if="mapStore.mapDownloadLink !== ''" prepend-icon="mdi-link" variant="plain"
+              :href="mapStore.mapDownloadLink" :download="mapStore.mapDownloadName">
+              {{ mapStore.mapDownloadName }}
+            </v-btn>
+          </v-breadcrumbs-item>
+        </v-breadcrumbs>
+      </v-row>
+
+    </v-container>
+
+    <component :is=" display.mdAndUp ? 'v-navigation-drawer' : 'v-container'" v-navigation-drawer permanent touchless="true" :location="display.mdAndUp ? 'right' : 'bottom'" width="300">
       <v-list nav>
 
         <v-list-subheader>
@@ -99,86 +179,8 @@
       </v-list>
 
 
-    </v-navigation-drawer>
-    <v-container fluid>
-      <!-- 지도 -->
-      <div class="map_wrap">
-        <div id="map" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+    </component>
 
-        <div id="menu_wrap" class="bg_white" v-if="display.mdAndUp">
-          <div class="option">
-            <div>
-              <form id="searchPlaces" @submit.prevent="mapStore.searchPlaces">
-                키워드 : <input type="text" id="keyword" size="15">
-                <button type="submit">검색하기</button>
-              </form>
-            </div>
-          </div>
-          <hr>
-          <ul id="placesList"></ul>
-          <div id="pagination"></div>
-        </div>
-      </div>
-      <!-- 지도 끝 -->
-
-
-      <v-container fluid>
-
-
-        <v-row>
-          <v-col>
-            <div>
-              <p class="text-center text-overline">위도</p>
-              <p class="text-center text-body-1">{{ mapStore.lat }}</p>
-            </div>
-          </v-col>
-
-          <v-col>
-            <div>
-              <p class="text-center text-overline">경도</p>
-              <p class="text-center text-body-1">{{ mapStore.lng }}</p>
-            </div>
-          </v-col>
-
-          <v-col>
-            <p class="text-center text-overline">도로명주소</p>
-            <p class="text-center text-body-1">{{ mapStore.roadAddress }}</p>
-          </v-col>
-
-          <v-col>
-            <div>
-              <p class="text-center text-overline">지번주소</p>
-              <p class="text-center text-body-1">{{ mapStore.bunziAddress }}</p>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-row class="mt-5">
-        <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" rounded
-          v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
-          :indeterminate="mapStore.progressBarLoading" />
-
-        <v-progress-linear v-else height="15" model-value="0" color="info" rounded />
-      </v-row>
-
-      <v-row>
-        <v-breadcrumbs divider="/">
-          <v-breadcrumbs-item>
-            {{ mapStore.statusMessage }}
-          </v-breadcrumbs-item>
-
-          <v-breadcrumbs-divider v-if="mapStore.statusMessage !== ''" />
-
-          <v-breadcrumbs-item>
-            <v-btn v-if="mapStore.mapDownloadLink !== ''" prepend-icon="mdi-link" variant="plain"
-              :href="mapStore.mapDownloadLink" :download="mapStore.mapDownloadName">
-              {{ mapStore.mapDownloadName }}
-            </v-btn>
-          </v-breadcrumbs-item>
-        </v-breadcrumbs>
-      </v-row>
-
-    </v-container>
   </v-container>
 </template>
 
