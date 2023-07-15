@@ -335,13 +335,14 @@ export const useMapStore = defineStore("map", {
       this.proxyProfile.setLayerMode(this.layerMode);
 
       let canvas = document.createElement("canvas");
+      var googleOffset = 500;
 
-      canvas.width = this.proxyProfile.getWidth();
-      canvas.height = this.proxyProfile.getWidth();
+      canvas.width = this.proxyProfile.getWidth() - googleOffset;
+      canvas.height = this.proxyProfile.getWidth() - googleOffset;
 
       let ctx = canvas.getContext("2d");
-      // let sideBlockCount = parseInt(this.proxyProfile.getWidth() / defaultBlockSize);
-      // let maxCount = sideBlockCount * sideBlockCount;
+      let sideBlockCount = parseInt(this.proxyProfile.getWidth() / defaultBlockSize);
+      let maxCount = sideBlockCount * sideBlockCount;
       let count = 0;
 
       let data = await requsetImage(this.proxyProfile.getQueryString());
@@ -354,7 +355,6 @@ export const useMapStore = defineStore("map", {
         return;
       }
 
-      let maxCount = data.length - 1;
 
       for (let i = 0; i < data.length; i++) {
         let json = data[i];
