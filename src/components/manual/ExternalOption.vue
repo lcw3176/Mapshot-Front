@@ -17,16 +17,18 @@
             <p>수집한 위치에 표시를 남깁니다. 지도 상에 하얀색 바탕의 사각형이 색칠되며, 다른 별도의 정보는 저장되지 않습니다.</p>
         </v-card-text>
 
-        <v-card elevation="0" class="mt-10">
+
+        <v-card-title class="mt-5">
+            네이버 전용 옵션
+        </v-card-title>
+
+        <v-card elevation="0">
             <v-img :src="naverOption" max-width="300"></v-img>
         </v-card>
 
 
+        
         <v-card-title class="mt-10">
-            네이버 전용 옵션
-        </v-card-title>
-
-        <v-card-title>
             도시 계획 레이어
         </v-card-title>
 
@@ -44,16 +46,15 @@
             기존 위성 이미지에 덧입히지 않고 레이어로만 이루어진 이미지를 출력합니다.
         </v-card-text>
 
-        <v-card elevation="0" class="mt-10"> 
-            <v-img :src="kakaoOption" max-width="300"></v-img>
-        </v-card>
-
-
-        <v-card-title class="mt-10">
+        <v-card-title class="mt-5">
             카카오 전용 옵션
         </v-card-title>
 
-        <v-card-title>
+        <v-card elevation="0"> 
+            <v-img :src="kakaoOption" max-width="300"></v-img>
+        </v-card>
+
+        <v-card-title  class="mt-10">
             지적 편집도
         </v-card-title>
         <v-card-text>

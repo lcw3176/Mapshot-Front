@@ -22,7 +22,8 @@
     "vue-router": "^4.0.3",
     "vue-showdown": "^4.0.0",
     "vue-spinner": "^1.0.4",
-    "vuetify": "^3.2.1"
+    "vuetify": "^3.2.1",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

@@ -3,15 +3,15 @@ import { Proxy, Naver, Layer, NaverTile, ProxyTile, LatLng, Radius } from "../as
 import axios from 'axios';
 
 async function requsetImage(queryString) {
-  try{
+  try {
     const response = await axios.get('https://api.kmapshot.com/image/queue' + queryString);
 
     return response.data;
-  } catch(error){
+  } catch (error) {
 
     return [];
   }
-  
+
 }
 
 
@@ -64,6 +64,7 @@ export const useMapStore = defineStore("map", {
     companyArr: {
       '네이버': 'naver',
       '카카오': 'kakao',
+      '구글': 'google',
     },
 
     progressBarValue: 0,
@@ -102,7 +103,7 @@ export const useMapStore = defineStore("map", {
 
       this.proxyProfile = new Proxy();
       this.proxyProfile.setProxyUrl("https://api.kmapshot.com/image/storage");
-      this.proxyProfile.setCompanyType(this.companyArr['카카오']);
+      // this.proxyProfile.setCompanyType(this.companyArr['카카오']);
       // this.proxyProfile.setMapType(this.baseMap);
 
       this.proxyTile = new ProxyTile();
@@ -111,43 +112,43 @@ export const useMapStore = defineStore("map", {
       this.layerProfile.setUrl("https://pkhb969vta.execute-api.ap-northeast-2.amazonaws.com/default/vworld");
     },
 
-    async addListeners(){
+    async addListeners() {
       this.map.addListener('click', this.mapOnClick);
       this.map.addListener('rightclick', this.removeRectangle);
     },
 
-    async removeListeners(){
+    async removeListeners() {
       this.map.removeListener('click', this.mapOnClick);
       this.map.removeListener('rightclick', this.removeRectangle);
     },
 
     async startCapture() {
-      if(this.coor.getX() == undefined || this.coor.getY() == undefined){
+      if (this.coor.getX() == undefined || this.coor.getY() == undefined) {
         alert("먼저 지도를 클릭해서 좌표 설정을 진행해 주세요");
         return;
       }
 
-      if(this.mapRadius === ''){
+      if (this.mapRadius === '') {
         alert("반경을 선택해 주세요.");
         return;
       }
 
-      if(this.baseMap === ''){
+      if (this.baseMap === '') {
         alert("지도 종류를 선택해 주세요.");
         return;
       }
 
-      if(this.company === ''){
+      if (this.company === '') {
         alert("출력 회사를 선택해 주세요.");
         return;
       }
-      
-      if(this.inProgress){
+
+      if (this.inProgress) {
         alert("현재 작업이 진행중입니다.");
         return;
       }
 
-  
+
       this.error = false;
       this.inProgress = true;
 
@@ -162,10 +163,14 @@ export const useMapStore = defineStore("map", {
       if (this.company === "kakao") {
         this.kakaoCapture();
       }
-      
+
+      if (this.company === "google") {
+        this.googleCapture();
+      }
+
     },
 
-    async makeTrace(){
+    async makeTrace() {
       let traceRec = new kakao.maps.Rectangle({
         bounds: this.rectangle.getBounds(),
         strokeWeight: 4,
@@ -206,46 +211,46 @@ export const useMapStore = defineStore("map", {
       this.naverProfile.setLevel(this.mapRadius);
       let addLayers = false;
 
-      if(this.layers.length > 0){
-        addLayers  = true;
+      if (this.layers.length > 0) {
+        addLayers = true;
         this.layerProfile.setLayer(this.layers);
       }
 
       let fileName = this.bunziAddress;
 
-      if(this.onlyLayers){
+      if (this.onlyLayers) {
         let imageExtension = this.layerExtension;
 
         this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, null, (layerCanvas) => {
-            layerCanvas.toBlob((blob) => {
-              this.mapDownloadLink = URL.createObjectURL(blob);
-              
-              if(imageExtension === "image/png"){
-                this.onCaptureEnded(fileName, "png");
-              } else {
-                this.onCaptureEnded(fileName, "jpg");
-              }
-    
-            }, imageExtension);
-          });
+          layerCanvas.toBlob((blob) => {
+            this.mapDownloadLink = URL.createObjectURL(blob);
+
+            if (imageExtension === "image/png") {
+              this.onCaptureEnded(fileName, "png");
+            } else {
+              this.onCaptureEnded(fileName, "jpg");
+            }
+
+          }, imageExtension);
+        });
       } else {
         this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
-          if(addLayers){
+          if (addLayers) {
             this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, canvas, (layerCanvas) => {
               layerCanvas.toBlob((blob) => {
                 this.mapDownloadLink = URL.createObjectURL(blob);
                 this.onCaptureEnded(fileName, "jpg");
-      
+
               }, "image/jpeg");
             });
           } else {
             canvas.toBlob((blob) => {
               this.mapDownloadLink = URL.createObjectURL(blob);
               this.onCaptureEnded(fileName, "jpg");
-    
+
             }, "image/jpeg");
           }
-        
+
         });
       }
     },
@@ -253,7 +258,7 @@ export const useMapStore = defineStore("map", {
     async kakaoCapture() {
       this.progressBarValue = 0;
       this.progressBarMax = 100;
-      
+
       this.progressBarLoading = true;
       let fileName = this.bunziAddress;
       let expectedEndTime = new Date();
@@ -279,19 +284,19 @@ export const useMapStore = defineStore("map", {
       let data = await requsetImage(this.proxyProfile.getQueryString());
 
       this.progressBarLoading = false;
-      
 
-      if(data.length === 0){
+
+      if (data.length === 0) {
         this.proxyTileOnError();
         return;
       }
 
-      
+
       for (let i = 0; i < data.length; i++) {
         let json = data[i];
 
-        ((_json) =>{
-          
+        ((_json) => {
+
           this.proxyTile.requestImage(this.proxyProfile, _json.uuid, (loadedImage) => {
             ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.width,
               _json.x, _json.y, defaultBlockSize, defaultBlockSize);
@@ -312,7 +317,94 @@ export const useMapStore = defineStore("map", {
       }
     },
 
-    async onCaptureEnded(fileName, type){
+
+    async googleCapture() {
+      this.progressBarValue = 0;
+      this.progressBarMax = 100;
+
+      this.progressBarLoading = true;
+      let fileName = this.bunziAddress;
+      let expectedEndTime = new Date();
+      expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 30);
+
+      this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
+
+
+      const defaultBlockSize = 1000;
+      this.proxyProfile.setRadius(this.mapRadius);
+      this.proxyProfile.setLayerMode(this.layerMode);
+
+      let canvas = document.createElement("canvas");
+      var googleOffset = 500;
+
+      canvas.width = this.proxyProfile.getWidth() - googleOffset;
+      canvas.height = this.proxyProfile.getWidth() - googleOffset;
+
+      let ctx = canvas.getContext("2d");
+      let sideBlockCount = parseInt(this.proxyProfile.getWidth() / defaultBlockSize);
+      let maxCount = sideBlockCount * sideBlockCount;
+      let count = 0;
+
+      let data = await requsetImage(this.proxyProfile.getQueryString());
+      
+      this.progressBarLoading = false;
+
+
+      if (data.length === 0) {
+        this.proxyTileOnError();
+        return;
+      }
+
+
+      for (let i = 0; i < data.length; i++) {
+        let json = data[i];
+
+        ((_json) => {
+
+          this.proxyTile.requestImage(this.proxyProfile, _json.uuid, (loadedImage) => {
+
+            if (_json.x + defaultBlockSize === sideBlockCount * defaultBlockSize
+              && _json.y + defaultBlockSize !== sideBlockCount * defaultBlockSize) {
+
+              ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.height,
+                _json.x - googleOffset, _json.y, defaultBlockSize, defaultBlockSize);
+
+            } else if (_json.x + defaultBlockSize !== sideBlockCount * defaultBlockSize
+              && _json.y + defaultBlockSize === sideBlockCount * defaultBlockSize) {
+
+              ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.height,
+                _json.x, _json.y - googleOffset, defaultBlockSize, defaultBlockSize);
+
+            } else if (_json.x + defaultBlockSize === sideBlockCount * defaultBlockSize
+              && _json.y + defaultBlockSize === sideBlockCount * defaultBlockSize) {
+
+              ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.height,
+                _json.x - googleOffset, _json.y - googleOffset, defaultBlockSize, defaultBlockSize);
+
+            } else {
+
+              ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.width,
+                _json.x, _json.y, defaultBlockSize, defaultBlockSize);
+            }
+
+            count++;
+            this.statusMessage = parseInt((count / maxCount) * 100).toString() + " / 100";
+            this.progressBarValue = count / maxCount * 100;
+
+            if (count === maxCount) {
+              canvas.toBlob((blob) => {
+                this.mapDownloadLink = URL.createObjectURL(blob);
+                this.progressBarValue = 100;
+                this.onCaptureEnded(fileName, "jpg");
+
+              }, "image/jpeg");
+            }
+          })
+        })(json);
+      }
+    },
+
+    async onCaptureEnded(fileName, type) {
       this.mapDownloadName = "mapshot_" + fileName + "." + type;
       this.statusMessage = "완료되었습니다. 생성된 링크를 확인해 주세요";
       this.inProgress = false;
@@ -379,7 +471,11 @@ export const useMapStore = defineStore("map", {
 
     async changeCompany(company, event) {
       this.company = company;
-
+      
+      if(this.company !== "naver"){
+        this.proxyProfile.setCompanyType(this.company);
+      }
+      
       if (this.company !== this.companyArr['카카오'] && this.layerMode) {
         this.layerMode = false;
       }

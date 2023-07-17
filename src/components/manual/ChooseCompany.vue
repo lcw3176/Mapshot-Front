@@ -26,6 +26,14 @@
             <p>출력 결과물이 카카오 지도를 통해서 생성됩니다.</p>
         </v-card-text>
 
+        <v-card-title>
+            구글
+        </v-card-title>
+        <v-card-text>
+            <p>출력 결과물이 구글 지도를 통해서 생성됩니다.</p>
+        </v-card-text>
+
+
     </v-card>
 </template>
 
