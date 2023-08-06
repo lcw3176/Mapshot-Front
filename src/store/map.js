@@ -128,17 +128,17 @@ export const useMapStore = defineStore("map", {
         return;
       }
 
-      if (this.mapRadius === '') {
+      if (this.mapRadius === '' || this.mapRadius === undefined) {
         alert("반경을 선택해 주세요.");
         return;
       }
 
-      if (this.baseMap === '') {
+      if (this.baseMap === '' || this.baseMap === undefined) {
         alert("지도 종류를 선택해 주세요.");
         return;
       }
 
-      if (this.company === '') {
+      if (this.company === '' || this.company === undefined) {
         alert("출력 회사를 선택해 주세요.");
         return;
       }
@@ -461,12 +461,14 @@ export const useMapStore = defineStore("map", {
 
     async changeRadius(rad, event) {
       this.mapRadius = rad;
+      console.log(this.mapRadius);
     },
 
     async changeBaseMap(map, event) {
       this.baseMap = map;
       this.naverProfile.setMapType(map);
       this.proxyProfile.setMapType(map);
+      console.log(this.baseMap);
     },
 
     async changeCompany(company, event) {
@@ -479,6 +481,8 @@ export const useMapStore = defineStore("map", {
       if (this.company !== this.companyArr['카카오'] && this.layerMode) {
         this.layerMode = false;
       }
+
+      console.log(this.company);
     },
 
 
