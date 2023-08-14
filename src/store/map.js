@@ -461,14 +461,12 @@ export const useMapStore = defineStore("map", {
 
     async changeRadius(rad, event) {
       this.mapRadius = rad;
-      console.log(this.mapRadius);
     },
 
     async changeBaseMap(map, event) {
       this.baseMap = map;
       this.naverProfile.setMapType(map);
       this.proxyProfile.setMapType(map);
-      console.log(this.baseMap);
     },
 
     async changeCompany(company, event) {
@@ -482,7 +480,6 @@ export const useMapStore = defineStore("map", {
         this.layerMode = false;
       }
 
-      console.log(this.company);
     },
 
 
