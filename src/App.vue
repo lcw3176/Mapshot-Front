@@ -1,4 +1,10 @@
 <template>
+  <div v-if="loaderStore.isLoading" class="loading-container">
+    <div class="loading">
+      <Moon-loader />
+    </div>
+  </div>
+
   <v-layout>
     <v-app-bar elevation="1" v-if="display.mdAndUp">
       <v-btn class="font-weight-black font-weight-bold text-h5" variant="plain" to="/">
@@ -34,13 +40,16 @@
 <script>
 
 import AdsView from './views/AdsView'
+import { useLoaderStore } from '@/store/loader'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
 
+import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 export default {
   components: {
-    AdsView
+    AdsView,
+    MoonLoader
   },
 
   data() {
@@ -61,10 +70,30 @@ export default {
         { title: "사용법", path: "/manual", icon: "mdi-school-outline" },
         { title: "공지사항", path: "/notice", icon: "mdi-bullhorn-outline" },
         { title: "문의", path: "/contact", icon: "mdi-tooltip-question-outline" },
-        
+
       ],
-      display
+
+      display,
     };
   },
+
+  setup(){
+    const loaderStore = useLoaderStore();
+
+    return {
+      loaderStore
+    }
+  }
 }
 </script>
+
+
+<style scoped>
+.loading {
+    z-index: 2;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+</style>

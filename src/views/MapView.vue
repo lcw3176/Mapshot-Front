@@ -1,6 +1,9 @@
 <template>
-  <v-container fluid>
+  <v-lazy>
 
+  <v-container fluid>
+    
+    
     <v-container fluid>
       <!-- 지도 -->
       <div class="map_wrap">
@@ -81,6 +84,9 @@
 
     </v-container>
 
+
+
+  
     <component :is=" display.mdAndUp ? 'v-navigation-drawer' : 'v-container'" v-navigation-drawer permanent touchless="true" :location="display.mdAndUp ? 'right' : 'bottom'" width="300">
       <v-list nav>
 
@@ -180,8 +186,9 @@
 
 
     </component>
-
+  
   </v-container>
+</v-lazy>
 </template>
 
 <script>
@@ -213,23 +220,23 @@ export default {
     }
   },
 
-  mounted() {
-    this.mapStore.init();
-    this.mapStore.addListeners();
+  // mounted() {
+  //   this.mapStore.init();
+  //   this.mapStore.addListeners();
 
-    document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
-  },
+  //   document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+  //   document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+  //   document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+  //   document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+  // },
 
-  beforeDestroy() {
-    this.mapStore.removeListeners();
+  // beforeDestroy() {
+  //   this.mapStore.removeListeners();
 
-    document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
-  },
+  //   document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
+  //   document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
+  //   document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
+  //   document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+  // },
 }
 </script>

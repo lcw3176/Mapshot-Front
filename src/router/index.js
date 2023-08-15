@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
+import { useLoaderStore } from '@/store/loader'
 
 const routes = [
   {
@@ -7,7 +7,7 @@ const routes = [
     name: 'map',
     component: () => import(/* webpackChunkName: "map" */ '../views/MapView.vue')
   },
-  
+
   {
     path: '/contact',
     name: 'contact',
@@ -36,6 +36,23 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+
+
+router.beforeEach((to, from, next) => {
+  const loaderStore = useLoaderStore();
+
+  loaderStore.isLoading = true;
+
+  setTimeout(() => {
+    next();
+  }, 1);
+
+})
+router.afterEach(() => {
+  const loaderStore = useLoaderStore();
+  loaderStore.isLoading = false;
 })
 
 export default router
