@@ -1,8 +1,6 @@
 <template>
-  <v-lazy>
 
   <v-container fluid>
-    
     
     <v-container fluid>
       <!-- 지도 -->
@@ -188,7 +186,7 @@
     </component>
   
   </v-container>
-</v-lazy>
+
 </template>
 
 <script>
