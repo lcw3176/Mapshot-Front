@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ColdRain</title>
+    <description></description>
+    <link>https://kmapshot.com/blog/</link>
+    <atom:link href="https://kmapshot.com/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sat, 19 Aug 2023 15:53:05 +0900</pubDate>
+    <lastBuildDate>Sat, 19 Aug 2023 15:53:05 +0900</lastBuildDate>
+    <generator>Jekyll v3.9.3</generator>
+    
+      <item>
+        <title>디지털 논리회로</title>
+        <description>&lt;h1 id=&quot;디지털-논리회로&quot;&gt;디지털 논리회로&lt;/h1&gt; &lt;p&gt;디지털 논리회로는 크게 2가지로 나뉜다.&lt;/p&gt; &lt;p&gt;조합논리회로, 순서놀리회로로 구분되는데 구별의 기준은 기억소자의 유무이다.&lt;/p&gt; &lt;h2 id=&quot;조합논리회로&quot;&gt;조합논리회로&lt;/h2&gt; &lt;p&gt;현재의 입력에 의해서만 출력이 결정되는 논리회로이다.&lt;/p&gt; &lt;p&gt;종류로는 덧셈회로인 가산기, 뺄셈회로인 감산기 등이 존재한다.&lt;/p&gt; &lt;h3 id=&quot;반가산기&quot;&gt;반가산기&lt;/h3&gt; &lt;p&gt;&lt;img src=&quot;https://github.com/lcw3176/lcw3176.github.io/assets/59993347/ce12ec7d-c646-4325-b95d-2aeee4cc92fa&quot; alt=&quot;화면 캡처 2023-08-18 144118&quot; /&gt;&lt;/p&gt; &lt;p&gt;2진수의 덧셈을 수행하는 회로이며, 두 비트의 덧셈을 수행한다.&lt;/p&gt; &lt;p&gt;덧셈의 결과 중 합을 뜻하는 S와 올림수를 뜻하는 C(캐리)가 존재한다.&lt;/p&gt; &lt;h3 id=&quot;전가산기&quot;&gt;전가산기&lt;/h3&gt; &lt;p&gt;&lt;img src=&quot;https://github.com/lcw3176/lcw3176.github.io/assets/59993347/ebe78d89-5e8a-4d6b-8769-997f5466f62c&quot; alt=&quot;화면 캡처 2023-08-18 144513&quot; /&gt;&lt;/p&gt; &lt;p&gt;2진수의 덧셈을 수행하는 회로이며, 세 비트의 덧셈을 수행한다.&lt;/p&gt; &lt;h3 id=&quot;반감산기&quot;&gt;반감산기&lt;/h3&gt; &lt;p&gt;&lt;img src=&quot;https://github.com/lcw3176/lcw3176.github.io/assets/59993347/6608eb55-5610-44fd-9071-04c2082d00e7&quot; alt=&quot;반감산기&quot; /&gt;&lt;/p&gt; &lt;p&gt;2진수의 뺄셈을 수행하는 회로이며, 두 비트의 뺄셈을 수행한다.&lt;/p&gt; &lt;p&gt;한 가지 눈여겨 볼 점은 반가산기의 회로와 매우 유사한데, 반가산기에 NOT 게이트를...</description>
+        <pubDate>Fri, 18 Aug 2023 00:00:00 +0900</pubDate>
+        <link>https://kmapshot.com/blog/%EB%94%94%EC%A7%80%ED%84%B8_%EB%85%BC%EB%A6%AC%ED%9A%8C%EB%A1%9C/</link>
+        <guid isPermaLink="true">https://kmapshot.com/blog/%EB%94%94%EC%A7%80%ED%84%B8_%EB%85%BC%EB%A6%AC%ED%9A%8C%EB%A1%9C/</guid>
+        
+        <category>Computer</category>
+        
+        <category>Architecture</category>
+        
+        <category>cs</category>
+      </item>
+    
+      <item>
+        <title>스프링 컨테이너</title>
+        <description>&lt;h2 id=&quot;스프링-부트의-자바-빈은-어떻게-생성될까&quot;&gt;스프링 부트의 자바 빈은 어떻게 생성될까?&lt;/h2&gt; &lt;p&gt;스프링 컨테이너에 등록되는 빈은 어떤 방식으로 생성되는지 궁금해졌다.&lt;/p&gt; &lt;p&gt;그래서 한 번 인텔리제이로 코드를 따라가봤다. 아마 틀렸을 수도 있다…&lt;/p&gt; &lt;h2 id=&quot;싱글톤이란&quot;&gt;싱글톤이란?&lt;/h2&gt; &lt;p&gt;일단 스프링은 기본적으로 싱글톤으로 빈을 생성한다. 그렇다면 싱글톤 패턴이 무엇인지 잠시 알아보자.&lt;/p&gt; &lt;blockquote&gt; &lt;p&gt;생성자가 여러 차례 호출되더라도 실제로 생성되는 객체는 하나이고 최초 생성 이후에 호출된 생성자는 최초의 생성자가 생성한 객체를 리턴한다. 이와 같은 디자인 유형을 싱글턴 패턴이라고 한다. 주로 공통된 객체를 여러개 생성해서 사용하는 DBCP(DataBase Connection Pool)와 같은 상황에서 많이 사용된다.&lt;/p&gt; &lt;/blockquote&gt; &lt;p&gt;라고 위키백과에 정의되어 있다.&lt;/p&gt; &lt;p&gt;핵심은 하나의 객체만 생성되어야 한다는 것이고, 이를 통해 효율적인 자원 사용을 하겠다는 것이 목표다.&lt;/p&gt; &lt;h2 id=&quot;구현-방법&quot;&gt;구현 방법&lt;/h2&gt;...</description>
+        <pubDate>Sat, 22 Jul 2023 00:00:00 +0900</pubDate>
+        <link>https://kmapshot.com/blog/%EC%8A%A4%ED%94%84%EB%A7%81_%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88/</link>
+        <guid isPermaLink="true">https://kmapshot.com/blog/%EC%8A%A4%ED%94%84%EB%A7%81_%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88/</guid>
+        
+        <category>Framework</category>
+        
+        <category>Spring</category>
+        
+        <category>backend</category>
+      </item>
+    
+      <item>
+        <title>스프링 네이티브</title>
+        <description>&lt;h2 id=&quot;메모리-기근&quot;&gt;메모리 기근&lt;/h2&gt; &lt;p&gt;운영중인 이미지 관련 웹 서비스가 하나 있는데 서버 메모리가 1GB라 굉장히 빠듯하다.&lt;/p&gt; &lt;p&gt;자바 스프링 기반으로 작동하고 있는데, 메모리를 더 효과적으로 사용할 방법이 없을까 싶어서 조사하던 중 스프링 네이티브를 발견하게 되었다.&lt;/p&gt; &lt;h2 id=&quot;스프링-네이티브란&quot;&gt;스프링 네이티브란?&lt;/h2&gt; &lt;p&gt;GraalVM을 활용했으며, 스프링 어플리케이션을 네이티브 이미지로 컴파일하여 기존 JVM에 비해 더 작은 메모리 공간과 훨씬 더 빠른 시작 시간으로 실행할 수 있다고 한다.&lt;/p&gt; &lt;p&gt;주요 차이점으로는,&lt;/p&gt; &lt;ul&gt; &lt;li&gt;애플리케이션의 정적 분석은 진입 main점에서 빌드 시 수행됩니다.&lt;/li&gt; &lt;li&gt;네이티브 이미지가 생성될 때 도달할 수 없는 코드는 제거되며 실행 파일의 일부가 되지 않습니다.&lt;/li&gt; &lt;li&gt;GraalVM은 코드의 동적 요소를 직접 인식하지 않으며 리플렉션, 리소스, 직렬화 및 동적 프록시에 대해 알려야 합니다.&lt;/li&gt;...</description>
+        <pubDate>Tue, 18 Jul 2023 00:00:00 +0900</pubDate>
+        <link>https://kmapshot.com/blog/%EC%8A%A4%ED%94%84%EB%A7%81_%EB%84%A4%EC%9D%B4%ED%8B%B0%EB%B8%8C/</link>
+        <guid isPermaLink="true">https://kmapshot.com/blog/%EC%8A%A4%ED%94%84%EB%A7%81_%EB%84%A4%EC%9D%B4%ED%8B%B0%EB%B8%8C/</guid>
+        
+        <category>Framework</category>
+        
+        <category>Spring</category>
+        
+        <category>backend</category>
+      </item>
+    
+      <item>
+        <title>키보드</title>
+        <description>&lt;h2 id=&quot;타이핑-시-발생하는-일들&quot;&gt;타이핑 시 발생하는 일들&lt;/h2&gt; &lt;p&gt;키보드를 타이핑 하는 순간 컴퓨터에서는 어떤 일이 일어날까?&lt;/p&gt; &lt;p&gt;키를 누르는 순간부터 모니터에 표시되기 까지의 과정이 궁금해서 알아보았다.&lt;/p&gt; &lt;h2 id=&quot;키캡을-누른-순간&quot;&gt;키캡을 누른 순간&lt;/h2&gt; &lt;p&gt;&lt;img src=&quot;https://github.com/lcw3176/lcw3176.github.io/assets/59993347/24034b57-5de8-4bec-9754-83831734ed6b&quot; alt=&quot;키보드&quot; /&gt;&lt;/p&gt; &lt;p&gt;먼저 특정 키를 누르면 키보드 아래의 회로에 전류가 흐르고, 마이크로 컨트롤러가 신호를 인식한다.&lt;/p&gt; &lt;p&gt;이때 컨트롤러는 키가 눌리거나 떨어질 때 마다 고유 코드를 전송하는데, 이런 특정 키의 상태에 따라 다른 고유 코드를 &lt;strong&gt;Scan Code&lt;/strong&gt; 라고 한다.&lt;/p&gt; &lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th&gt;Key Name&lt;/th&gt; &lt;th&gt;Down Code&lt;/th&gt; &lt;th&gt;Up Code&lt;/th&gt; &lt;/tr&gt; &lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td&gt;Q&lt;/td&gt; &lt;td&gt;0x10&lt;/td&gt; &lt;td&gt;0x90&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;W&lt;/td&gt; &lt;td&gt;0x11&lt;/td&gt; &lt;td&gt;0x91&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;E&lt;/td&gt; &lt;td&gt;0x12&lt;/td&gt; &lt;td&gt;0x92&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;R&lt;/td&gt; &lt;td&gt;0x13&lt;/td&gt; &lt;td&gt;0x93&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;T&lt;/td&gt; &lt;td&gt;0x14&lt;/td&gt;...</description>
+        <pubDate>Fri, 14 Jul 2023 00:00:00 +0900</pubDate>
+        <link>https://kmapshot.com/blog/%ED%82%A4%EB%B3%B4%EB%93%9C/</link>
+        <guid isPermaLink="true">https://kmapshot.com/blog/%ED%82%A4%EB%B3%B4%EB%93%9C/</guid>
+        
+        <category>Infra</category>
+        
+        <category>Keyboard</category>
+        
+        <category>cs</category>
+      </item>
+    
+      <item>
+        <title>재시도 전략</title>
+        <description>&lt;h2 id=&quot;api-요청과-재시도&quot;&gt;API 요청과 재시도&lt;/h2&gt; &lt;p&gt;API 요청에 실패하면 어떻게 대응하는 것이 좋을까?&lt;/p&gt; &lt;ol&gt; &lt;li&gt;될때까지 쏘기&lt;/li&gt; &lt;li&gt;한 10분 있다가 다시 요청하기&lt;/li&gt; &lt;li&gt;그냥 멍때리기&lt;/li&gt; &lt;/ol&gt; &lt;p&gt;전부 다 좋은 방법은 아닌 것 같다.&lt;/p&gt; &lt;p&gt;1번 방법 사용 시 API를 제공하는 서버에 지속적으로 부하를 걸어서 장애 복구에 차질이 생기게 할 수 있다. 또한 내 서버도 굉장히 많은 리소스를 낭비하게 된다.&lt;/p&gt; &lt;p&gt;2번 방안은 몇 분 후에 장애 복구될지 누가 알 것인가? 이건 앨런 튜링도 못 맞춘다. 애니그마가 아닌 부스타빗 도박에 가깝기 때문이다.&lt;/p&gt; &lt;p&gt;3번으로 대응 시 유저 다 나간다. ‘입술에 30초, 가슴에 30년’ 이라는 좋아하는 글귀가 있는데 서비스 이렇게 운영하면 30년은 나발이고 3년안에 망할 것이다.&lt;/p&gt; &lt;p&gt;이런 상황을 대비해서...</description>
+        <pubDate>Thu, 13 Jul 2023 00:00:00 +0900</pubDate>
+        <link>https://kmapshot.com/blog/%EC%9E%AC%EC%8B%9C%EB%8F%84_%EC%A0%84%EB%9E%B5/</link>
+        <guid isPermaLink="true">https://kmapshot.com/blog/%EC%9E%AC%EC%8B%9C%EB%8F%84_%EC%A0%84%EB%9E%B5/</guid>
+        
+        <category>Infra</category>
+        
+        <category>Error</category>
+        
+        <category>backend</category>
+      </item>
+    
+      <item>
+        <title>자바 버전별 릴리즈</title>
+        <description>&lt;h2 id=&quot;언어의-성장-방향&quot;&gt;언어의 성장 방향&lt;/h2&gt; &lt;p&gt;문득 자바의 개발 방향은 어디로 향하고 있는 것인지 궁금해졌다.&lt;/p&gt; &lt;p&gt;그래서 각 버전별로 릴리즈 노트를 찾아보았고, 다 정리하기엔 너무 많아서 일부 목록만 발췌한 후 어떤 패치들이 이루어졌는지 살펴보려 한다.&lt;/p&gt; &lt;h2 id=&quot;버전별-릴리즈&quot;&gt;버전별 릴리즈&lt;/h2&gt; &lt;h3 id=&quot;java-11&quot;&gt;Java 11&lt;/h3&gt; &lt;ul&gt; &lt;li&gt;HTTP 클라이언트 API를 표준화&lt;/li&gt; &lt;li&gt;새 Collection.toArray(IntFunction) 기본 메서드&lt;/li&gt; &lt;li&gt;Lambda 매개변수에 대한 로컬 변수 구문 (var)&lt;/li&gt; &lt;li&gt;컴파일러 스레드의 지연 할당 (-XX:+UseDynamicNumberOfCompilerThreads)&lt;/li&gt; &lt;li&gt;ZGC 확장 가능한 저지연 가비지 수집기&lt;/li&gt; &lt;li&gt;무작동 가비지 수집기 Epsilon GC, 메모리 할당만 처리하고 메모리 회수 메커니즘을 구현 X&lt;/li&gt; &lt;li&gt;jvmti를 통한 낮은 오버헤드 힙 프로파일링&lt;/li&gt; &lt;/ul&gt; &lt;p&gt;코드 레벨은 편의성 기능들이 패치되었고, 인프라는 주로 성능 관련 개선이 많이 이루어진 것을 확인할 수...</description>
+        <pubDate>Wed, 12 Jul 2023 00:00:00 +0900</pubDate>
+        <link>https://kmapshot.com/blog/%EC%9E%90%EB%B0%94/</link>
+        <guid isPermaLink="true">https://kmapshot.com/blog/%EC%9E%90%EB%B0%94/</guid>
+        
+        <category>Language</category>
+        
+        <category>Java</category>
+        
+        <category>language</category>
+      </item>
+    
+      <item>
+        <title>포인터</title>
+        <description>&lt;h2 id=&quot;뒤바뀐-인과관계&quot;&gt;뒤바뀐 인과관계&lt;/h2&gt; &lt;p&gt;포인터에 대해 검색하던 도중 내가 궁금한 요소가 해결되지 않았다.&lt;/p&gt; &lt;p&gt;‘포인터 탄생 배경’ 등에 대해 검색을 해 보면 대부분의 검색 결과가 포인터가 ‘필요한 이유’가 아닌 포인터가 등장해서 얻은 이점과 같은 ‘결과’에 대한 서술이 많았다.&lt;/p&gt; &lt;p&gt;원래 전공이 하드웨어에 가까운 학과라 포인터의 당위성에 대해 부분적으로 어렴풋이 알고 있었는데, 이번 기회에 확실히 더 찾아봐서 정리를 해 보려고 한다.&lt;/p&gt; &lt;h2 id=&quot;포인터란&quot;&gt;포인터란?&lt;/h2&gt; &lt;p&gt;&lt;img src=&quot;http://www.tcpschool.com/lectures/img_c_memory_structure.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt; &lt;blockquote&gt; &lt;p&gt;C언어에서 포인터란 메모리의 주소값을 저장하는 변수이며, 포인터 변수라고도 부릅니다. char형 변수가 문자를 저장하고, int형 변수가 정수를 저장하는 것처럼 포인터는 주소값을 저장합니다. -TCP 스쿨&lt;/p&gt; &lt;/blockquote&gt; &lt;p&gt;포인터는 주소값을 저장하는 변수이다. 예를 들어서,&lt;/p&gt; &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;char *arr...</description>
+        <pubDate>Tue, 11 Jul 2023 00:00:00 +0900</pubDate>
+        <link>https://kmapshot.com/blog/%ED%8F%AC%EC%9D%B8%ED%84%B0/</link>
+        <guid isPermaLink="true">https://kmapshot.com/blog/%ED%8F%AC%EC%9D%B8%ED%84%B0/</guid>
+        
+        <category>Language</category>
+        
+        <category>Pointer</category>
+        
+        <category>language</category>
+      </item>
+    
+      <item>
+        <title>데이터베이스 인덱스</title>
+        <description>&lt;h2 id=&quot;index&quot;&gt;Index&lt;/h2&gt; &lt;h3 id=&quot;소개&quot;&gt;소개&lt;/h3&gt; &lt;p&gt;인덱스는 테이블의 컬럼 색인화, 책의 목차 기능을 제공한다. 데이터 정렬 후 별도의 메모리 공간에 저장하는데, 이 형태는 컬럼 값(key), 물리 주소(value)로 설정된다.&lt;/p&gt; &lt;h3 id=&quot;목적&quot;&gt;목적&lt;/h3&gt; &lt;table&gt; &lt;thead&gt; &lt;tr&gt; &lt;th&gt;first_name&lt;/th&gt; &lt;th&gt;age&lt;/th&gt; &lt;/tr&gt; &lt;/thead&gt; &lt;tbody&gt; &lt;tr&gt; &lt;td&gt;kim&lt;/td&gt; &lt;td&gt;15&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;lee&lt;/td&gt; &lt;td&gt;30&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;park&lt;/td&gt; &lt;td&gt;25&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;lee&lt;/td&gt; &lt;td&gt;20&lt;/td&gt; &lt;/tr&gt; &lt;tr&gt; &lt;td&gt;park&lt;/td&gt; &lt;td&gt;10&lt;/td&gt; &lt;/tr&gt; &lt;/tbody&gt; &lt;/table&gt; &lt;p&gt;다음과 같은 자료가 있다고 가정해보자. 만약 인덱스가 없다면 다음과 같은 쿼리를 실행했을 경우 데이터베이스를 모두 스캔해야 한다.&lt;/p&gt; &lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;first_name&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;TABLE&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;age&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt; &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt; &lt;p&gt;하지만 인덱스가 있다면, 인덱스...</description>
+        <pubDate>Tue, 07 Mar 2023 00:00:00 +0900</pubDate>
+        <link>https://kmapshot.com/blog/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EC%9D%B8%EB%8D%B1%EC%8A%A4/</link>
+        <guid isPermaLink="true">https://kmapshot.com/blog/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4%EC%9D%B8%EB%8D%B1%EC%8A%A4/</guid>
+        
+        <category>DB</category>
+        
+        <category>Index</category>
+        
+        <category>cs</category>
+      </item>
+    
+  </channel>
+</rss>
