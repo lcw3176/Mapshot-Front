@@ -1,5 +1,5 @@
 <template>
-  <v-container is-fluid>
+  <v-container fluid>
     <v-navigation-drawer v-if="display.mdAndUp" permanent location="left">
 
       <v-list nav>
@@ -9,10 +9,11 @@
     </v-navigation-drawer>
 
     <div v-if="display.mdAndUp">
-      <v-lazy>
-
-        <component :is=nowPage></component>
-      </v-lazy>
+      <v-container fluid>
+        <v-lazy>
+          <component :is=nowPage></component>
+        </v-lazy>
+      </v-container>
     </div>
 
 
