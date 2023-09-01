@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="0" class="ml-10">
+    <v-card elevation="0">
         <v-card-title class="text-h5"> 지도 종류</v-card-title>
         <v-card-text>
             수집할 지도의 종류를 설정합니다. 기본값은 위성으로 설정됩니다.

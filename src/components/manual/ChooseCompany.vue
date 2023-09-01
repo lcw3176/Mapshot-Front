@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="0" class="ml-10">
+    <v-card elevation="0">
         <v-card-title class="text-h5"> 회사 설정</v-card-title>
         <v-card-text>
             출력할 지도의 종류를 설정합니다.

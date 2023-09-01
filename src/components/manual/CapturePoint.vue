@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="0" class="ml-10">
+    <v-card elevation="0">
         <v-card-title class="text-h5">좌표 탐색</v-card-title>
         <v-card-text>
 

@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="0" class="ml-10">
+    <v-card elevation="0">
         <v-card-title class="text-h5"> 반경 설정</v-card-title>
         <v-card-subtitle>
             이 값은 <strong>네이버</strong> 기준입니다. 카카오는 정확한 추정이 어렵습니다.

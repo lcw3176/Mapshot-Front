@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="0" class="ml-10">
+    <v-card elevation="0">
         <v-card-title class="text-h5"> 옵션</v-card-title>
         <v-card-text>
             <p>부가적인 기능을 설정합니다.</p>
