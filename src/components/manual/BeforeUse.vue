@@ -14,7 +14,7 @@
             만약 서비스 이용에 어려움이 있다면, 호환 브라우저 목록을 확인해 주세요.
         </v-card-text>
 
-        <v-sheet :max-width="500">
+        <v-sheet>
             <v-table>
                 <thead>
                     <tr>
