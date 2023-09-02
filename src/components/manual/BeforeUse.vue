@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="0" class="ml-10">
+    <v-card elevation="0">
         <v-card-title class="text-h5">사용 전</v-card-title>
 
         <v-card-subtitle>환경</v-card-subtitle>
@@ -14,7 +14,7 @@
             만약 서비스 이용에 어려움이 있다면, 호환 브라우저 목록을 확인해 주세요.
         </v-card-text>
 
-        <v-sheet :max-width="500">
+        <v-sheet>
             <v-table>
                 <thead>
                     <tr>

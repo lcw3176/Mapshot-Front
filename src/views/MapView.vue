@@ -85,7 +85,7 @@
 
 
   
-    <component :is=" display.mdAndUp ? 'v-navigation-drawer' : 'v-container'" v-navigation-drawer permanent touchless="true" :location="display.mdAndUp ? 'right' : 'bottom'" width="300">
+    <component :is=" display.mdAndUp ? 'v-navigation-drawer' : 'v-container'" permanent touchless="true" :location="display.mdAndUp ? 'right' : 'bottom'" width="300">
       <v-list nav>
 
         <v-list-subheader>

@@ -13,6 +13,7 @@ const routes = [
     name: 'contact',
     component: () => import(/* webpackChunkName: "contact" */ '../views/ContactView.vue')
   },
+  
   {
     path: '/manual',
     name: 'manual',
@@ -30,7 +31,13 @@ const routes = [
     name: 'noticeDetail',
     component: () => import(/* webpackChunkName: "noticeDetail" */ '../views/NoticeDetailView.vue'),
     props: true
-  }
+  },
+
+  {
+    path: '/faq',
+    name: 'faq',
+    component: () => import(/* webpackChunkName: "faq" */ '../views/FAQView.vue')
+  },
 ]
 
 const router = createRouter({
