@@ -7,7 +7,7 @@
 
                 </v-col>
 
-                <v-col cols="10">
+                <v-col cols="8">
                     <v-table>
                         <thead>
                             <tr>
