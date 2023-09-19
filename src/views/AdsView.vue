@@ -1,24 +1,19 @@
 <template>
   <v-container fluid>
-    <v-row class="text-center">
-      <v-col>
-        
-      </v-col>
-      
+    <v-row class="text-center" v-if="display.mdAndUp">
+
       <v-col>
         <div id="adOne">
           <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-jQc4S43mgtM6ZqRE" data-ad-width="728"
-          data-ad-height="90"></ins>
+            data-ad-height="90"></ins>
 
         </div>
 
         <div id="adTwo">
-          <ins class="kakao_ad_area" style="display:none;"
-          data-ad-unit = "DAN-5wPT27aGQHQre4DP"
-          data-ad-width = "320"
-          data-ad-height = "100"></ins>
+          <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-5wPT27aGQHQre4DP" data-ad-width="320"
+            data-ad-height="100"></ins>
         </div>
-    
+
       </v-col>
 
       <v-col id="adThree">
@@ -26,12 +21,29 @@
           data-ad-height="250"></ins>
       </v-col>
 
+    </v-row>
 
-      <v-col>
-      
+
+    <v-row class="text-center" v-else>
+
+      <!-- <v-col>
+        <div id="adOne">
+          <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-HEHh99g6pdekjkfQ" data-ad-width="300"
+            data-ad-height="250"></ins>
+
+        </div>
+
+        <div id="adTwo">
+          <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-1f22sNeH6puxNSbl" data-ad-width="300"
+            data-ad-height="250"></ins>
+        </div>
+
       </v-col>
 
-     
+      <v-col id="adThree">
+        <ins class="kakao_ad_area" style="display:none;" data-ad-unit="DAN-OPghfSGHOLdGJdlJ" data-ad-width="300"
+          data-ad-height="250"></ins>
+      </v-col> -->
 
     </v-row>
   </v-container>
@@ -40,11 +52,22 @@
 
 <script>
 
+import { useDisplay } from 'vuetify'
+import { ref } from 'vue'
+
 export default {
   name: 'AdsView',
 
-  mounted() {
+  data() {
+    const display = ref(useDisplay())
 
+    return {
+      display,
+    };
+  },
+
+  mounted() {
+    
     let adOne = document.createElement("script");
     adOne.setAttribute(
       "src",

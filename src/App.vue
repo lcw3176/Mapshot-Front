@@ -101,15 +101,15 @@ export default {
 
 
   mounted() {
-        
+    
     let adTwo = document.createElement("script");
-    adTwo.setAttribute(
-      "src",
-      "//t1.daumcdn.net/kas/static/ba.min.js"
-    );
-    adTwo.async = true;
-    document.getElementById("adOnNav").appendChild(adTwo);
-
+      adTwo.setAttribute(
+        "src",
+        "//t1.daumcdn.net/kas/static/ba.min.js"
+      );
+      adTwo.async = true;
+      document.getElementById("adOnNav").appendChild(adTwo);
+ 
   }
 }
 </script>
