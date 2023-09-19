@@ -18,6 +18,19 @@
 
       </v-btn>
 
+      <v-spacer>
+
+
+      </v-spacer>
+      
+
+      
+      <div id="adOnNav">
+        <ins class="kakao_ad_area" style="display:none;"
+          data-ad-unit = "DAN-PHtjbTNT6UriScBj"
+          data-ad-width = "320"
+          data-ad-height = "50"></ins>
+        </div>
     </v-app-bar>
 
     <v-bottom-navigation v-else grow>
@@ -84,6 +97,19 @@ export default {
     return {
       loaderStore
     }
+  },
+
+
+  mounted() {
+        
+    let adTwo = document.createElement("script");
+    adTwo.setAttribute(
+      "src",
+      "//t1.daumcdn.net/kas/static/ba.min.js"
+    );
+    adTwo.async = true;
+    document.getElementById("adOnNav").appendChild(adTwo);
+
   }
 }
 </script>
