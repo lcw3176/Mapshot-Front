@@ -7,30 +7,23 @@
 
   <v-layout>
     <v-app-bar elevation="1" v-if="display.mdAndUp">
-      <v-btn class="font-weight-bold text-h5" size="large" variant="plain" to="/">
+
+      <v-btn class="font-weight-bold text-h5" size="x-large" variant="plain" to="/">
         {{ appTitle }}
-
-      </v-btn>
-
-      <v-btn v-for="item in desktop" :key="item.title" size="large" variant="plain" :to="item.path">
-
-        {{ item.title }}
 
       </v-btn>
 
       <v-spacer>
 
-
       </v-spacer>
-      
 
-      
-      <div id="adOnNav">
-        <ins class="kakao_ad_area" style="display:none;"
-          data-ad-unit = "DAN-PHtjbTNT6UriScBj"
-          data-ad-width = "320"
-          data-ad-height = "50"></ins>
-        </div>
+
+
+      <v-btn v-for="item in desktop" :key="item.title" size="x-large" variant="plain" :to="item.path">
+
+        {{ item.title }}
+
+      </v-btn>
     </v-app-bar>
 
     <v-bottom-navigation v-else grow>
@@ -41,11 +34,13 @@
     </v-bottom-navigation>
 
 
+
     <v-main>
       <router-view></router-view>
 
       <AdsView />
     </v-main>
+
 
   </v-layout>
 </template>
@@ -84,14 +79,14 @@ export default {
         { title: "사용법", path: "/manual", icon: "mdi-school-outline" },
         { title: "공지사항", path: "/notice", icon: "mdi-bullhorn-outline" },
         { title: "문의", path: "/contact", icon: "mdi-tooltip-question-outline" },
-
+        { title: "FAQ", path: "/faq" , icon: "mdi-frequently-asked-questions"},
       ],
 
       display,
     };
   },
 
-  setup(){
+  setup() {
     const loaderStore = useLoaderStore();
 
     return {
@@ -99,28 +94,16 @@ export default {
     }
   },
 
-
-  mounted() {
-    
-    let adTwo = document.createElement("script");
-      adTwo.setAttribute(
-        "src",
-        "//t1.daumcdn.net/kas/static/ba.min.js"
-      );
-      adTwo.async = true;
-      document.getElementById("adOnNav").appendChild(adTwo);
- 
-  }
 }
 </script>
 
 
 <style scoped>
 .loading {
-    z-index: 2;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  z-index: 2;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
