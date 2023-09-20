@@ -7,17 +7,23 @@
 
   <v-layout>
     <v-app-bar elevation="1" v-if="display.mdAndUp">
-      <v-btn class="font-weight-bold text-h5" size="large" variant="plain" to="/">
+
+      <v-btn class="font-weight-bold text-h5" size="x-large" variant="plain" to="/">
         {{ appTitle }}
 
       </v-btn>
 
-      <v-btn v-for="item in desktop" :key="item.title" size="large" variant="plain" :to="item.path">
+      <v-spacer>
+
+      </v-spacer>
+
+
+
+      <v-btn v-for="item in desktop" :key="item.title" size="x-large" variant="plain" :to="item.path">
 
         {{ item.title }}
 
       </v-btn>
-
     </v-app-bar>
 
     <v-bottom-navigation v-else grow>
@@ -28,11 +34,13 @@
     </v-bottom-navigation>
 
 
+
     <v-main>
       <router-view></router-view>
 
       <AdsView />
     </v-main>
+
 
   </v-layout>
 </template>
@@ -71,30 +79,31 @@ export default {
         { title: "사용법", path: "/manual", icon: "mdi-school-outline" },
         { title: "공지사항", path: "/notice", icon: "mdi-bullhorn-outline" },
         { title: "문의", path: "/contact", icon: "mdi-tooltip-question-outline" },
-
+        { title: "FAQ", path: "/faq" , icon: "mdi-frequently-asked-questions"},
       ],
 
       display,
     };
   },
 
-  setup(){
+  setup() {
     const loaderStore = useLoaderStore();
 
     return {
       loaderStore
     }
-  }
+  },
+
 }
 </script>
 
 
 <style scoped>
 .loading {
-    z-index: 2;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  z-index: 2;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
