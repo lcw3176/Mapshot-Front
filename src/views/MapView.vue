@@ -61,7 +61,7 @@
         <v-progress-linear v-else height="15" model-value="0" color="info" rounded />
       </v-row>
 
-      <v-row>
+      <v-row class="pl-10 pr-10">
         <v-breadcrumbs divider="/">
           <v-breadcrumbs-item>
             {{ mapStore.statusMessage }}
