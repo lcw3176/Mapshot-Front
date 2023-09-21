@@ -1,8 +1,6 @@
 <template>
 
-  <v-container fluid>
     
-    <v-container fluid>
       <!-- 지도 -->
       <div class="map_wrap">
         <div id="map" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
@@ -55,7 +53,7 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-row class="mt-5">
+      <v-row class="pl-10 pr-10 mt-5">
         <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" rounded
           v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
           :indeterminate="mapStore.progressBarLoading" />
@@ -79,9 +77,6 @@
           </v-breadcrumbs-item>
         </v-breadcrumbs>
       </v-row>
-
-    </v-container>
-
 
 
   
@@ -185,7 +180,6 @@
 
     </component>
   
-  </v-container>
 
 </template>
 
