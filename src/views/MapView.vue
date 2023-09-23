@@ -222,7 +222,7 @@ export default {
     document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     this.mapStore.removeListeners();
 
     document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
