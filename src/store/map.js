@@ -95,6 +95,7 @@ export const useMapStore = defineStore("map", {
       this.naverTile = new NaverTile();
       this.coor = new LatLng();
       this.mapRadius = Radius.Two;
+      this.baseMap = '';
       // this.baseMap = this.baseMapArr['위성'];
 
       this.naverProfile = new Naver();
