@@ -19,7 +19,7 @@
 
 
 
-      <v-btn v-for="item in desktop" :key="item.title" size="x-large" variant="plain" :to="item.path">
+      <v-btn v-for="item in desktop" :key="item.title" size="x-large" variant="plain" class="font-weight-bold text-h6" :to="item.path">
 
         {{ item.title }}
 
