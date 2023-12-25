@@ -1,0 +1,290 @@
+
+
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>https://kmapshot.com/blog/</id>
+  <title>ColdRain</title>
+  <subtitle>A minimal, responsive and feature-rich Jekyll theme for technical writing.</subtitle>
+  <updated>2023-12-25T22:21:51+09:00</updated>
+  <author>
+    <name></name>
+    <uri>https://kmapshot.com/blog/</uri>
+  </author>
+  <link rel="self" type="application/atom+xml" href="https://kmapshot.com/blog/feed.xml"/>
+  <link rel="alternate" type="text/html" hreflang="en"
+    href="https://kmapshot.com/blog/"/>
+  <generator uri="https://jekyllrb.com/" version="4.3.2">Jekyll</generator>
+  <rights> © 2023  </rights>
+  <icon>/blog/assets/img/favicons/favicon.ico</icon>
+  <logo>/blog/assets/img/favicons/favicon-96x96.png</logo>
+
+
+  
+  <entry>
+    <title>DB 트랜잭션</title>
+    <link href="https://kmapshot.com/blog/posts/DB_%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98/" rel="alternate" type="text/html" title="DB 트랜잭션" />
+    <published>2023-12-15T00:00:00+09:00</published>
+  
+    <updated>2023-12-15T17:52:56+09:00</updated>
+  
+    <id>https://kmapshot.com/blog/posts/DB_%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98/</id>
+    <content src="https://kmapshot.com/blog/posts/DB_%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98/" />
+    <author>
+      <name></name>
+    </author>
+
+  
+    
+    <category term="DB" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      트랜잭션
+
+정의
+
+한 번 질의가 실행되면 질의가 모두 수행되거나 모두 수행되지 않는, 작업 수행의 논리적 단위이다.
+
+다양한 상황에서 트랜잭션이라는 용어를 사용할 수 있지만 보통 데이터베이스와 관련하여 많이 사용한다.
+이 글 또한 데이터베이스의 트랜잭션을 다루려고 한다.
+
+사용 이유
+
+데이터의 부정합을 방지하고자 할 때 사용한다.
+
+보통 트랜잭션은 다른 트랜잭션과 동시에 작업 내용이 겹치는 행위(수정, 삭제)을 최대한 방지하는데,
+만약 이런 행동을 허용한다면 의도치 않은 결과를 얻게 될 수 있다.
+
+특성
+원자성 (Atomicity)
+
+All or Nothing의 표본이다.
+
+작업 단위를 일부분만 실행하지 않는다는 뜻인데, 한 트랜잭션에 포함되어 있다면 
+모든 작업 내용이 반영되거나 롤백되어야 한다.
+
+...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>쌩신입의 카카오뱅크 도전기</title>
+    <link href="https://kmapshot.com/blog/posts/%EC%8C%A9%EC%8B%A0%EC%9E%85%EC%9D%98_%EC%B9%B4%EC%B9%B4%EC%98%A4%EB%B1%85%ED%81%AC_%EB%8F%84%EC%A0%84%EA%B8%B0/" rel="alternate" type="text/html" title="쌩신입의 카카오뱅크 도전기" />
+    <published>2023-11-15T00:00:00+09:00</published>
+  
+    <updated>2023-11-15T17:01:38+09:00</updated>
+  
+    <id>https://kmapshot.com/blog/posts/%EC%8C%A9%EC%8B%A0%EC%9E%85%EC%9D%98_%EC%B9%B4%EC%B9%B4%EC%98%A4%EB%B1%85%ED%81%AC_%EB%8F%84%EC%A0%84%EA%B8%B0/</id>
+    <content src="https://kmapshot.com/blog/posts/%EC%8C%A9%EC%8B%A0%EC%9E%85%EC%9D%98_%EC%B9%B4%EC%B9%B4%EC%98%A4%EB%B1%85%ED%81%AC_%EB%8F%84%EC%A0%84%EA%B8%B0/" />
+    <author>
+      <name></name>
+    </author>
+
+  
+    
+    <category term="ETC" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      아쉬움을 보내기 위해
+
+결론부터 쓰면 마지막 임원면접에서 떨어졌다.
+
+며칠동안 정말 아쉬워서 잠도 제대로 못잤는데, 
+이제는 떨쳐내기 위해 이 글을 쓰면서 길다면 길었던 여정의 마침표를 찍어볼까 한다.
+
+글을 시작하기 전에 잠시 내 정보를 요약하자면, 관련 업계 경력은 전혀 없는 신입이고
+제지공장 생산직과 복싱장 코치로 일한 경험은 있다.
+
+그리고 내용을 어디까지 적어도 괜찮은지 모르겠어서, 일단은 그냥 겪었던 일 세부적으로 다 적고 나중에 뭔 일(?) 나면 수정할 수도 있다. 어차피 잡플래닛 같은 곳 봐도 뭐 다 적어놓던데 별일 없지 않을까 싶다.
+
+원서접수
+
+
+
+내가 지원한 공고는 서버개발자 - 기반기술 이라는 공고였다. 5년차 이하를 뽑는다길래 그러면 0년차도 포함(?) 아닌가 싶어서 넣었다. 은...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>클러스터, 논클러스터 인덱스</title>
+    <link href="https://kmapshot.com/blog/posts/%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0_%EB%85%BC%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0_%EC%9D%B8%EB%8D%B1%EC%8A%A4/" rel="alternate" type="text/html" title="클러스터, 논클러스터 인덱스" />
+    <published>2023-10-29T00:00:00+09:00</published>
+  
+    <updated>2023-10-30T22:01:33+09:00</updated>
+  
+    <id>https://kmapshot.com/blog/posts/%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0_%EB%85%BC%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0_%EC%9D%B8%EB%8D%B1%EC%8A%A4/</id>
+    <content src="https://kmapshot.com/blog/posts/%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0_%EB%85%BC%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0_%EC%9D%B8%EB%8D%B1%EC%8A%A4/" />
+    <author>
+      <name></name>
+    </author>
+
+  
+    
+    <category term="DB" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      인덱스란?
+
+인덱스는 테이블의 컬럼을 색인화 함으로서 책의 목차와 유사한 기능을 제공한다.
+데이터를 정렬 후 별도의 메모리 공간에 저장하는데, 이 형태는 key, value 쌍으로 구성된다.
+
+인덱스를 저장하는 방식에도 종류가 있는데, 대표적으로 클러스터형 인덱스와 논클러스터형 인덱스로 구분할 수 있다.
+
+클러스터 인덱스
+
+
+
+클러스터 인덱스는 데이터를 순차적으로 재배열한다. 
+대표적으로 MySQL에 해당 방식이 기본적으로 사용되고 있다.
+
+primary key를 설정하면 해당 컬럼은 자동으로 클러스터드 인덱스가 구성되며,
+데이터 위치를 참조하는 포인터를 가지고 있다.
+이를 활용하여 실제 데이터를 가져오는 방식이다.
+
+별도의 데이터 페이지를 생성하는것이 아니라 실제 테이블을 참조하기 때문에
+검색 속도는...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>정렬 알고리즘</title>
+    <link href="https://kmapshot.com/blog/posts/%EC%A0%95%EB%A0%AC_%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/" rel="alternate" type="text/html" title="정렬 알고리즘" />
+    <published>2023-10-25T00:00:00+09:00</published>
+  
+    <updated>2023-10-26T18:10:03+09:00</updated>
+  
+    <id>https://kmapshot.com/blog/posts/%EC%A0%95%EB%A0%AC_%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/</id>
+    <content src="https://kmapshot.com/blog/posts/%EC%A0%95%EB%A0%AC_%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98/" />
+    <author>
+      <name></name>
+    </author>
+
+  
+    
+    <category term="Language" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      거품 정렬(Bubble Sort)
+
+public void bubbleSort(int[] arr) {
+
+    int temp = 0;
+    
+    for(int i = 0; i &amp;lt; arr.length; i++) {   
+
+        for(int j= 1 ; j &amp;lt; arr.length-i; j++) {
+
+            if(arr[j - 1] &amp;gt; arr[j]) {             
+                temp = arr[j - 1];
+                arr[j - 1] = arr[j];
+                arr[j] = temp;
+            }
+
+        }
+    }
+}
+
+
+
+
+
+인접한 두 데이터를 비교 후, 자리를 ...
+    </summary>
+  
+
+  </entry>
+
+  
+  <entry>
+    <title>운영체제의 동기화 기법</title>
+    <link href="https://kmapshot.com/blog/posts/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EC%9D%98_%EB%8F%99%EA%B8%B0%ED%99%94_%EA%B8%B0%EB%B2%95/" rel="alternate" type="text/html" title="운영체제의 동기화 기법" />
+    <published>2023-10-24T00:00:00+09:00</published>
+  
+    <updated>2023-10-24T00:00:00+09:00</updated>
+  
+    <id>https://kmapshot.com/blog/posts/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EC%9D%98_%EB%8F%99%EA%B8%B0%ED%99%94_%EA%B8%B0%EB%B2%95/</id>
+    <content src="https://kmapshot.com/blog/posts/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C%EC%9D%98_%EB%8F%99%EA%B8%B0%ED%99%94_%EA%B8%B0%EB%B2%95/" />
+    <author>
+      <name></name>
+    </author>
+
+  
+    
+    <category term="OS" />
+    
+  
+
+  
+    <summary>
+      
+
+
+
+
+
+      동기화란?
+
+
+  작업들 사이의 수행 시기를 맞추는 것. 사건이 동시에 일어나거나, 
+일정한 간격을 두고 일어나도록 시간의 간격을 조정하는 것을 이른다.
+-네이버 국어사전-
+
+
+국어사전에 따르면 ‘동기화’에 대해 위와 같이 설명하고 있다.
+
+컴퓨터 과학에서도 비슷한 의미로 통용되는데, 작업들의 수행 시기를 맞추면서 여러 프로세스가 공유하고 있는 자원이 일관되게 유지될 수 있도록 하는 방법이다.
+
+동기화는 여러 프로세스가 접근하는 공유자원을 사용할 때 중요한 화두로 떠오르는데, 예기치 않은 데이터의 접근과 변경으로 다른 프로세스의 작동에 영향을 끼칠 수 있기 때문이다.
+
+이런 공유자원에 2개 이상의 프로세스가 접근해서 데이터를 조작하는 상황을 경쟁 상태(race condition)이라 하며, 프로세스의 ...
+    </summary>
+  
+
+  </entry>
+
+</feed>
+
+
