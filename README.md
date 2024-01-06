@@ -10,7 +10,6 @@
 </p>  
 <p align="center">
   <a href="#서비스-소개">서비스 소개</a> •
-  <a href="#방문자-추이">방문자 추이</a> •
   <a href="#기술-스택">기술 스택</a> •
   <a href="#결과-샘플">결과 샘플</a>
 </p>  
@@ -28,9 +27,6 @@
 도시 공학 계열에서 계획도를 그릴 때 사용되는 배경 위성 이미지를 제공해주는 서비스입니다.<br>
 직접 한 구역씩 캡쳐해서 포토샵으로 합치는 프로세스를 자동화해서, <br>
 기존 작업 대비 효율적인 업무가 가능합니다. (약 1시간 -> 10초)
-
-## 방문자 추이
-![방문](https://hits.seeyoufarm.com/api/count/graph/dailyhits.svg?url=https://kmapshot.com?)
 
 ## 기술 스택
 ### FrontEnd
