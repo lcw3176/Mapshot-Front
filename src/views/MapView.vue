@@ -18,6 +18,15 @@
           <ul id="placesList"></ul>
           <div id="pagination"></div>
         </div>
+        <div class="custom_typecontrol">
+          <v-list theme="dark">
+            <v-list-item v-for="(value, key) in mapStore.baseMapStyles" :key="key" :value="value" active-color="info"
+              @click="mapStore.changeMapStyle(value)" density="compact" :active="value === mapStore.currentMapStyle">
+          {{ key }}
+        </v-list-item>
+          </v-list>
+ 
+        </div>
       </div>
       <!-- 지도 끝 -->
 

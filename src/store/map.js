@@ -70,6 +70,13 @@ export const useMapStore = defineStore("map", {
     progressBarValue: 0,
     progressBarMax: 100,
     progressBarLoading: false,
+    
+    baseMapStyles: {
+      '일반': kakao.maps.MapTypeId.ROADMAP,
+      '위성': kakao.maps.MapTypeId.SKYVIEW,
+    },
+
+    currentMapStyle: '',
   }),
 
 
@@ -111,6 +118,8 @@ export const useMapStore = defineStore("map", {
 
       this.layerProfile = new Layer();
       this.layerProfile.setUrl("https://pkhb969vta.execute-api.ap-northeast-2.amazonaws.com/default/vworld");
+
+      this.currentMapStyle = this.baseMapStyles['일반']
     },
 
     async addListeners() {
@@ -483,6 +492,10 @@ export const useMapStore = defineStore("map", {
 
     },
 
+    async changeMapStyle(mapStyle) { 
+      this.currentMapStyle = mapStyle;
+      this.map.setMapTypeId(this.currentMapStyle); 
+    },
 
     // 이하 카카오 지도 api 문서 코드
     placesSearchCB(data, status, pagination) {
