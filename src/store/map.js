@@ -4,7 +4,7 @@ import axios from 'axios';
 
 async function requsetImage(queryString) {
   try {
-    const response = await axios.get('https://api.kmapshot.com/image/queue' + queryString);
+    const response = await axios.get('https://dev-api.kmapshot.com/image/queue' + queryString);
 
     return response.data;
   } catch (error) {

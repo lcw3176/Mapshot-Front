@@ -3,13 +3,13 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 
 async function getContent(id) {
-  const response = await axios.get('https://api.kmapshot.com/notice/detail/' + id);
+  const response = await axios.get('https://dev-api.kmapshot.com/notice/detail/' + id);
   return response.data;
 }
 
 
 async function getSummary(id) {
-  const response = await axios.get('https://api.kmapshot.com/notice/list/' + id);
+  const response = await axios.get('https://dev-api.kmapshot.com/notice/list/' + id);
   return response.data;
 }
 
