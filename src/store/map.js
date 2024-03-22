@@ -110,7 +110,7 @@ export const useMapStore = defineStore("map", {
       // this.naverProfile.setMapType(this.baseMap);
 
       this.proxyProfile = new Proxy();
-      this.proxyProfile.setProxyUrl("https://api.kmapshot.com/image/storage");
+      this.proxyProfile.setProxyUrl("https://dev-api.kmapshot.com/image/storage");
       // this.proxyProfile.setCompanyType(this.companyArr['카카오']);
       // this.proxyProfile.setMapType(this.baseMap);
 
