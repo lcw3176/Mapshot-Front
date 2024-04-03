@@ -2,9 +2,11 @@ import { defineStore } from "pinia";
 import { Proxy, Naver, Layer, NaverTile, ProxyTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
 import axios from 'axios';
 
+const apiUrl = process.env.VUE_APP_API_URL;
+
 async function requsetImage(queryString) {
   try {
-    const response = await axios.get('https://api.kmapshot.com/image/queue' + queryString);
+    const response = await axios.get(apiUrl + '/image/queue' + queryString);
 
     return response.data;
   } catch (error) {
@@ -110,7 +112,7 @@ export const useMapStore = defineStore("map", {
       // this.naverProfile.setMapType(this.baseMap);
 
       this.proxyProfile = new Proxy();
-      this.proxyProfile.setProxyUrl("https://api.kmapshot.com/image/storage");
+      this.proxyProfile.setProxyUrl(apiUrl + "/image/storage");
       // this.proxyProfile.setCompanyType(this.companyArr['카카오']);
       // this.proxyProfile.setMapType(this.baseMap);
 

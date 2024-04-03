@@ -2,14 +2,16 @@ import { defineStore } from "pinia";
 import axios from 'axios';
 import dayjs from 'dayjs';
 
+const apiUrl = process.env.VUE_APP_API_URL;
+
 async function getContent(id) {
-  const response = await axios.get('https://api.kmapshot.com/notice/detail/' + id);
+  const response = await axios.get(apiUrl + '/notice/detail/' + id);
   return response.data;
 }
 
 
 async function getSummary(id) {
-  const response = await axios.get('https://api.kmapshot.com/notice/list/' + id);
+  const response = await axios.get(apiUrl + '/notice/list/' + id);
   return response.data;
 }
 
