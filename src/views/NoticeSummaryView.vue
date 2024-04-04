@@ -1,7 +1,7 @@
 <template>
     <v-container is-fluid>
 
-        <v-lazy>
+        <v-lazy transition="fade-transition">
             <v-row>
                 <v-col>
 
