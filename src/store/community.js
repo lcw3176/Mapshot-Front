@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 
 const apiUrl = process.env.VUE_APP_API_URL;
 
-async function getContent(id) {
+async function getPost(id) {
   const response = await axios.get(apiUrl + '/post/detail/' + id);
   return response.data;
 }
@@ -29,9 +29,22 @@ async function registerPost(post) {
 }
 
 
-async function getContentList(id) {
+async function getPostList(id) {
   const response = await axios.get(apiUrl + '/post/' + id);
   return response.data;
+}
+
+async function deletePost(id, password) {
+  try{
+    await axios.get(apiUrl + '/post/delete/' + id + '?password=' + password);
+
+    return true;
+
+  } catch (e){
+
+    return false;
+  }
+
 }
 
 
@@ -42,7 +55,8 @@ export const useCommunityStore = defineStore("communityStore", {
     post: Object,
     posts: [],
     lastLoadedId: 0,
-    ready: false
+    ready: false,
+    password: '',
   }),
 
 
@@ -53,12 +67,12 @@ export const useCommunityStore = defineStore("communityStore", {
   actions: {
     async loadSinglePost(id) {
       this.post = '';
-      this.post = await getContent(id);
+      this.post = await getPost(id);
     },
 
     async loadPostList(id) {
       this.posts = '';
-      this.posts = await getContentList(id);
+      this.posts = await getPostList(id);
     },
 
     async register() {
@@ -74,6 +88,16 @@ export const useCommunityStore = defineStore("communityStore", {
       }
     },
 
+    async delete(){
+      let success = await deletePost(this.post.id, this.password);
+
+      if(success){
+        alert("삭제 완료되었습니다.");
+        window.location.href = "/community";
+      } else {
+        alert("삭제에 실패했습니다.");
+      }
+    },
 
     formatDate(dateString) {
       const date = dayjs(dateString);

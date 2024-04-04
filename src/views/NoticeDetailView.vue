@@ -6,7 +6,7 @@
 
                 </v-col>
 
-                <v-col cols="10">
+                <v-col cols="8">
 
                     <v-sheet class="d-flex flex-wrap mx-auto pa-10" elevation="1">
                         <div>

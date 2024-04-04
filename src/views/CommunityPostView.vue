@@ -8,26 +8,44 @@
 
                 <v-col cols="8">
 
-                    <v-sheet class="pa-10" elevation="1">
+                    <v-sheet class="d-flex flex-wrap mx-auto pa-10" elevation="1">
                         <div>
 
-                            <h2 class="font-weight-black">{{ communityStore.post.title }}</h2>
-                          <p class="text-right"> {{
-                              communityStore.formatDate(communityStore.post.createdDate) }}
-                          </p>
+                          <v-chip color="success" variant="outlined">
+                            {{ communityStore.post.writer }}
+                          </v-chip>
+                          <h2 class="text-h5 font-weight-black mt-2">{{ communityStore.post.title }}</h2>
 
-                          <h4 class="text-right">
-                              작성자: {{ communityStore.post.writer }}
-                            </h4>
+                          <div class="text-h font-weight-medium mt-2">
+                            {{ communityStore.formatDate(communityStore.post.createdDate) }}
+                          </div>
 
-
-
-                            <p>
-                                <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly="true"
-                                    contentType="html" />
-                            </p>
+                          <div class="blockquote text-body-1 noticeContent">
+                            <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly="true"
+                                         contentType="html" />
+                          </div>
 
                         </div>
+
+                        <v-col class="text-right">
+                          <v-btn variant="outlined" @click="overlay = !overlay">삭제하기</v-btn>
+                        </v-col>
+
+                      <v-overlay :model-value="overlay" class="align-center justify-center">
+                        <v-card>
+                          <v-container>
+                            <v-card-title>비밀번호를 입력해주세요.</v-card-title>
+                            <v-divider></v-divider>
+                            <v-card-item>
+                              <v-text-field v-model="communityStore.password" variant="outlined"></v-text-field>
+                            </v-card-item>
+                            <v-card-actions>
+                              <v-btn variant="text" color="error" @click="communityStore.delete()">삭제하기</v-btn>
+                              <v-btn variant="text" color="info" @click="overlay = !overlay">닫기</v-btn>
+                            </v-card-actions>
+                          </v-container>
+                        </v-card>
+                      </v-overlay>
                     </v-sheet>
 
                 </v-col>
@@ -37,6 +55,8 @@
                 </v-col>
             </v-row>
         </v-lazy>
+
+
     </v-container>
 </template>
 
@@ -59,6 +79,12 @@ export default {
         return {
           communityStore
         }
+    },
+
+    data(){
+      return {
+        overlay: null,
+      }
     },
 
     created() {
