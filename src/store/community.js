@@ -42,6 +42,7 @@ export const useCommunityStore = defineStore("communityStore", {
     post: Object,
     posts: [],
     lastLoadedId: 0,
+    ready: false
   }),
 
 

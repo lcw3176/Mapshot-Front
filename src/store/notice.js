@@ -23,7 +23,7 @@ export const useNoticeStore = defineStore("noticeStore", {
     notice: Object,
     notices: [],
     lastLoadedId: 0,
-    loading: false,
+    ready: false,
   }),
 
 
@@ -34,25 +34,19 @@ export const useNoticeStore = defineStore("noticeStore", {
   actions: {
     async loadPost(id) {
       this.notice = '';
-      this.loading = true;
+      this.notice = await getContent(id);
 
-      let data = await getContent(id);
-      this.notice = data;
-
-      this.loading = false;
     },
 
     async infiniteHandler($state) {
       if (this.lastLoadedId === 1) {
         return;
       }
-      this.loading = true;
 
       let data = await getSummary(this.lastLoadedId);
 
-      this.loading = false;
 
-      if (this.lastLoadedId != 1) {
+      if (this.lastLoadedId !== 1) {
 
         data.forEach(element => {
           this.notices.push(element);

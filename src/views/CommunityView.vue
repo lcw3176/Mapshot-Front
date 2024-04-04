@@ -1,7 +1,7 @@
 <template>
     <v-container is-fluid>
 
-        <v-lazy transition="fade-transition">
+        <v-lazy transition="fade-transition" v-model="communityStore.ready" :options="{threshold: .5}">
             <v-row>
                 <v-col>
 
@@ -62,6 +62,7 @@
 
 <script>
 import { useCommunityStore } from '@/store/community';
+
 import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
 
@@ -80,8 +81,9 @@ export default {
         const communityStore = useCommunityStore();
 
         communityStore.loadPostList(communityStore.lastLoadedId);
+
         return {
-          communityStore
+          communityStore,
         }
     },
 }

@@ -1,7 +1,7 @@
 <template>
     <v-container is-fluid>
 
-        <v-lazy transition="fade-transition">
+        <v-lazy transition="fade-transition" v-model="noticeStore.ready" :options="{threshold: .5}">
             <v-row>
                 <v-col>
 
