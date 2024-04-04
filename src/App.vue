@@ -71,6 +71,7 @@ export default {
         { title: "공지사항", path: "/notice" },
         { title: "문의", path: "/contact" },
         { title: "FAQ", path: "/faq" },
+        { title: "게시판", path: "/community" }
       ],
 
 
