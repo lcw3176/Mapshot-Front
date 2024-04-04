@@ -11,7 +11,7 @@ async function getContent(id) {
 
 async function registerPost(post) {
   try{
-    const response = await axios.post(apiUrl + '/post/register', {
+    await axios.post(apiUrl + '/post/register', {
       title: post.title,
       content: post.content,
       password: post.password,
@@ -52,10 +52,12 @@ export const useCommunityStore = defineStore("communityStore", {
 
   actions: {
     async loadSinglePost(id) {
+      this.post = '';
       this.post = await getContent(id);
     },
 
     async loadPostList(id) {
+      this.posts = '';
       this.posts = await getContentList(id);
     },
 
