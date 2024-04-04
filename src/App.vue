@@ -37,9 +37,9 @@
 
     <v-main>
       <router-view></router-view>
-
-      <AdsView />
+<!--      <AdsView />-->
     </v-main>
+
 
 
   </v-layout>
