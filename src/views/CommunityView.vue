@@ -112,12 +112,15 @@ export default {
     setup() {
         const communityStore = useCommunityStore();
 
-        communityStore.loadPostList(communityStore.lastLoadedId);
-
         return {
           communityStore,
         }
     },
+
+    created () {
+      this.communityStore.loadPostList(this.communityStore.lastLoadedId);
+
+    }
 }
 
 </script>
