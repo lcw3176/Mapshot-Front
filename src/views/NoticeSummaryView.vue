@@ -2,7 +2,7 @@
     <v-container is-fluid>
 
         <v-lazy transition="fade-transition" v-model="noticeStore.ready" :options="{threshold: .5}">
-            <v-row>
+            <v-row v-if="display.mdAndUp">
                 <v-col>
 
                 </v-col>
@@ -14,7 +14,7 @@
                                 <th class="text-left">
                                     No
                                 </th>
-                                <th class="text-left" v-if="display.mdAndUp">
+                                <th class="text-left">
                                     카테고리
                                 </th>
 
@@ -22,7 +22,7 @@
                                     제목
                                 </th>
 
-                                <th class="text-left" v-if="display.mdAndUp">
+                                <th class="text-left">
                                     작성일
                                 </th>
                             </tr>
@@ -31,7 +31,7 @@
                             <tr v-for="notice in noticeStore.notices" :key="notice.id">
 
                                 <td>{{ notice.id }}</td>
-                                <td v-if="display.mdAndUp">
+                                <td>
                                     <v-chip :color=noticeStore.getNoticeTypeClass(notice.noticeType) variant="outlined">
                                         {{ notice.noticeType }}
                                     </v-chip>
@@ -39,7 +39,7 @@
                                 <td><v-list-item :to="{ path: `/notice/detail/${notice.id}` }"> {{ notice.title
                                 }}</v-list-item>
                                 </td>
-                                <td v-if="display.mdAndUp">{{ noticeStore.formatDate(notice.createdDate) }}</td>
+                                <td>{{ noticeStore.formatDate(notice.createdDate) }}</td>
                             </tr>
                         </tbody>
                     </v-table>
@@ -50,6 +50,33 @@
 
                 </v-col>
             </v-row>
+
+
+          <v-row v-else>
+
+            <v-col>
+              <v-table>
+                <thead>
+                <tr>
+                  <th class="text-left">
+                    제목
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="notice in noticeStore.notices" :key="notice.id">
+
+                  <td>
+                    <v-list-item :to="{ path: `/notice/detail/${notice.id}` }">
+                      {{ notice.title }}
+                    </v-list-item>
+                  </td>
+                </tr>
+                </tbody>
+              </v-table>
+
+            </v-col>
+          </v-row>
         </v-lazy>
     </v-container>
 

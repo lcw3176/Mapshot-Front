@@ -1,7 +1,7 @@
 <template>
     <v-container is-fluid>
         <v-lazy transition="fade-transition" v-model="noticeStore.ready" :options="{threshold: .5}">
-            <v-row>
+            <v-row v-if="display.mdAndUp">
                 <v-col>
 
                 </v-col>
@@ -15,8 +15,8 @@
                             </v-chip>
                             <h2 class="text-h5 font-weight-black mt-2">{{ noticeStore.notice.title }}</h2>
 
-                            <div class="text-h font-weight-medium mt-2"> {{
-                                noticeStore.formatDate(noticeStore.notice.createdDate) }}
+                            <div class="text-h font-weight-medium mt-2">
+                              {{ noticeStore.formatDate(noticeStore.notice.createdDate) }}
                             </div>
 
 
@@ -34,6 +34,33 @@
 
                 </v-col>
             </v-row>
+
+
+          <v-row v-else>
+            <v-col>
+
+              <v-sheet>
+                <div>
+                  <v-chip :color=noticeStore.getNoticeTypeClass(noticeStore.notice.noticeType) variant="outlined">
+                    {{ noticeStore.notice.noticeType }}
+                  </v-chip>
+                  <h2 class="text-h5 font-weight-black mt-2">{{ noticeStore.notice.title }}</h2>
+
+                  <div class="text-h font-weight-medium mt-2">
+                    {{ noticeStore.formatDate(noticeStore.notice.createdDate) }}
+                  </div>
+
+
+                  <div class="blockquote text-body-1 noticeContent">
+                    <QuillEditor v-model:content="noticeStore.notice.content" theme="bubble" readOnly="true"
+                                 contentType="html" />
+                  </div>
+
+                </div>
+              </v-sheet>
+
+            </v-col>
+          </v-row>
         </v-lazy>
     </v-container>
 </template>
