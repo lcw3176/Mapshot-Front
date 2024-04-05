@@ -71,6 +71,9 @@ import { useNoticeStore } from '@/store/notice';
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.bubble.css';
 
+import { ref } from 'vue'
+import { useDisplay } from 'vuetify'
+
 export default {
     name: 'NoticeDetailView',
     components: {
@@ -85,6 +88,15 @@ export default {
             noticeStore
         }
     },
+
+  data() {
+    const display = ref(useDisplay());
+
+
+    return {
+      display
+    }
+  },
 
     created() {
         this.noticeStore.loadPost(this.postNumber);
