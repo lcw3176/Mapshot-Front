@@ -2,7 +2,7 @@
     <v-container is-fluid>
 
         <v-lazy transition="fade-transition" v-model="communityStore.ready" :options="{threshold: .5}">
-            <v-row>
+            <v-row v-if="display.mdAndUp">
                 <v-col>
 
                 </v-col>
@@ -22,7 +22,7 @@
                                 작성자
                               </th>
 
-                                <th class="text-left" v-if="display.mdAndUp">
+                                <th class="text-left">
                                     작성일
                                 </th>
                             </tr>
@@ -36,7 +36,7 @@
                                 </v-list-item>
                                 </td>
                                 <td>{{ post.writer }}</td>
-                                <td v-if="display.mdAndUp">{{ communityStore.formatDate(post.createdDate) }}</td>
+                                <td>{{ communityStore.formatDate(post.createdDate) }}</td>
                             </tr>
                         </tbody>
 
@@ -55,6 +55,38 @@
 
                 </v-col>
             </v-row>
+
+
+          <v-row v-else>
+
+            <v-col>
+              <v-table>
+                <thead>
+                <tr>
+                  <th class="text-left">
+                    제목
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="post in communityStore.posts" :key="post.id">
+                  <td><v-list-item :to="{ path: `/community/${post.id}` }">
+                    {{ post.title }}
+                  </v-list-item>
+                  </td>
+                </tr>
+                </tbody>
+
+              </v-table>
+
+              <v-col class="text-right">
+                <v-btn variant="outlined" to="/community/register">글쓰기</v-btn>
+              </v-col>
+
+
+              <v-pagination :length="4"></v-pagination>
+            </v-col>
+          </v-row>
         </v-lazy>
     </v-container>
 
