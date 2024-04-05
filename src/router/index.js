@@ -42,20 +42,20 @@ const routes = [
   {
     path: '/community',
     name: 'community',
-    component: () => import(/* webpackChunkName: "faq" */ '../views/CommunityView.vue')
+    component: () => import(/* webpackChunkName: "community" */ '../views/CommunityView.vue')
   },
 
   {
     path: '/community/:postNumber',
     name: 'communityPost',
-    component: () => import(/* webpackChunkName: "faq" */ '../views/CommunityPostView.vue'),
+    component: () => import(/* webpackChunkName: "communityPost" */ '../views/CommunityPostView.vue'),
     props: true
   },
 
   {
     path: '/community/register',
     name: 'communityRegister',
-    component: () => import(/* webpackChunkName: "faq" */ '../views/CommunityRegisterView.vue')
+    component: () => import(/* webpackChunkName: "communityRegister" */ '../views/CommunityRegisterView.vue')
   },
 ]
 
