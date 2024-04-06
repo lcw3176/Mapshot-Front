@@ -1,5 +1,4 @@
 <template>
-  {{ this.communityStore.isReady}}
     <v-container is-fluid>
 
 
