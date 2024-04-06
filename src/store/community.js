@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 
 const apiUrl = process.env.VUE_APP_API_URL;
 
+
 async function getPost(id) {
   const response = await axios.get(apiUrl + '/post/detail/' + id);
   return response.data;
@@ -55,7 +56,7 @@ export const useCommunityStore = defineStore("communityStore", {
     post: Object,
     posts: [],
     lastLoadedId: 0,
-    ready: false,
+    loading: false,
     password: '',
   }),
 
@@ -65,14 +66,24 @@ export const useCommunityStore = defineStore("communityStore", {
   },
 
   actions: {
+
     async loadSinglePost(id) {
+      this.loading = true;
+
+
       this.post = '';
       this.post = await getPost(id);
+
+      this.loading = false;
     },
 
     async loadPostList(id) {
+      this.loading = true;
+
       this.posts = '';
       this.posts = await getPostList(id);
+
+      this.loading = false;
     },
 
     async register() {

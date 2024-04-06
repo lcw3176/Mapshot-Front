@@ -23,7 +23,7 @@ export const useNoticeStore = defineStore("noticeStore", {
     notice: Object,
     notices: [],
     lastLoadedId: 0,
-    ready: false,
+    loading: false,
   }),
 
 
@@ -33,15 +33,20 @@ export const useNoticeStore = defineStore("noticeStore", {
 
   actions: {
     async loadPost(id) {
+      this.loading = true;
+
       this.notice = '';
       this.notice = await getContent(id);
 
+      this.loading = false;
     },
 
     async infiniteHandler($state) {
       if (this.lastLoadedId === 1) {
         return;
       }
+
+      this.loading = true;
 
       let data = await getSummary(this.lastLoadedId);
 
@@ -58,6 +63,7 @@ export const useNoticeStore = defineStore("noticeStore", {
 
       }
 
+      this.loading = false;
     },
 
     formatDate(dateString) {

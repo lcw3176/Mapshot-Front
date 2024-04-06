@@ -1,14 +1,24 @@
 <template>
+  {{ this.communityStore.isReady}}
     <v-container is-fluid>
 
-        <v-lazy transition="fade-transition" v-model="communityStore.ready" :options="{threshold: .5}">
+
             <v-row v-if="display.mdAndUp">
                 <v-col>
 
                 </v-col>
 
-                <v-col cols="8">
-                    <v-table>
+                <v-col cols="8"  v-if="this.communityStore.loading" >
+                  <v-skeleton-loader type="table">
+
+
+                  </v-skeleton-loader>
+
+                </v-col>
+
+              <v-col cols="8"  v-else >
+                      <v-table  class="text-body-1">
+
                         <thead>
                             <tr>
                                 <th class="text-left">
@@ -40,15 +50,14 @@
                             </tr>
                         </tbody>
 
-
-                    </v-table>
-
+                      </v-table>
                   <v-col class="text-right">
                     <v-btn variant="outlined" to="/community/register">글쓰기</v-btn>
                   </v-col>
 
 
                   <v-pagination :length="4"></v-pagination>
+
                 </v-col>
 
                 <v-col>
@@ -59,7 +68,14 @@
 
           <v-row v-else>
 
-            <v-col>
+            <v-col v-if="this.communityStore.loading" >
+              <v-skeleton-loader type="table">
+
+              </v-skeleton-loader>
+            </v-col>
+
+            <v-col v-else>
+
               <v-table>
                 <thead>
                 <tr>
@@ -85,9 +101,9 @@
 
 
               <v-pagination :length="4"></v-pagination>
+
             </v-col>
           </v-row>
-        </v-lazy>
     </v-container>
 
 </template>

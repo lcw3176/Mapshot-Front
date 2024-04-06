@@ -1,13 +1,22 @@
 <template>
     <v-container is-fluid>
 
-        <v-lazy transition="fade-transition" v-model="noticeStore.ready" :options="{threshold: .5}">
+
             <v-row v-if="display.mdAndUp">
                 <v-col>
 
                 </v-col>
 
-                <v-col cols="8">
+              <v-col cols="8"  v-if="this.noticeStore.loading" >
+                <v-skeleton-loader type="table">
+
+
+                </v-skeleton-loader>
+
+              </v-col>
+
+
+              <v-col v-else cols="8">
                     <v-table>
                         <thead>
                             <tr>
@@ -54,7 +63,16 @@
 
           <v-row v-else>
 
-            <v-col>
+            <v-col v-if="this.noticeStore.loading" >
+              <v-skeleton-loader type="table">
+
+
+              </v-skeleton-loader>
+
+            </v-col>
+
+
+            <v-col v-else>
               <v-table>
                 <thead>
                 <tr>
@@ -77,7 +95,7 @@
 
             </v-col>
           </v-row>
-        </v-lazy>
+
     </v-container>
 
     <InfiniteLoading @infinite="noticeStore.infiniteHandler">
