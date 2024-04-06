@@ -17,7 +17,7 @@
 
 
               <v-col v-else cols="8">
-                    <v-table>
+                    <v-table class="text-body-1">
                         <thead>
                             <tr>
                                 <th class="text-left">
