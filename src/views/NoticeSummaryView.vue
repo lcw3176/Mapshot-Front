@@ -52,7 +52,7 @@
             </tbody>
           </v-table>
 
-          <v-pagination :length="noticeStore.totalPage"></v-pagination>
+          <v-pagination v-model="noticeStore.nowPage" @click="noticeStore.loadPostList(noticeStore.nowPage)"  :length="noticeStore.totalPage"></v-pagination>
 
         </v-col>
 
