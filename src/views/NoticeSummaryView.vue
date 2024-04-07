@@ -108,7 +108,6 @@
 </template>
 
 <script>
-import InfiniteLoading from 'v3-infinite-loading';
 import { useNoticeStore } from '@/store/notice';
 import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
@@ -125,10 +124,6 @@ export default {
             display
 
         }
-    },
-
-    components: {
-        InfiniteLoading,
     },
 
     setup() {
