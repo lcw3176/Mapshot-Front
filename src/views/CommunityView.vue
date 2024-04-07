@@ -1,7 +1,5 @@
 <template>
     <v-container is-fluid>
-
-
             <v-row v-if="display.mdAndUp">
                 <v-col>
 
@@ -55,7 +53,7 @@
                   </v-col>
 
 
-                  <v-pagination :length="4"></v-pagination>
+                  <v-pagination :length="communityStore.totalPage"></v-pagination>
 
                 </v-col>
 
@@ -99,7 +97,7 @@
               </v-col>
 
 
-              <v-pagination :length="4"></v-pagination>
+              <v-pagination :length="communityStore.totalPage"></v-pagination>
 
             </v-col>
           </v-row>
@@ -133,7 +131,7 @@ export default {
     },
 
     created () {
-      this.communityStore.loadPostList(this.communityStore.lastLoadedId);
+      this.communityStore.loadPostList(this.communityStore.nowPage);
 
     }
 }

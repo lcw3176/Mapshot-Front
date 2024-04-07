@@ -1,18 +1,26 @@
 import { defineStore } from "pinia";
-import axios from 'axios';
 import dayjs from 'dayjs';
+
+import axios from 'axios';
+import { cacheAdapterEnhancer } from 'axios-extensions';
+
+const api = axios.create({
+  headers: { 'Cache-Control': 'no-cache' },
+  adapter: cacheAdapterEnhancer(axios.getAdapter(axios.defaults.adapter)),
+});
+
 
 const apiUrl = process.env.VUE_APP_API_URL;
 
 
 async function getPost(id) {
-  const response = await axios.get(apiUrl + '/post/detail/' + id);
+  const response = await api.get(apiUrl + '/post/' + id);
   return response.data;
 }
 
 async function registerPost(post) {
   try{
-    await axios.post(apiUrl + '/post/register', {
+    await api.post(apiUrl + '/post/register', {
       title: post.title,
       content: post.content,
       password: post.password,
@@ -31,13 +39,14 @@ async function registerPost(post) {
 
 
 async function getPostList(id) {
-  const response = await axios.get(apiUrl + '/post/' + id);
+  const response = await api.get(apiUrl + '/post?page=' + id);
+
   return response.data;
 }
 
 async function deletePost(id, password) {
   try{
-    await axios.get(apiUrl + '/post/delete/' + id + '?password=' + password);
+    await api.get(apiUrl + '/post/delete/' + id + '?password=' + password);
 
     return true;
 
@@ -55,9 +64,10 @@ export const useCommunityStore = defineStore("communityStore", {
   state: () => ({
     post: Object,
     posts: [],
-    lastLoadedId: 0,
+    nowPage: 0,
     loading: false,
     password: '',
+    totalPage: 0,
   }),
 
 
@@ -81,7 +91,10 @@ export const useCommunityStore = defineStore("communityStore", {
       this.loading = true;
 
       this.posts = '';
-      this.posts = await getPostList(id);
+      let data = await getPostList(id);
+
+      this.totalPage = data.totalPage;
+      this.posts = data.posts;
 
       this.loading = false;
     },

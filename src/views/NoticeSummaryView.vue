@@ -1,106 +1,110 @@
 <template>
     <v-container is-fluid>
 
+      <v-row v-if="display.mdAndUp">
+        <v-col>
 
-            <v-row v-if="display.mdAndUp">
-                <v-col>
+        </v-col>
 
-                </v-col>
-
-              <v-col cols="8"  v-if="this.noticeStore.loading" >
-                <v-skeleton-loader type="table">
-
-
-                </v-skeleton-loader>
-
-              </v-col>
+        <v-col cols="8"  v-if="this.noticeStore.loading" >
+          <v-skeleton-loader type="table">
 
 
-              <v-col v-else cols="8">
-                    <v-table class="text-body-1">
-                        <thead>
-                            <tr>
-                                <th class="text-left">
-                                    No
-                                </th>
-                                <th class="text-left">
-                                    카테고리
-                                </th>
+          </v-skeleton-loader>
 
-                                <th class="text-left">
-                                    제목
-                                </th>
-
-                                <th class="text-left">
-                                    작성일
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="notice in noticeStore.notices" :key="notice.id">
-
-                                <td>{{ notice.id }}</td>
-                                <td>
-                                    <v-chip :color=noticeStore.getNoticeTypeClass(notice.noticeType) variant="outlined">
-                                        {{ notice.noticeType }}
-                                    </v-chip>
-                                </td>
-                                <td><v-list-item :to="{ path: `/notice/detail/${notice.id}` }"> {{ notice.title
-                                }}</v-list-item>
-                                </td>
-                                <td>{{ noticeStore.formatDate(notice.createdDate) }}</td>
-                            </tr>
-                        </tbody>
-                    </v-table>
-
-                </v-col>
-
-                <v-col>
-
-                </v-col>
-            </v-row>
+        </v-col>
 
 
-          <v-row v-else>
+        <v-col v-else cols="8">
+          <v-table class="text-body-1">
+            <thead>
+            <tr>
+              <th class="text-left">
+                No
+              </th>
+              <th class="text-left">
+                카테고리
+              </th>
 
-            <v-col v-if="this.noticeStore.loading" >
-              <v-skeleton-loader type="table">
+              <th class="text-left">
+                제목
+              </th>
+
+              <th class="text-left">
+                작성일
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="notice in noticeStore.notices" :key="notice.id">
+
+              <td>{{ notice.id }}</td>
+              <td>
+                <v-chip :color=noticeStore.getNoticeTypeClass(notice.noticeType) variant="outlined">
+                  {{ notice.noticeType }}
+                </v-chip>
+              </td>
+              <td><v-list-item :to="{ path: `/notice/detail/${notice.id}` }"> {{ notice.title
+                }}</v-list-item>
+              </td>
+              <td>{{ noticeStore.formatDate(notice.createdDate) }}</td>
+            </tr>
+            </tbody>
+          </v-table>
+
+        </v-col>
+
+        <v-pagination :length="noticeStore.totalPage"></v-pagination>
+
+        <v-col>
+
+        </v-col>
+      </v-row>
 
 
-              </v-skeleton-loader>
-
-            </v-col>
 
 
-            <v-col v-else>
-              <v-table>
-                <thead>
-                <tr>
-                  <th class="text-left">
-                    제목
-                  </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="notice in noticeStore.notices" :key="notice.id">
+      <v-row v-else>
 
-                  <td>
-                    <v-list-item :to="{ path: `/notice/detail/${notice.id}` }">
-                      {{ notice.title }}
-                    </v-list-item>
-                  </td>
-                </tr>
-                </tbody>
-              </v-table>
+        <v-col v-if="this.noticeStore.loading" >
+          <v-skeleton-loader type="table">
 
-            </v-col>
-          </v-row>
+          </v-skeleton-loader>
+        </v-col>
 
+        <v-col v-else>
+
+          <v-table>
+            <thead>
+            <tr>
+              <th class="text-left">
+                제목
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="notice in noticeStore.notices" :key="notice.id">
+
+              <td>
+                <v-list-item :to="{ path: `/notice/detail/${notice.id}` }">
+                  {{ notice.title }}
+                </v-list-item>
+              </td>
+            </tr>
+            </tbody>
+          </v-table>
+
+          <v-col class="text-right">
+            <v-btn variant="outlined" to="/community/register">글쓰기</v-btn>
+          </v-col>
+
+
+          <v-pagination :length="noticeStore.totalPage"></v-pagination>
+
+        </v-col>
+      </v-row>
     </v-container>
 
-    <InfiniteLoading @infinite="noticeStore.infiniteHandler">
-
-    </InfiniteLoading>
 </template>
 
 <script>
@@ -134,6 +138,11 @@ export default {
             noticeStore
         }
     },
+
+  created () {
+    this.noticeStore.loadPostList(this.noticeStore.nowPage);
+
+  }
 }
 
 </script>
