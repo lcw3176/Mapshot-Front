@@ -52,9 +52,9 @@
             </tbody>
           </v-table>
 
-        </v-col>
+          <v-pagination :length="noticeStore.totalPage"></v-pagination>
 
-        <v-pagination :length="noticeStore.totalPage"></v-pagination>
+        </v-col>
 
         <v-col>
 
