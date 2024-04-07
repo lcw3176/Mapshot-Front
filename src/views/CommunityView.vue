@@ -97,7 +97,7 @@
               </v-col>
 
 
-              <v-pagination :length="communityStore.totalPage"></v-pagination>
+              <v-pagination v-model="communityStore.nowPage" @click="communityStore.loadPostList(communityStore.nowPage)" :length="communityStore.totalPage"></v-pagination>
 
             </v-col>
           </v-row>
