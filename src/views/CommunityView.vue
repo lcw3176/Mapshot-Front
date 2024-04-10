@@ -92,6 +92,13 @@
                 <tr v-for="post in communityStore.posts" :key="post.id">
                   <td><v-list-item :to="{ path: `/community/${post.id}` }">
                     {{ post.title }}
+                    <template v-slot:append v-if="post.commentCount !== 0">
+                      <v-badge
+                        color="success"
+                        :content="post.commentCount"
+                        inline
+                      ></v-badge>
+                    </template>
                   </v-list-item>
                   </td>
                 </tr>

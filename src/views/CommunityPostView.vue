@@ -150,6 +150,40 @@
                   </v-card>
                 </v-overlay>
 
+              <v-sheet class="d-flex flex-wrap mx-auto ma-5 pr-5 pl-5" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
+
+                <v-row>
+                  <v-col>
+                    {{ comment.writer }}
+                  </v-col>
+
+                  <v-col class="text-body-1">
+                    {{ comment.content }}
+                  </v-col>
+
+                </v-row>
+                <v-divider class="mt-2"></v-divider>
+              </v-sheet>
+
+              <v-textarea class="mt-10" label="댓글" variant="outlined" v-model="this.communityStore.comment.content"></v-textarea>
+
+              <v-row>
+                <v-col cols="4">
+                  <v-text-field label="비밀번호" variant="outlined"  v-model="this.communityStore.comment.password">
+
+                  </v-text-field>
+                </v-col>
+
+                <v-col>
+
+
+                </v-col>
+
+                <v-col>
+                  <v-btn variant="flat" size="large" color="#5865f2" @click="this.communityStore.registerComment(this.postNumber)">입력하기</v-btn>
+                </v-col>
+              </v-row>
+
             </v-col>
           </v-row>
         </v-lazy>
