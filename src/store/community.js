@@ -58,13 +58,50 @@ async function deletePost(id, password) {
 }
 
 
+async function getComments(page, postId) {
+  const response = await api.get(apiUrl + '/comment?page=' + page + '&postId=' + postId);
+
+  return response.data;
+}
+
+
+
+async function registerComment(comment) {
+  try{
+    await api.post(apiUrl + '/comment/register', {
+      content: comment.content,
+      password: comment.password,
+      writer: comment.writer,
+      postId: comment.postId,
+    });
+
+    return true;
+
+  } catch (e){
+
+    return false;
+  }
+
+}
+
+
 
 export const useCommunityStore = defineStore("communityStore", {
 
   state: () => ({
     post: Object,
     posts: [],
-    nowPage: 0,
+
+    comment: {
+      password: '',
+      content: '',
+      postId: '',
+      writer: '',
+    },
+    comments: [],
+    commentPage: 1,
+
+    nowPage: 1,
     loading: false,
     password: '',
     totalPage: 0,
@@ -99,7 +136,20 @@ export const useCommunityStore = defineStore("communityStore", {
       this.loading = false;
     },
 
-    async register() {
+    async loadComments(page, id) {
+      this.loading = true;
+
+      this.comments = '';
+      let data = await getComments(page, id);
+
+      this.totalPage = data.totalPage;
+      this.comments = data.comments;
+
+      this.loading = false;
+    },
+
+
+    async registerPost() {
       this.post.writer = (Math.random() + 1).toString(36).substring(7);
 
       let success = await registerPost(this.post);
@@ -112,7 +162,7 @@ export const useCommunityStore = defineStore("communityStore", {
       }
     },
 
-    async delete(){
+    async deletePost(){
       let success = await deletePost(this.post.id, this.password);
 
       if(success){
@@ -120,6 +170,20 @@ export const useCommunityStore = defineStore("communityStore", {
         window.location.href = "/community";
       } else {
         alert("삭제에 실패했습니다.");
+      }
+    },
+
+
+    async registerComment(postId) {
+      this.comment.writer = (Math.random() + 1).toString(36).substring(7);
+      this.comment.postId = postId;
+
+      let success = await registerComment(this.comment);
+
+      if(success){
+        location.reload();
+      } else {
+        alert("등록에 실패했습니다.");
       }
     },
 

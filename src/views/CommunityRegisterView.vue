@@ -15,7 +15,7 @@
             <QuillEditor v-model:content="communityStore.post.content" theme="snow" contentType="html" style="height: 500px;" />
 
             <v-col class="text-right">
-              <v-btn class="text-right" color="success" @click="communityStore.register()">
+              <v-btn class="text-right" color="success" @click="communityStore.registerPost()">
                 등록하기
               </v-btn>
             </v-col>
@@ -42,7 +42,7 @@
             <QuillEditor v-model:content="communityStore.post.content" theme="snow" contentType="html" style="height: 500px;" />
 
             <v-col class="text-right">
-              <v-btn class="text-right" color="success" @click="communityStore.register()">
+              <v-btn class="text-right" color="success" @click="communityStore.registerPost()">
                 등록하기
               </v-btn>
             </v-col>
