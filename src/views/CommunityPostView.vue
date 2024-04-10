@@ -49,7 +49,7 @@
                               <v-text-field v-model="communityStore.password" variant="outlined"></v-text-field>
                             </v-card-item>
                             <v-card-actions>
-                              <v-btn variant="text" color="error" @click="communityStore.delete()">삭제하기</v-btn>
+                              <v-btn variant="text" color="error" @click="communityStore.deletePost()">삭제하기</v-btn>
                               <v-btn variant="text" color="info" @click="overlay = !overlay">닫기</v-btn>
                             </v-card-actions>
                           </v-container>
@@ -57,7 +57,45 @@
                       </v-overlay>
                     </v-sheet>
 
-                </v-col>
+                <v-sheet class="d-flex flex-wrap mx-auto ma-5 pr-5 pl-5" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
+
+                  <v-row>
+                    <v-col cols="2">
+                      {{ comment.writer }}
+                    </v-col>
+
+                    <v-col class="text-body-1">
+                      {{ comment.content }}
+                    </v-col>
+
+                    <v-col cols="2">
+                      {{ communityStore.formatDate(comment.createdDate) }}
+                    </v-col>
+
+                  </v-row>
+                  <v-divider class="mt-2"></v-divider>
+                </v-sheet>
+
+                <v-textarea class="mt-10" label="댓글" variant="outlined" v-model="this.communityStore.comment.content"></v-textarea>
+
+                <v-row>
+                  <v-col cols="4">
+                    <v-text-field label="비밀번호" variant="outlined"  v-model="this.communityStore.comment.password">
+
+                    </v-text-field>
+                  </v-col>
+
+                  <v-col>
+
+
+                  </v-col>
+
+                  <v-col class="text-right" cols="2">
+                    <v-btn variant="flat" size="large" color="#5865f2" @click="this.communityStore.registerComment(this.postNumber)">입력하기</v-btn>
+                  </v-col>
+                </v-row>
+
+              </v-col>
 
                 <v-col>
 
@@ -105,7 +143,7 @@
                         <v-text-field v-model="communityStore.password" variant="outlined"></v-text-field>
                       </v-card-item>
                       <v-card-actions>
-                        <v-btn variant="text" color="error" @click="communityStore.delete()">삭제하기</v-btn>
+                        <v-btn variant="text" color="error" @click="communityStore.deletePost()">삭제하기</v-btn>
                         <v-btn variant="text" color="info" @click="overlay = !overlay">닫기</v-btn>
                       </v-card-actions>
                     </v-container>
@@ -155,6 +193,7 @@ export default {
 
     created() {
         this.communityStore.loadSinglePost(this.postNumber);
+        this.communityStore.loadComments(this.communityStore.commentPage, this.postNumber);
     },
 
 
