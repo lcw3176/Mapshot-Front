@@ -29,10 +29,8 @@
                             {{ communityStore.formatDate(communityStore.post.createdDate) }}
                           </div>
 
-                          <div class="blockquote text-body-1 noticeContent">
-                            <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly="true"
-                                         contentType="html" />
-                          </div>
+                          <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly="true"
+                                       contentType="html" class="blockquote text-body-1" />
 
                         </div>
 
@@ -123,10 +121,8 @@
                     {{ communityStore.formatDate(communityStore.post.createdDate) }}
                   </div>
 
-                  <div class="blockquote text-body-1 noticeContent">
-                    <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly="true"
-                                 contentType="html" />
-                  </div>
+                  <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly="true"
+                               contentType="html" class="blockquote text-body-1" />
 
                 </div>
 
