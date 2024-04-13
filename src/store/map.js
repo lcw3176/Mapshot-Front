@@ -72,7 +72,7 @@ export const useMapStore = defineStore("map", {
     progressBarValue: 0,
     progressBarMax: 100,
     progressBarLoading: false,
-    
+
     baseMapStyles: {
       '일반': kakao.maps.MapTypeId.ROADMAP,
       '위성': kakao.maps.MapTypeId.SKYVIEW,
@@ -274,7 +274,7 @@ export const useMapStore = defineStore("map", {
       this.progressBarLoading = true;
       let fileName = this.bunziAddress;
       let expectedEndTime = new Date();
-      expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 30);
+      expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 60);
 
       this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
 
@@ -337,7 +337,7 @@ export const useMapStore = defineStore("map", {
       this.progressBarLoading = true;
       let fileName = this.bunziAddress;
       let expectedEndTime = new Date();
-      expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 30);
+      expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 60);
 
       this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
 
@@ -358,7 +358,7 @@ export const useMapStore = defineStore("map", {
       let count = 0;
 
       let data = await requsetImage(this.proxyProfile.getQueryString());
-      
+
       this.progressBarLoading = false;
 
 
@@ -429,7 +429,7 @@ export const useMapStore = defineStore("map", {
     },
 
     async mapOnClick(mouseEvent) {
-      // 클릭한 위도, 경도 정보를 가져옵니다 
+      // 클릭한 위도, 경도 정보를 가져옵니다
       let latlng = mouseEvent.latLng;
 
       this.lat = latlng.getLat();
@@ -483,20 +483,20 @@ export const useMapStore = defineStore("map", {
 
     async changeCompany(company, event) {
       this.company = company;
-      
+
       if(this.company !== "naver"){
         this.proxyProfile.setCompanyType(this.company);
       }
-      
+
       if (this.company !== this.companyArr['카카오'] && this.layerMode) {
         this.layerMode = false;
       }
 
     },
 
-    async changeMapStyle(mapStyle) { 
+    async changeMapStyle(mapStyle) {
       this.currentMapStyle = mapStyle;
-      this.map.setMapTypeId(this.currentMapStyle); 
+      this.map.setMapTypeId(this.currentMapStyle);
     },
 
     // 이하 카카오 지도 api 문서 코드
