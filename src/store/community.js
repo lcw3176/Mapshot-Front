@@ -100,6 +100,7 @@ export const useCommunityStore = defineStore("communityStore", {
     },
     comments: [],
     commentPage: 1,
+    commentTotalPage: 1,
 
     nowPage: 1,
     loading: false,
@@ -142,7 +143,7 @@ export const useCommunityStore = defineStore("communityStore", {
       this.comments = '';
       let data = await getComments(page, id);
 
-      this.totalPage = data.totalPage;
+      this.commentTotalPage = data.totalPage;
       this.comments = data.comments;
 
       this.loading = false;

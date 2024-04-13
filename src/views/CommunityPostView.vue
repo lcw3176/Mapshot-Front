@@ -74,6 +74,8 @@
                   <v-divider class="mt-2"></v-divider>
                 </v-sheet>
 
+                <v-pagination v-model="communityStore.commentPage" @click="communityStore.loadComments(this.communityStore.commentPage, this.postNumber)" :length="communityStore.commentTotalPage"></v-pagination>
+
                 <v-textarea class="mt-10" label="댓글" variant="outlined" v-model="this.communityStore.comment.content"></v-textarea>
 
                 <v-row>
@@ -160,6 +162,7 @@
                 </v-row>
                 <v-divider class="mt-2"></v-divider>
               </v-sheet>
+              <v-pagination v-model="communityStore.commentPage" @click="communityStore.loadComments(this.communityStore.commentPage, this.postNumber)" :length="communityStore.commentTotalPage"></v-pagination>
 
               <v-textarea class="mt-10" label="댓글" variant="outlined" v-model="this.communityStore.comment.content"></v-textarea>
 
