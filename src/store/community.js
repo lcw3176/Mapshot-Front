@@ -85,6 +85,20 @@ async function registerComment(comment) {
 }
 
 
+async function deleteComment(id, password) {
+  try{
+    await api.get(apiUrl + '/comment/delete/' + id + '?password=' + password);
+
+    return true;
+
+  } catch (e){
+
+    return false;
+  }
+
+}
+
+
 
 export const useCommunityStore = defineStore("communityStore", {
 
@@ -101,6 +115,8 @@ export const useCommunityStore = defineStore("communityStore", {
     comments: [],
     commentPage: 1,
     commentTotalPage: 1,
+    commentPassword: '',
+    removeCommentId: '',
 
     nowPage: 1,
     loading: false,
@@ -185,6 +201,18 @@ export const useCommunityStore = defineStore("communityStore", {
         location.reload();
       } else {
         alert("등록에 실패했습니다.");
+      }
+    },
+
+
+    async deleteComment(){
+      let success = await deleteComment(this.removeCommentId, this.commentPassword);
+
+      if(success){
+        alert("삭제 완료되었습니다.");
+        window.location.href = "/community/" + this.post.id;
+      } else {
+        alert("삭제에 실패했습니다.");
       }
     },
 

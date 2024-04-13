@@ -55,9 +55,9 @@
                       </v-overlay>
                     </v-sheet>
 
-                <v-sheet class="d-flex flex-wrap mx-auto ma-5 pr-5 pl-5" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
-
-                  <v-row>
+                <v-sheet class="d-flex flex-wrap mx-auto ma-2 pr-5 pl-5" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
+                  <v-divider class="mb-2"></v-divider>
+                  <v-row align="center">
                     <v-col cols="2">
                       {{ comment.writer }}
                     </v-col>
@@ -70,9 +70,33 @@
                       {{ communityStore.formatDate(comment.createdDate) }}
                     </v-col>
 
+                    <v-col cols="1">
+                      <v-btn
+                        icon="mdi-close"
+                        variant="text"
+                        size="x-small"
+                        @click="commentOverlay = !commentOverlay; communityStore.removeCommentId = comment.id"
+                      ></v-btn>
+                    </v-col>
+
                   </v-row>
-                  <v-divider class="mt-2"></v-divider>
                 </v-sheet>
+
+                <v-overlay :model-value="commentOverlay" class="align-center justify-center">
+                  <v-card>
+                    <v-container>
+                      <v-card-title>비밀번호를 입력해주세요.</v-card-title>
+                      <v-divider></v-divider>
+                      <v-card-item>
+                        <v-text-field v-model="communityStore.commentPassword" variant="outlined"></v-text-field>
+                      </v-card-item>
+                      <v-card-actions>
+                        <v-btn variant="text" color="error" @click="communityStore.deleteComment()">삭제하기</v-btn>
+                        <v-btn variant="text" color="info" @click="commentOverlay = !commentOverlay">닫기</v-btn>
+                      </v-card-actions>
+                    </v-container>
+                  </v-card>
+                </v-overlay>
 
                 <v-pagination v-model="communityStore.commentPage" @click="communityStore.loadComments(this.communityStore.commentPage, this.postNumber)" :length="communityStore.commentTotalPage"></v-pagination>
 
@@ -148,8 +172,8 @@
                   </v-card>
                 </v-overlay>
 
-              <v-sheet class="d-flex flex-wrap mx-auto ma-5 pr-5 pl-5" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
-
+              <v-sheet class="d-flex flex-wrap mx-auto ma-2 pr-5 pl-5" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
+                <v-divider class="mb-2"></v-divider>
                 <v-row>
                   <v-col>
                     {{ comment.writer }}
@@ -159,9 +183,35 @@
                     {{ comment.content }}
                   </v-col>
 
+                  <v-col cols="1">
+                    <v-btn
+                      icon="mdi-close"
+                      variant="text"
+                      size="x-small"
+                      @click="commentOverlay = !commentOverlay; communityStore.removeCommentId = comment.id"
+                    ></v-btn>
+                  </v-col>
+
                 </v-row>
-                <v-divider class="mt-2"></v-divider>
+
               </v-sheet>
+
+              <v-overlay :model-value="commentOverlay" class="align-center justify-center">
+                <v-card>
+                  <v-container>
+                    <v-card-title>비밀번호를 입력해주세요.</v-card-title>
+                    <v-divider></v-divider>
+                    <v-card-item>
+                      <v-text-field v-model="communityStore.commentPassword" variant="outlined"></v-text-field>
+                    </v-card-item>
+                    <v-card-actions>
+                      <v-btn variant="text" color="error" @click="communityStore.deleteComment()">삭제하기</v-btn>
+                      <v-btn variant="text" color="info" @click="commentOverlay = !commentOverlay">닫기</v-btn>
+                    </v-card-actions>
+                  </v-container>
+                </v-card>
+              </v-overlay>
+
               <v-pagination v-model="communityStore.commentPage" @click="communityStore.loadComments(this.communityStore.commentPage, this.postNumber)" :length="communityStore.commentTotalPage"></v-pagination>
 
               <v-textarea class="mt-10" label="댓글" variant="outlined" v-model="this.communityStore.comment.content"></v-textarea>
@@ -220,6 +270,7 @@ export default {
 
       return {
         overlay: null,
+        commentOverlay: null,
         display
       }
     },
