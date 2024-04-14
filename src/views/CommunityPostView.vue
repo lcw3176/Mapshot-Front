@@ -17,24 +17,20 @@
 
               <v-col v-else cols="8">
 
-                    <v-sheet class="d-flex flex-wrap mx-auto pa-10" elevation="1">
-                        <div>
+                    <v-sheet class="mx-auto pa-10"  elevation="1">
+                      <v-chip color="success" variant="outlined">
+                        {{ communityStore.post.writer }}
+                      </v-chip>
+                      <h2 class="text-h5 font-weight-black mt-2">{{ communityStore.post.title }}</h2>
 
-                          <v-chip color="success" variant="outlined">
-                            {{ communityStore.post.writer }}
-                          </v-chip>
-                          <h2 class="text-h5 font-weight-black mt-2">{{ communityStore.post.title }}</h2>
+                      <div class="text-h font-weight-medium mt-2">
+                        {{ communityStore.formatDate(communityStore.post.createdDate) }}
+                      </div>
 
-                          <div class="text-h font-weight-medium mt-2">
-                            {{ communityStore.formatDate(communityStore.post.createdDate) }}
-                          </div>
+                      <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly
+                                   contentType="html" class="blockquote text-body-1"/>
 
-                          <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly="true"
-                                       contentType="html" class="blockquote text-body-1" />
-
-                        </div>
-
-                        <v-col class="text-right">
+                      <v-col class="text-right">
                           <v-btn variant="outlined" @click="overlay = !overlay">삭제하기</v-btn>
                         </v-col>
 
@@ -55,31 +51,23 @@
                       </v-overlay>
                     </v-sheet>
 
-                <v-sheet class="d-flex flex-wrap mx-auto ma-2 pr-5 pl-5" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
+                <v-sheet class="ma-2 pr-5 pl-5" justify="center" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
                   <v-divider class="mb-2"></v-divider>
-                  <v-row align="center">
-                    <v-col cols="2">
-                      {{ comment.writer }}
-                    </v-col>
+                  <v-card-subtitle>
+                    {{ comment.writer }} / {{ communityStore.formatDate(comment.createdDate) }}
 
-                    <v-col class="text-body-1">
-                      {{ comment.content }}
-                    </v-col>
+                    <v-btn
+                      icon="mdi-close"
+                      variant="text"
+                      size="x-small"
+                      @click="commentOverlay = !commentOverlay; communityStore.removeCommentId = comment.id"
+                    ></v-btn>
 
-                    <v-col cols="2">
-                      {{ communityStore.formatDate(comment.createdDate) }}
-                    </v-col>
+                  </v-card-subtitle>
 
-                    <v-col cols="1">
-                      <v-btn
-                        icon="mdi-close"
-                        variant="text"
-                        size="x-small"
-                        @click="commentOverlay = !commentOverlay; communityStore.removeCommentId = comment.id"
-                      ></v-btn>
-                    </v-col>
+                  <QuillEditor v-model:content="comment.content" theme="bubble" readOnly
+                               contentType="text" class="blockquote text-body-1"/>
 
-                  </v-row>
                 </v-sheet>
 
                 <v-overlay :model-value="commentOverlay" class="align-center justify-center">
@@ -147,7 +135,7 @@
                     {{ communityStore.formatDate(communityStore.post.createdDate) }}
                   </div>
 
-                  <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly="true"
+                  <QuillEditor v-model:content="communityStore.post.content" theme="bubble" readOnly
                                contentType="html" class="blockquote text-body-1" />
 
                 </div>
@@ -172,27 +160,22 @@
                   </v-card>
                 </v-overlay>
 
-              <v-sheet class="d-flex flex-wrap mx-auto ma-2 pr-5 pl-5" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
+              <v-sheet class="mx-auto ma-2 pr-5 pl-5" elevation="0" v-for="comment in communityStore.comments" :key="comment.id">
                 <v-divider class="mb-2"></v-divider>
-                <v-row>
-                  <v-col>
-                    {{ comment.writer }}
-                  </v-col>
+                <v-card-subtitle>
+                  {{ comment.writer }} / {{ communityStore.formatDate(comment.createdDate) }}
 
-                  <v-col class="text-body-1">
-                    {{ comment.content }}
-                  </v-col>
+                  <v-btn
+                    icon="mdi-close"
+                    variant="text"
+                    size="x-small"
+                    @click="commentOverlay = !commentOverlay; communityStore.removeCommentId = comment.id"
+                  ></v-btn>
 
-                  <v-col cols="1">
-                    <v-btn
-                      icon="mdi-close"
-                      variant="text"
-                      size="x-small"
-                      @click="commentOverlay = !commentOverlay; communityStore.removeCommentId = comment.id"
-                    ></v-btn>
-                  </v-col>
+                </v-card-subtitle>
 
-                </v-row>
+                <QuillEditor v-model:content="comment.content" theme="bubble" readOnly
+                             contentType="text" class="blockquote text-body-1"/>
 
               </v-sheet>
 
@@ -260,6 +243,7 @@ export default {
     setup() {
         const communityStore = useCommunityStore();
 
+      communityStore.commentPage = 1;
         return {
           communityStore
         }
