@@ -1,6 +1,6 @@
 <template>
 
-    
+
       <!-- 지도 -->
       <div class="map_wrap">
         <div id="map" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
@@ -25,7 +25,7 @@
           {{ key }}
         </v-list-item>
           </v-list>
- 
+
         </div>
       </div>
       <!-- 지도 끝 -->
@@ -62,33 +62,34 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-row class="pl-10 pr-10 mt-5">
-        <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" rounded
-          v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
-          :indeterminate="mapStore.progressBarLoading" />
+      <v-container fluid>
+        <v-row class="pl-10 pr-10 mt-5">
+          <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" rounded
+                             v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
+                             :indeterminate="mapStore.progressBarLoading" />
 
-        <v-progress-linear v-else height="15" model-value="0" color="info" rounded />
-      </v-row>
+          <v-progress-linear v-else height="15" model-value="0" color="info" rounded />
+        </v-row>
 
-      <v-row class="pl-10 pr-10">
-        <v-breadcrumbs divider="/">
-          <v-breadcrumbs-item>
-            {{ mapStore.statusMessage }}
-          </v-breadcrumbs-item>
+        <v-row class="pl-10 pr-10">
+          <v-breadcrumbs divider="/">
+            <v-breadcrumbs-item>
+              {{ mapStore.statusMessage }}
+            </v-breadcrumbs-item>
 
-          <v-breadcrumbs-divider v-if="mapStore.statusMessage !== ''" />
+            <v-breadcrumbs-divider v-if="mapStore.statusMessage !== ''" />
 
-          <v-breadcrumbs-item>
-            <v-btn v-if="mapStore.mapDownloadLink !== ''" prepend-icon="mdi-link" variant="plain"
-              :href="mapStore.mapDownloadLink" :download="mapStore.mapDownloadName">
-              {{ mapStore.mapDownloadName }}
-            </v-btn>
-          </v-breadcrumbs-item>
-        </v-breadcrumbs>
-      </v-row>
+            <v-breadcrumbs-item>
+              <v-btn v-if="mapStore.mapDownloadLink !== ''" prepend-icon="mdi-link" variant="plain"
+                     :href="mapStore.mapDownloadLink" :download="mapStore.mapDownloadName">
+                {{ mapStore.mapDownloadName }}
+              </v-btn>
+            </v-breadcrumbs-item>
+          </v-breadcrumbs>
+        </v-row>
+      </v-container>
 
 
-  
     <component :is=" display.mdAndUp ? 'v-navigation-drawer' : 'v-container'" permanent touchless="true" :location="display.mdAndUp ? 'right' : 'bottom'" width="300">
       <v-list nav>
 
@@ -188,7 +189,7 @@
 
 
     </component>
-  
+
 
 </template>
 

@@ -12,18 +12,17 @@
     "@mdi/font": "^7.2.96",
     "@sentry/vue": "^7.48.0",
     "@vueup/vue-quill": "^1.2.0",
-    "axios": "^1.2.2",
+    "axios": "1.6.8",
+    "axios-extensions": "3.1.7",
     "core-js": "^3.8.3",
     "dayjs": "^1.11.7",
     "pinia": "^2.0.28",
-    "v3-infinite-loading": "^1.2.2",
     "vue": "^3.2.13",
     "vue-mobile-detection": "^2.0.1",
     "vue-router": "^4.0.3",
     "vue-showdown": "^4.0.0",
     "vue-spinner": "^1.0.4",
-    "vuetify": "^3.2.1",
-    "yarn": "^1.22.19"
+    "vuetify": "^3.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
@@ -32,13 +31,7 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-vuex": "~5.0.0",
-    "@vue/cli-service": "^5.0.8",
-    "@vue/eslint-config-standard": "^6.1.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-import": "^2.24.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "@vue/cli-service": "^5.0.8"
   },
   "eslintConfig": {
     "root": true,

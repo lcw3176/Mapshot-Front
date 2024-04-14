@@ -1,17 +1,24 @@
 import { defineStore } from "pinia";
-import axios from 'axios';
 import dayjs from 'dayjs';
+
+import axios from 'axios';
+import { cacheAdapterEnhancer } from 'axios-extensions';
+
+const api = axios.create({
+  headers: { 'Cache-Control': 'no-cache' },
+  adapter: cacheAdapterEnhancer(axios.getAdapter(axios.defaults.adapter)),
+});
 
 const apiUrl = process.env.VUE_APP_API_URL;
 
 async function getContent(id) {
-  const response = await axios.get(apiUrl + '/notice/detail/' + id);
+  const response = await api.get(apiUrl + '/notice/' + id);
   return response.data;
 }
 
 
 async function getSummary(id) {
-  const response = await axios.get(apiUrl + '/notice/list/' + id);
+  const response = await api.get(apiUrl + '/notice?page=' + id);
   return response.data;
 }
 
@@ -22,8 +29,9 @@ export const useNoticeStore = defineStore("noticeStore", {
   state: () => ({
     notice: Object,
     notices: [],
-    lastLoadedId: 0,
+    nowPage: 0,
     loading: false,
+    totalPage: 0,
   }),
 
 
@@ -33,37 +41,24 @@ export const useNoticeStore = defineStore("noticeStore", {
 
   actions: {
     async loadPost(id) {
-      this.notice = '';
       this.loading = true;
 
-      let data = await getContent(id);
-      this.notice = data;
+      this.notice = '';
+      this.notice = await getContent(id);
 
       this.loading = false;
     },
 
-    async infiniteHandler($state) {
-      if (this.lastLoadedId === 1) {
-        return;
-      }
+    async loadPostList(id) {
       this.loading = true;
 
-      let data = await getSummary(this.lastLoadedId);
+      this.notices = '';
+      let data = await getSummary(id);
+
+      this.totalPage = data.totalPage;
+      this.notices = data.notices;
 
       this.loading = false;
-
-      if (this.lastLoadedId != 1) {
-
-        data.forEach(element => {
-          this.notices.push(element);
-          this.lastLoadedId = element.id;
-        });
-
-        $state.loaded();
-      } else {
-
-      }
-
     },
 
     formatDate(dateString) {

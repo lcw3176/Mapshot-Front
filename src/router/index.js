@@ -13,7 +13,7 @@ const routes = [
     name: 'contact',
     component: () => import(/* webpackChunkName: "contact" */ '../views/ContactView.vue')
   },
-  
+
   {
     path: '/manual',
     name: 'manual',
@@ -37,6 +37,25 @@ const routes = [
     path: '/faq',
     name: 'faq',
     component: () => import(/* webpackChunkName: "faq" */ '../views/FAQView.vue')
+  },
+
+  {
+    path: '/community',
+    name: 'community',
+    component: () => import(/* webpackChunkName: "community" */ '../views/CommunityView.vue')
+  },
+
+  {
+    path: '/community/:postNumber',
+    name: 'communityPost',
+    component: () => import(/* webpackChunkName: "communityPost" */ '../views/CommunityPostView.vue'),
+    props: true
+  },
+
+  {
+    path: '/community/register',
+    name: 'communityRegister',
+    component: () => import(/* webpackChunkName: "communityRegister" */ '../views/CommunityRegisterView.vue')
   },
 ]
 
