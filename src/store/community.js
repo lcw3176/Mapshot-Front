@@ -103,7 +103,12 @@ async function deleteComment(id, password) {
 export const useCommunityStore = defineStore("communityStore", {
 
   state: () => ({
-    post: Object,
+    post: {
+      title: '',
+      password: '',
+      createdDate: '',
+      content: '',
+    },
     posts: [],
 
     comment: {
@@ -120,8 +125,12 @@ export const useCommunityStore = defineStore("communityStore", {
 
     nowPage: 1,
     loading: false,
-    password: '',
     totalPage: 0,
+
+    isAlert: false,
+    alertMessage: '',
+
+    password: '',
   }),
 
 
