@@ -94,11 +94,6 @@
             </tbody>
           </v-table>
 
-          <v-col class="text-right">
-            <v-btn variant="outlined" to="/community/register">글쓰기</v-btn>
-          </v-col>
-
-
           <v-pagination v-model="noticeStore.nowPage" @click="noticeStore.loadPostList(noticeStore.nowPage)"  :length="noticeStore.totalPage"></v-pagination>
 
         </v-col>
