@@ -24,7 +24,7 @@ Sentry.init({
         }),
     ],
 
-    tracesSampleRate: 0.5,
+    tracesSampleRate: 1,
 });
 
 const vuetify = createVuetify({
