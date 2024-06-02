@@ -4,10 +4,14 @@
 
       <v-col>
         <div id="adOne">
-          <ins class="kakao_ad_area" style="display:none;"
-               data-ad-unit = "DAN-OPghfSGHOLdGJdlJ"
-               data-ad-width = "300"
-               data-ad-height = "250"></ins>
+          <amp-ad
+            layout="fixed"
+            width="300"
+            height="300"
+            type="adsense"
+            data-ad-client="ca-pub-7390022674285155"
+            data-ad-slot="4803193329">
+          </amp-ad>
         </div>
 
       </v-col>
@@ -16,20 +20,28 @@
       <v-col>
 
         <div id="adTwo">
-          <ins class="kakao_ad_area" style="display:none;"
-               data-ad-unit = "DAN-1f22sNeH6puxNSbl"
-               data-ad-width = "300"
-               data-ad-height = "250"></ins>
+          <amp-ad
+            layout="fixed"
+            width="300"
+            height="300"
+            type="adsense"
+            data-ad-client="ca-pub-7390022674285155"
+            data-ad-slot="7155676880">
+          </amp-ad>
         </div>
       </v-col>
 
 
       <v-col>
         <div id="adThree">
-          <ins class="kakao_ad_area" style="display:none;"
-               data-ad-unit = "DAN-HEHh99g6pdekjkfQ"
-               data-ad-width = "300"
-               data-ad-height = "250"></ins>
+          <amp-ad
+            layout="fixed"
+            width="300"
+            height="300"
+            type="adsense"
+            data-ad-client="ca-pub-7390022674285155"
+            data-ad-slot="7155676880">
+          </amp-ad>
         </div>
 
       </v-col>
@@ -47,35 +59,6 @@
 export default {
   name: 'AdsView',
 
-  data() {
-
-  },
-
-  mounted() {
-    let adOne = document.createElement("script");
-    adOne.setAttribute(
-      "src",
-      "//t1.daumcdn.net/kas/static/ba.min.js"
-    );
-    adOne.async = true;
-    document.getElementById("adOne").appendChild(adOne);
-
-    let adTwo = document.createElement("script");
-    adTwo.setAttribute(
-      "src",
-      "//t1.daumcdn.net/kas/static/ba.min.js"
-    );
-    adTwo.async = true;
-    document.getElementById("adTwo").appendChild(adTwo);
-
-    let adThree = document.createElement("script");
-    adThree.setAttribute(
-      "src",
-      "//t1.daumcdn.net/kas/static/ba.min.js"
-    );
-    adThree.async = true;
-    document.getElementById("adThree").appendChild(adThree);
-  }
 
 }
 </script>
