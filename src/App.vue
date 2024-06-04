@@ -40,7 +40,7 @@
 
     <v-main>
       <router-view></router-view>
-<!--      <AdsView />-->
+      <AdsView />
     </v-main>
 
 
@@ -51,7 +51,7 @@
 <script>
 
 
-// import AdsView from './views/AdsView'
+import AdsView from './views/AdsView'
 import { useLoaderStore } from '@/store/loader'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
@@ -60,7 +60,7 @@ import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 export default {
   components: {
-    // AdsView,
+    AdsView,
     MoonLoader
   },
 
