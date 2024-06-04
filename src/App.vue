@@ -40,7 +40,7 @@
 
     <v-main>
       <router-view></router-view>
-      <AdsView />
+      <AdsView v-if="display.mdAndUp"/>
     </v-main>
 
 
