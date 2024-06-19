@@ -3,10 +3,9 @@
     <v-row class="text-center">
 
       <v-col>
-        <Adsense style="display:block"
-                 format="autorelaxed"
+        <Adsense adStyle="display:inline-block;width:1200px;height:600px"
                  client="ca-pub-7390022674285155"
-                 slot="6113438353">
+                 slot="6197100774">
         </Adsense>
       </v-col>
 
