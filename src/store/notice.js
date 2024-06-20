@@ -11,6 +11,20 @@ const api = axios.create({
 
 const apiUrl = process.env.VUE_APP_API_URL;
 
+api.interceptors.response.use(
+  (response) => {
+
+    return response;
+  },
+  (err) => {
+    if(err.response.status === 404){
+      window.location.href = "/404";
+    }
+
+    return Promise.reject(err);
+  }
+);
+
 async function getContent(id) {
   const response = await api.get(apiUrl + '/notice/' + id);
   return response.data;

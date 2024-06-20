@@ -10,6 +10,20 @@ const api = axios.create({
 });
 
 
+api.interceptors.response.use(
+  (response) => {
+
+    return response;
+  },
+  (err) => {
+    if(err.response.status === 404){
+      window.location.href = "/404";
+    }
+
+    return Promise.reject(err);
+  }
+);
+
 const apiUrl = process.env.VUE_APP_API_URL;
 
 
