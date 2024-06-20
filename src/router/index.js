@@ -57,6 +57,18 @@ const routes = [
     name: 'communityRegister',
     component: () => import(/* webpackChunkName: "communityRegister" */ '../views/CommunityRegisterView.vue')
   },
+
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: "/404"
+  },
+
+  {
+    path: "/404",
+    name: "notFound",
+    component:  () => import(/* webpackChunkName: "notFound" */ '../views/NotFoundView.vue')
+  },
+
 ]
 
 const router = createRouter({
