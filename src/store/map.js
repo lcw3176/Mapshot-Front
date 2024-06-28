@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Proxy, Naver, Layer, NaverTile, ProxyTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
+import { Proxy, Naver, Layer, NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
 import axios from 'axios';
 
 const apiUrl = process.env.VUE_APP_API_URL;
@@ -44,11 +44,11 @@ export const useMapStore = defineStore("map", {
     error: false,
     naverProfile: '',
     proxyProfile: '',
-    proxyTile: '',
     layers: [],
     layerProfile: '',
     onlyLayers: false,
     layerExtension: 'image/jpeg',
+    noLabel: false,
 
     radiusArr: {
       1: Radius.One,
@@ -112,11 +112,11 @@ export const useMapStore = defineStore("map", {
       // this.naverProfile.setMapType(this.baseMap);
 
       this.proxyProfile = new Proxy();
-      this.proxyProfile.setProxyUrl(apiUrl + "/image/storage");
+      // this.proxyProfile.setProxyUrl(apiUrl + "/image/storage");
       // this.proxyProfile.setCompanyType(this.companyArr['카카오']);
       // this.proxyProfile.setMapType(this.baseMap);
 
-      this.proxyTile = new ProxyTile();
+      // this.proxyTile = new ProxyTile();
 
       this.layerProfile = new Layer();
       this.layerProfile.setUrl("https://pkhb969vta.execute-api.ap-northeast-2.amazonaws.com/default/vworld");
@@ -190,12 +190,6 @@ export const useMapStore = defineStore("map", {
       traceRec.setMap(this.map);
     },
 
-    async proxyTileOnError(event) {
-      this.statusMessage = "서버 에러입니다. 잠시 후 다시 시도해주세요.";
-      this.error = true;
-      this.inProgress = false;
-      this.value = 100;
-    },
 
     async naverTileOnLoadStart(event) {
       this.progressBarMax = event.detail.total;
@@ -275,6 +269,7 @@ export const useMapStore = defineStore("map", {
 
       this.proxyProfile.setRadius(this.mapRadius);
       this.proxyProfile.setLayerMode(this.layerMode);
+      this.proxyProfile.setNoLabel(this.noLabel);
 
 
       let data = await requestImage(this.proxyProfile.getQueryString());
