@@ -4,9 +4,9 @@ import axios from 'axios';
 
 const apiUrl = process.env.VUE_APP_API_URL;
 
-async function requsetImage(queryString) {
+async function requestImage(queryString) {
   try {
-    const response = await axios.get(apiUrl + '/image/queue' + queryString);
+    const response = await axios.get(apiUrl + '/image/generate' + queryString, {responseType: 'blob'});
 
     return response.data;
   } catch (error) {
@@ -172,14 +172,9 @@ export const useMapStore = defineStore("map", {
         this.naverCapture();
       }
 
-      if (this.company === "kakao") {
-        this.kakaoCapture();
+      if (this.company === "kakao" || this.company === "google") {
+        this.proxyCapture();
       }
-
-      if (this.company === "google") {
-        this.googleCapture();
-      }
-
     },
 
     async makeTrace() {
@@ -267,7 +262,7 @@ export const useMapStore = defineStore("map", {
       }
     },
 
-    async kakaoCapture() {
+    async proxyCapture() {
       this.progressBarValue = 0;
       this.progressBarMax = 100;
 
@@ -278,22 +273,11 @@ export const useMapStore = defineStore("map", {
 
       this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
 
-
-      const defaultBlockSize = 1000;
       this.proxyProfile.setRadius(this.mapRadius);
       this.proxyProfile.setLayerMode(this.layerMode);
 
-      let canvas = document.createElement("canvas");
 
-      canvas.width = this.proxyProfile.getWidth();
-      canvas.height = this.proxyProfile.getWidth();
-
-      let ctx = canvas.getContext("2d");
-      let sideBlockCount = parseInt(this.proxyProfile.getWidth() / defaultBlockSize);
-      let maxCount = sideBlockCount * sideBlockCount;
-      let count = 0;
-
-      let data = await requsetImage(this.proxyProfile.getQueryString());
+      let data = await requestImage(this.proxyProfile.getQueryString());
 
       this.progressBarLoading = false;
 
@@ -303,118 +287,10 @@ export const useMapStore = defineStore("map", {
         return;
       }
 
-
-      for (let i = 0; i < data.length; i++) {
-        let json = data[i];
-
-        ((_json) => {
-
-          this.proxyTile.requestImage(this.proxyProfile, _json.uuid, (loadedImage) => {
-            ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.width,
-              _json.x, _json.y, defaultBlockSize, defaultBlockSize);
-            count++;
-            this.statusMessage = parseInt((count / maxCount) * 100).toString() + " / 100";
-            this.progressBarValue = count / maxCount * 100;
-
-            if (count === maxCount) {
-              canvas.toBlob((blob) => {
-                this.mapDownloadLink = URL.createObjectURL(blob);
-                this.progressBarValue = 100;
-                this.onCaptureEnded(fileName, "jpg");
-
-              }, "image/jpeg");
-            }
-          })
-        })(json);
-      }
+      this.mapDownloadLink = URL.createObjectURL(data);
+      this.onCaptureEnded(fileName, "jpg");
     },
 
-
-    async googleCapture() {
-      this.progressBarValue = 0;
-      this.progressBarMax = 100;
-
-      this.progressBarLoading = true;
-      let fileName = this.bunziAddress;
-      let expectedEndTime = new Date();
-      expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 60);
-
-      this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
-
-
-      const defaultBlockSize = 1000;
-      this.proxyProfile.setRadius(this.mapRadius);
-      this.proxyProfile.setLayerMode(this.layerMode);
-
-      let canvas = document.createElement("canvas");
-      var googleOffset = 500;
-
-      canvas.width = this.proxyProfile.getWidth() - googleOffset;
-      canvas.height = this.proxyProfile.getWidth() - googleOffset;
-
-      let ctx = canvas.getContext("2d");
-      let sideBlockCount = parseInt(this.proxyProfile.getWidth() / defaultBlockSize);
-      let maxCount = sideBlockCount * sideBlockCount;
-      let count = 0;
-
-      let data = await requsetImage(this.proxyProfile.getQueryString());
-
-      this.progressBarLoading = false;
-
-
-      if (data.length === 0) {
-        this.proxyTileOnError();
-        return;
-      }
-
-
-      for (let i = 0; i < data.length; i++) {
-        let json = data[i];
-
-        ((_json) => {
-
-          this.proxyTile.requestImage(this.proxyProfile, _json.uuid, (loadedImage) => {
-
-            if (_json.x + defaultBlockSize === sideBlockCount * defaultBlockSize
-              && _json.y + defaultBlockSize !== sideBlockCount * defaultBlockSize) {
-
-              ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.height,
-                _json.x - googleOffset, _json.y, defaultBlockSize, defaultBlockSize);
-
-            } else if (_json.x + defaultBlockSize !== sideBlockCount * defaultBlockSize
-              && _json.y + defaultBlockSize === sideBlockCount * defaultBlockSize) {
-
-              ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.height,
-                _json.x, _json.y - googleOffset, defaultBlockSize, defaultBlockSize);
-
-            } else if (_json.x + defaultBlockSize === sideBlockCount * defaultBlockSize
-              && _json.y + defaultBlockSize === sideBlockCount * defaultBlockSize) {
-
-              ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.height,
-                _json.x - googleOffset, _json.y - googleOffset, defaultBlockSize, defaultBlockSize);
-
-            } else {
-
-              ctx.drawImage(loadedImage, 0, 0, loadedImage.width, loadedImage.width,
-                _json.x, _json.y, defaultBlockSize, defaultBlockSize);
-            }
-
-            count++;
-            this.statusMessage = parseInt((count / maxCount) * 100).toString() + " / 100";
-            this.progressBarValue = count / maxCount * 100;
-
-            if (count === maxCount) {
-              canvas.toBlob((blob) => {
-                this.mapDownloadLink = URL.createObjectURL(blob);
-                this.progressBarValue = 100;
-                this.onCaptureEnded(fileName, "jpg");
-
-              }, "image/jpeg");
-            }
-          })
-        })(json);
-      }
-    },
 
     async onCaptureEnded(fileName, type) {
       this.mapDownloadName = "mapshot_" + fileName + "." + type;
