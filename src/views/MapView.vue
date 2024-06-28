@@ -144,7 +144,7 @@
         </v-list-item>
 
         <v-list-item density="compact" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel"
-                     active-color="info" @click="mapStore.noLabel = !mapStore.noLabel">
+                     active-color="info" @click="mapStore.noLabel = !mapStore.noLabel" :active="mapStore.noLabel">
           지형지물 명칭 없애기
         </v-list-item>
 
