@@ -64,7 +64,7 @@
       </v-container>
       <v-container fluid>
         <v-row class="pl-10 pr-10 mt-5">
-          <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" rounded
+          <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" stream rounded
                              v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
                              :indeterminate="mapStore.progressBarLoading" />
 
