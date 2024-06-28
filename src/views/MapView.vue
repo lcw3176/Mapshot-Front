@@ -64,7 +64,7 @@
       </v-container>
       <v-container fluid>
         <v-row class="pl-10 pr-10 mt-5">
-          <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" rounded
+          <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" stream rounded
                              v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
                              :indeterminate="mapStore.progressBarLoading" />
 
@@ -141,6 +141,11 @@
         <v-list-item density="compact" v-if="mapStore.company === 'naver'" @click="overlay = !overlay"
           active-color="info">
           도시 계획 레이어
+        </v-list-item>
+
+        <v-list-item density="compact" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel"
+                     active-color="info" @click="mapStore.noLabel = !mapStore.noLabel" :active="mapStore.noLabel">
+          지형지물 명칭 없애기
         </v-list-item>
 
         <v-overlay :model-value="overlay" class="align-center justify-center">
