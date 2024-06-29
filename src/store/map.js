@@ -286,6 +286,11 @@ export const useMapStore = defineStore("map", {
       this.onCaptureEnded(fileName, "jpg");
     },
 
+    async proxyTileOnError() {
+      this.statusMessage = "서버 에러입니다. 잠시 후 다시 시도해주세요.";
+      this.error = true;
+      this.inProgress = false;
+    },
 
     async onCaptureEnded(fileName, type) {
       this.mapDownloadName = "mapshot_" + fileName + "." + type;
