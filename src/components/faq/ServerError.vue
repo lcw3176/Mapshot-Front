@@ -3,7 +3,7 @@
         <v-card-title class="text-h5 mb-10">'서버 에러입니다' 문구 출력</v-card-title>
 
         <v-card-text>
-            네트워크 환경이 원할하지 않은 경우에 발생할 수 있습니다.
+            네트워크 환경이 원할하지 않거나 광고 차단 프로그램(AdBlock, Tampermonkey...) 동작 시 발생할 수 있습니다.
         </v-card-text>
 
         <v-card-text>
