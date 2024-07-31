@@ -1,6 +1,13 @@
 import { defineStore } from "pinia";
 import { Proxy, Naver, Layer, NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
 import axios from 'axios';
+import { retryAdapterEnhancer  } from 'axios-extensions';
+
+const api = axios.create({
+  headers: { 'Cache-Control': 'no-cache' },
+  adapter: retryAdapterEnhancer(axios.getAdapter(axios.defaults.adapter)),
+});
+
 
 const apiUrl = process.env.VUE_APP_API_URL;
 
