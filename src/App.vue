@@ -21,7 +21,7 @@
 
       <div v-for="item in desktop" :key="item.title">
 
-        <v-btn stacked :to="item.path">
+        <v-btn stacked :to="item.path" class="me-2">
           <v-icon :icon="item.icon"></v-icon>
           {{ item.title }}
         </v-btn>
