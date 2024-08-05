@@ -143,11 +143,6 @@
           도시 계획 레이어
         </v-list-item>
 
-        <v-list-item density="compact" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel"
-                     active-color="info" @click="mapStore.noLabel = !mapStore.noLabel" :active="mapStore.noLabel">
-          지형지물 명칭 없애기
-        </v-list-item>
-
         <v-overlay :model-value="overlay" class="align-center justify-center">
           <v-card>
             <v-container>
@@ -178,6 +173,9 @@
 
           <v-switch density="compact" color="info" v-if="mapStore.company === 'naver'" v-model="mapStore.onlyLayers"
             label="레이어만 출력하기" />
+
+          <v-switch density="compact" color="info" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel"
+            label=" 지형지물 명칭 없애기"/>
 
           <v-radio-group v-if="mapStore.onlyLayers" inline v-model="mapStore.layerExtension">
             <v-radio label="PNG" value="image/png"></v-radio>
