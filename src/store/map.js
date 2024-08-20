@@ -129,22 +129,22 @@ export const useMapStore = defineStore("map", {
     },
 
     async startCapture() {
-      if (this.coor.getX() == undefined || this.coor.getY() == undefined) {
+      if (this.isEmpty(this.coor.getX()) || this.isEmpty(this.coor.getY())) {
         alert("먼저 지도를 클릭해서 좌표 설정을 진행해 주세요");
         return;
       }
 
-      if (this.mapRadius === '' || this.mapRadius === undefined) {
+      if (this.isEmpty(this.mapRadius)) {
         alert("반경을 선택해 주세요.");
         return;
       }
 
-      if (this.baseMap === '' || this.baseMap === undefined) {
+      if (this.isEmpty(this.baseMap)) {
         alert("지도 종류를 선택해 주세요.");
         return;
       }
 
-      if (this.company === '' || this.company === undefined) {
+      if (this.isEmpty(this.company)) {
         alert("출력 회사를 선택해 주세요.");
         return;
       }
@@ -542,6 +542,15 @@ export const useMapStore = defineStore("map", {
       // 좌표로 법정동 상세 주소 정보를 요청합니다
       this.geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
     },
+
+    isEmpty(input) {
+      return typeof input === "undefined" ||
+        input === null ||
+        input === "" ||
+        input === "null" ||
+        input.length === 0 ||
+        (typeof input === "object" && !Object.keys(input).length);
+    }
 
   }
 });
