@@ -229,19 +229,17 @@ export default {
     this.mapStore.init();
     this.mapStore.addListeners();
 
-    document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+    document.body.addEventListener('mapshotTileOnLoadStart', this.mapStore.mapshotTileOnLoadStart);
+    document.body.addEventListener('mapshotTileOnProgress', this.mapStore.mapshotTileOnProgress);
+    document.body.addEventListener('mapshotTileOnError', this.mapStore.mapshotTileOnError);
   },
 
   beforeUnmount() {
     this.mapStore.removeListeners();
 
-    document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
+    document.body.removeEventListener('mapshotTileOnLoadStart', this.mapStore.mapshotTileOnLoadStart);
+    document.body.removeEventListener('mapshotTileOnProgress', this.mapStore.mapshotTileOnProgress);
+    document.body.removeEventListener('mapshotTileOnError', this.mapStore.mapshotTileOnError);
   },
 }
 </script>
