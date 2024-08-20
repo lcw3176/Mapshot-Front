@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { Proxy, Naver, Layer, NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
+import { External, Naver, Layer, Tile, LatLng, Radius } from '@/assets/js/mapshot.min';
 import axios from 'axios';
 
 const apiUrl = process.env.VUE_APP_API_URL;
@@ -101,22 +101,16 @@ export const useMapStore = defineStore("map", {
       this.ps = new kakao.maps.services.Places();
       this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 
-      this.naverTile = new NaverTile();
+      this.naverTile = new Tile();
       this.coor = new LatLng();
       this.mapRadius = Radius.Two;
       this.baseMap = '';
-      // this.baseMap = this.baseMapArr['위성'];
 
       this.naverProfile = new Naver();
       this.naverProfile.setKey("ny5d4sdo0e");
-      // this.naverProfile.setMapType(this.baseMap);
 
-      this.proxyProfile = new Proxy();
-      // this.proxyProfile.setProxyUrl(apiUrl + "/image/storage");
-      // this.proxyProfile.setCompanyType(this.companyArr['카카오']);
-      // this.proxyProfile.setMapType(this.baseMap);
+      this.proxyProfile = new External();
 
-      // this.proxyTile = new ProxyTile();
 
       this.layerProfile = new Layer();
       this.layerProfile.setUrl("https://pkhb969vta.execute-api.ap-northeast-2.amazonaws.com/default/vworld");
