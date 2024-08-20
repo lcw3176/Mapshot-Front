@@ -185,20 +185,20 @@ export const useMapStore = defineStore("map", {
     },
 
 
-    async naverTileOnLoadStart(event) {
+    async mapshotTileOnLoadStart(event) {
       this.progressBarMax = event.detail.total;
       this.progressBarValue = 0;
     },
 
-    async naverTileOnProgress() {
+    async mapshotTileOnProgress() {
       this.progressBarValue += 1;
       this.statusMessage = this.progressBarValue + "/" + this.progressBarMax + " 수집 완료";
     },
 
 
-    async naverTileOnError() {
+    async mapshotTileOnError() {
       this.error = true;
-      this.naverTileOnProgress();
+      this.mapshotTileOnProgress();
     },
 
 
