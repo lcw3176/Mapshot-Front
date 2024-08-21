@@ -3,6 +3,7 @@ import { External, Naver, Layer, Tile, LatLng, Radius } from '@/assets/js/mapsho
 import axios from 'axios';
 
 const apiUrl = process.env.VUE_APP_API_URL;
+const layerApiUrl = process.env.VUE_APP_LAYER_API_URL;
 
 async function requestImage(queryString) {
   try {
@@ -113,7 +114,7 @@ export const useMapStore = defineStore("map", {
 
 
       this.layerProfile = new Layer();
-      this.layerProfile.setUrl("https://pkhb969vta.execute-api.ap-northeast-2.amazonaws.com/default/vworld");
+      this.layerProfile.setUrl(layerApiUrl);
 
       this.currentMapStyle = this.baseMapStyles['일반']
     },
