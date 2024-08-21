@@ -64,7 +64,7 @@ export const useMapStore = defineStore("map", {
     },
 
     companyArr: {
-      '네이버': 'naver',
+      // '네이버': 'naver',
       '카카오': 'kakao',
       '구글': 'google',
     },
@@ -108,7 +108,7 @@ export const useMapStore = defineStore("map", {
       // this.baseMap = this.baseMapArr['위성'];
 
       this.naverProfile = new Naver();
-      this.naverProfile.setKey("ny5d4sdo0e");
+      // this.naverProfile.setKey("ny5d4sdo0e");
       // this.naverProfile.setMapType(this.baseMap);
 
       this.proxyProfile = new Proxy();
@@ -168,9 +168,9 @@ export const useMapStore = defineStore("map", {
         this.makeTrace();
       }
 
-      if (this.company === "naver") {
-        this.naverCapture();
-      }
+      // if (this.company === "naver") {
+      //   this.naverCapture();
+      // }
 
       if (this.company === "kakao" || this.company === "google") {
         this.proxyCapture();
