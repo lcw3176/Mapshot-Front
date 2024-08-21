@@ -64,7 +64,7 @@ export const useMapStore = defineStore("map", {
     },
 
     companyArr: {
-      '네이버': 'naver',
+      // '네이버': 'naver',
       '카카오': 'kakao',
       '구글': 'google',
     },
