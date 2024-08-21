@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { External, Naver, Layer, Tile, LatLng, Radius } from '@/assets/js/mapshot.min';
+import { Proxy, Naver, Layer, NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
 import axios from 'axios';
 
 const apiUrl = process.env.VUE_APP_API_URL;
@@ -64,7 +64,7 @@ export const useMapStore = defineStore("map", {
     },
 
     companyArr: {
-      '네이버': 'naver',
+      // '네이버': 'naver',
       '카카오': 'kakao',
       '구글': 'google',
     },
@@ -101,16 +101,22 @@ export const useMapStore = defineStore("map", {
       this.ps = new kakao.maps.services.Places();
       this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
 
-      this.naverTile = new Tile();
+      this.naverTile = new NaverTile();
       this.coor = new LatLng();
       this.mapRadius = Radius.Two;
       this.baseMap = '';
+      // this.baseMap = this.baseMapArr['위성'];
 
       this.naverProfile = new Naver();
-      this.naverProfile.setKey("ny5d4sdo0e");
+      // this.naverProfile.setKey("ny5d4sdo0e");
+      // this.naverProfile.setMapType(this.baseMap);
 
-      this.proxyProfile = new External();
+      this.proxyProfile = new Proxy();
+      // this.proxyProfile.setProxyUrl(apiUrl + "/image/storage");
+      // this.proxyProfile.setCompanyType(this.companyArr['카카오']);
+      // this.proxyProfile.setMapType(this.baseMap);
 
+      // this.proxyTile = new ProxyTile();
 
       this.layerProfile = new Layer();
       this.layerProfile.setUrl("https://pkhb969vta.execute-api.ap-northeast-2.amazonaws.com/default/vworld");
@@ -129,22 +135,22 @@ export const useMapStore = defineStore("map", {
     },
 
     async startCapture() {
-      if (this.isEmpty(this.coor.getX()) || this.isEmpty(this.coor.getY())) {
+      if (this.coor.getX() == undefined || this.coor.getY() == undefined) {
         alert("먼저 지도를 클릭해서 좌표 설정을 진행해 주세요");
         return;
       }
 
-      if (this.isEmpty(this.mapRadius)) {
+      if (this.mapRadius === '' || this.mapRadius === undefined) {
         alert("반경을 선택해 주세요.");
         return;
       }
 
-      if (this.isEmpty(this.baseMap)) {
+      if (this.baseMap === '' || this.baseMap === undefined) {
         alert("지도 종류를 선택해 주세요.");
         return;
       }
 
-      if (this.isEmpty(this.company)) {
+      if (this.company === '' || this.company === undefined) {
         alert("출력 회사를 선택해 주세요.");
         return;
       }
@@ -162,9 +168,9 @@ export const useMapStore = defineStore("map", {
         this.makeTrace();
       }
 
-      if (this.company === "naver") {
-        this.naverCapture();
-      }
+      // if (this.company === "naver") {
+      //   this.naverCapture();
+      // }
 
       if (this.company === "kakao" || this.company === "google") {
         this.proxyCapture();
@@ -185,20 +191,20 @@ export const useMapStore = defineStore("map", {
     },
 
 
-    async mapshotTileOnLoadStart(event) {
+    async naverTileOnLoadStart(event) {
       this.progressBarMax = event.detail.total;
       this.progressBarValue = 0;
     },
 
-    async mapshotTileOnProgress() {
+    async naverTileOnProgress() {
       this.progressBarValue += 1;
       this.statusMessage = this.progressBarValue + "/" + this.progressBarMax + " 수집 완료";
     },
 
 
-    async mapshotTileOnError() {
+    async naverTileOnError() {
       this.error = true;
-      this.mapshotTileOnProgress();
+      this.naverTileOnProgress();
     },
 
 
@@ -542,15 +548,6 @@ export const useMapStore = defineStore("map", {
       // 좌표로 법정동 상세 주소 정보를 요청합니다
       this.geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
     },
-
-    isEmpty(input) {
-      return typeof input === "undefined" ||
-        input === null ||
-        input === "" ||
-        input === "null" ||
-        input.length === 0 ||
-        (typeof input === "object" && !Object.keys(input).length);
-    }
 
   }
 });
