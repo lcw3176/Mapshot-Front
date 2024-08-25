@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { External, Naver, Layer, Tile, LatLng, Radius } from '@/assets/js/mapshot.min';
+import { External, Naver, Layer, Tile, LatLng, Radius } from '@/assets/js/mapshot.min.js';
 import axios from 'axios';
 
 const apiUrl = process.env.VUE_APP_API_URL;
@@ -65,7 +65,7 @@ export const useMapStore = defineStore("map", {
     },
 
     companyArr: {
-      '네이버': 'naver',
+      // '네이버': 'naver',
       '카카오': 'kakao',
       '구글': 'google',
     },
@@ -108,7 +108,7 @@ export const useMapStore = defineStore("map", {
       this.baseMap = '';
 
       this.naverProfile = new Naver();
-      this.naverProfile.setKey("ny5d4sdo0e");
+      // this.naverProfile.setKey("ny5d4sdo0e");
 
       this.proxyProfile = new External();
 
@@ -163,9 +163,9 @@ export const useMapStore = defineStore("map", {
         this.makeTrace();
       }
 
-      if (this.company === "naver") {
-        this.naverCapture();
-      }
+      // if (this.company === "naver") {
+      //   this.naverCapture();
+      // }
 
       if (this.company === "kakao" || this.company === "google") {
         this.proxyCapture();
