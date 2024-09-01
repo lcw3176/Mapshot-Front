@@ -1,13 +1,15 @@
 import { defineStore } from "pinia";
-import { Proxy, Naver, Layer, NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
+import { Proxy, Naver, Layer, NaverTile, LatLng, Radius } from '@/assets/js/mapshot.min';
 import axios from 'axios';
 
 const apiUrl = process.env.VUE_APP_API_URL;
 
 async function requestImage(queryString) {
   try {
-    const response = await axios.get(apiUrl + '/image/generate' + queryString, {responseType: 'blob'});
+    const response = await axios.get(apiUrl + '/image/template?lat=37.58224966162435&lng=126.95018587731077' +
+      '&level=2&type=satellite_base&layerMode=false&neLat=37.59984094126859&neLng=126.97296587731077');
 
+    console.log(response);
     return response.data;
   } catch (error) {
 
@@ -175,6 +177,10 @@ export const useMapStore = defineStore("map", {
       if (this.company === "kakao" || this.company === "google") {
         this.proxyCapture();
       }
+    },
+
+    async testRequest(){
+      return await requestImage();
     },
 
     async makeTrace() {
