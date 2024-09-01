@@ -32,12 +32,11 @@ export const useMapTemplateStore = defineStore("mapTemplate", {
     async test () {
       let template = await requestImage();
 
-      const newWindow = window.open("/public/templateSketch.html", "map");
+      const newWindow = window.open("/templateSketch.html", "_blank");
       if (newWindow) {
-        newWindow.document.write(template);
-        newWindow.document.close();
+        newWindow.loadContent(template);
       } else {
-        console.error("새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.");
+        alert("새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.");
 
       }
     }
