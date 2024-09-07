@@ -33,7 +33,6 @@
 
       <v-container fluid>
 
-
         <v-row>
           <v-col>
             <div>
@@ -60,32 +59,6 @@
               <p class="text-center text-body-1">{{ mapStore.bunziAddress }}</p>
             </div>
           </v-col>
-        </v-row>
-      </v-container>
-      <v-container fluid>
-        <v-row class="pl-10 pr-10 mt-5">
-          <v-progress-linear height="15" v-if="mapStore.inProgress" color="info" stream rounded
-                             v-model="mapStore.progressBarValue" :max="mapStore.progressBarMax"
-                             :indeterminate="mapStore.progressBarLoading" />
-
-          <v-progress-linear v-else height="15" model-value="0" color="info" rounded />
-        </v-row>
-
-        <v-row class="pl-10 pr-10">
-          <v-breadcrumbs divider="/">
-            <v-breadcrumbs-item>
-              {{ mapStore.statusMessage }}
-            </v-breadcrumbs-item>
-
-            <v-breadcrumbs-divider v-if="mapStore.statusMessage !== ''" />
-
-            <v-breadcrumbs-item>
-              <v-btn v-if="mapStore.mapDownloadLink !== ''" prepend-icon="mdi-link" variant="plain"
-                     :href="mapStore.mapDownloadLink" :download="mapStore.mapDownloadName">
-                {{ mapStore.mapDownloadName }}
-              </v-btn>
-            </v-breadcrumbs-item>
-          </v-breadcrumbs>
         </v-row>
       </v-container>
 
@@ -138,7 +111,7 @@
         </v-list-subheader>
 
         <v-divider></v-divider>
-        <v-list-item density="compact" v-if="mapStore.company === 'naver'" @click="overlay = !overlay"
+        <v-list-item density="compact" @click="overlay = !overlay"
           active-color="info">
           도시 계획 레이어
         </v-list-item>
@@ -171,16 +144,11 @@
           <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'" v-model="mapStore.layerMode"
             label="지적 편집도" />
 
-          <v-switch density="compact" color="info" v-if="mapStore.company === 'naver'" v-model="mapStore.onlyLayers"
-            label="레이어만 출력하기" />
-
           <v-switch density="compact" color="info" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel"
-            label=" 지형지물 명칭 없애기"/>
+                    label=" 지형지물 명칭 없애기"/>
 
-          <v-radio-group v-if="mapStore.onlyLayers" inline v-model="mapStore.layerExtension">
-            <v-radio label="PNG" value="image/png"></v-radio>
-            <v-radio label="JPG" value="image/jpeg"></v-radio>
-          </v-radio-group>
+
+          <v-switch density="compact" color="info" v-model="mapStore.onlyLayers" label="레이어만 출력하기" />
 
           <v-switch density="compact" color="info" v-model="mapStore.traceMode" label="흔적 남기기" />
 
@@ -197,7 +165,7 @@
 </template>
 
 <script>
-import { useMapStore } from '../store/map.js'
+import { useMapStore } from '@/store/map'
 import "../assets/css/map.css"
 import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
@@ -229,19 +197,10 @@ export default {
     this.mapStore.init();
     this.mapStore.addListeners();
 
-    document.body.addEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    document.body.addEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    document.body.addEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    document.body.addEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 
   beforeUnmount() {
     this.mapStore.removeListeners();
-
-    document.body.removeEventListener('naverTileOnLoadStart', this.mapStore.naverTileOnLoadStart);
-    document.body.removeEventListener('naverTileOnProgress', this.mapStore.naverTileOnProgress);
-    document.body.removeEventListener('naverTileOnError', this.mapStore.naverTileOnError);
-    document.body.removeEventListener('proxyTileOnError', this.mapStore.proxyTileOnError);
   },
 }
 </script>
