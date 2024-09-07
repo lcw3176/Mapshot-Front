@@ -61,7 +61,7 @@ export const useMapStore = defineStore('map', {
     },
 
     companyArr: {
-      // '네이버': 'naver',
+      '네이버': 'naver',
       '카카오': 'kakao',
       '구글': 'google',
     },
@@ -153,7 +153,7 @@ export const useMapStore = defineStore('map', {
       } else if (this.company === 'google') {
         this.makeGoogleTemplate()
       } else if (this.company === 'naver') {
-        // 네이버
+        this.makeNaverTemplate()
       }
 
     },
@@ -173,6 +173,39 @@ export const useMapStore = defineStore('map', {
       })
 
       const newWindow = window.open('/templateKakao.html?' + params.toString(), '_blank')
+
+      if (!newWindow) {
+        alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
+      } else {
+        let checkMapInterval = setInterval(() => {
+
+          let element = newWindow.document.getElementById('checker_true')
+          if (element) {
+
+            if (!this.isEmpty(layer)) {
+              this.makeLayers(newWindow, element, layer)
+            }
+
+            clearInterval(checkMapInterval)
+          }
+        }, 500)
+      }
+    },
+
+    async makeNaverTemplate () {
+
+      let layer = this.layers.join(',')
+      let centerLat = this.coor.getY()
+      let centerLng = this.coor.getX()
+
+      const params = new URLSearchParams({
+        lat: centerLat,
+        lng: centerLng,
+        level: this.mapRadius.level,
+        type: this.baseMap,
+      })
+
+      const newWindow = window.open('/templateNaver.html?' + params.toString(), '_blank')
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
