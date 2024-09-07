@@ -11,9 +11,13 @@
 <div id="checker">
 </div>
 
-<div id="map">
+<div id="map" style="z-index: 1; position: absolute">
 
 </div>
+
+<image id="layer" style="z-index: 2; position: absolute;">
+
+</image>
 
 
 <script async defer
@@ -94,7 +98,8 @@
       mapTypeId: maptype,
       disableDefaultUI: true,
       gestureHandling: 'none',
-      keyboardShortcuts: false
+      keyboardShortcuts: false,
+      tilt: 0
     }
 
     let map = new google.maps.Map(container, options)
