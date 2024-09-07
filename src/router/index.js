@@ -60,13 +60,13 @@ const routes = [
 
   {
     path: '/:pathMatch(.*)*',
-    redirect: "/404"
+    redirect: '/404'
   },
 
   {
-    path: "/404",
-    name: "notFound",
-    component:  () => import(/* webpackChunkName: "notFound" */ '../views/NotFoundView.vue')
+    path: '/404',
+    name: 'notFound',
+    component: () => import(/* webpackChunkName: "notFound" */ '../views/NotFoundView.vue')
   },
 
 ]
@@ -76,21 +76,19 @@ const router = createRouter({
   routes
 })
 
-
-
 router.beforeEach((to, from, next) => {
-  const loaderStore = useLoaderStore();
+  const loaderStore = useLoaderStore()
 
-  loaderStore.isLoading = true;
+  loaderStore.isLoading = true
 
   setTimeout(() => {
-    next();
-  }, 1);
+    next()
+  }, 1)
 
 })
 router.afterEach(() => {
-  const loaderStore = useLoaderStore();
-  loaderStore.isLoading = false;
+  const loaderStore = useLoaderStore()
+  loaderStore.isLoading = false
 })
 
 export default router
