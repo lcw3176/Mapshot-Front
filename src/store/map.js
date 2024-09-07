@@ -1,23 +1,33 @@
-import { defineStore } from "pinia";
-import { Proxy, Naver, Layer, NaverTile, LatLng, Radius } from "../assets/js/mapshot.min.js";
-import axios from 'axios';
+import { defineStore } from 'pinia'
+import { LatLng, Radius, Tile } from '@/assets/js/mapshot.min'
+import axios from 'axios'
+import proj4 from 'proj4'
 
-const apiUrl = process.env.VUE_APP_API_URL;
+const apiUrl = process.env.VUE_APP_API_URL
+const layerUrl = process.env.VUE_APP_LAYER_API_URL
 
-async function requestImage(queryString) {
+const epsg4326 = 'EPSG:4326'
+const epsg5181 = 'EPSG:5181'
+const epsg5179 = 'EPSG:5179'
+const epsg3857 = 'EPSG:3857'
+
+proj4.defs(epsg3857, '+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs +type=crs')
+proj4.defs(epsg5181, '+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=500000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs')
+proj4.defs(epsg5179, '+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs')
+
+async function requestImage (companyType, queryString) {
   try {
-    const response = await axios.get(apiUrl + '/image/generate' + queryString, {responseType: 'blob'});
+    const response = await axios.get(apiUrl + '/image/template/' + companyType + '?' + queryString)
 
-    return response.data;
+    return response.data
   } catch (error) {
 
-    return [];
+    return []
   }
 
 }
 
-
-export const useMapStore = defineStore("map", {
+export const useMapStore = defineStore('map', {
 
   state: () => ({
     map: '',
@@ -31,24 +41,15 @@ export const useMapStore = defineStore("map", {
     bunziAddress: '',
     coor: '',
     rectangle: null,
-    naverTile: '',
     mapRadius: '',
     baseMap: '',
     company: '',
+    layers: [],
     layerMode: false,
     traceMode: false,
     inProgress: false,
-    mapDownloadLink: '',
-    mapDownloadName: '',
-    statusMessage: '',
-    error: false,
-    naverProfile: '',
-    proxyProfile: '',
-    layers: [],
-    layerProfile: '',
-    onlyLayers: false,
-    layerExtension: 'image/jpeg',
     noLabel: false,
+    onlyLayers: false,
 
     radiusArr: {
       1: Radius.One,
@@ -64,7 +65,7 @@ export const useMapStore = defineStore("map", {
     },
 
     companyArr: {
-      // '네이버': 'naver',
+      '네이버': 'naver',
       '카카오': 'kakao',
       '구글': 'google',
     },
@@ -81,103 +82,238 @@ export const useMapStore = defineStore("map", {
     currentMapStyle: '',
   }),
 
-
-  getters: {
-
-  },
+  getters: {},
 
   actions: {
-    async init() {
+    async init () {
 
       let mapContainer = document.getElementById('map'),
         mapOption = {
           center: new kakao.maps.LatLng(37.56813070741759, 126.97899146359276),
           level: 7
-        };
+        }
 
-      this.map = new kakao.maps.Map(mapContainer, mapOption);
-      this.geocoder = new kakao.maps.services.Geocoder();
-      this.markers = [];
-      this.ps = new kakao.maps.services.Places();
-      this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+      this.map = new kakao.maps.Map(mapContainer, mapOption)
+      this.geocoder = new kakao.maps.services.Geocoder()
+      this.markers = []
+      this.ps = new kakao.maps.services.Places()
+      this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 })
 
-      this.naverTile = new NaverTile();
-      this.coor = new LatLng();
-      this.mapRadius = Radius.Two;
-      this.baseMap = '';
-      // this.baseMap = this.baseMapArr['위성'];
-
-      this.naverProfile = new Naver();
-      // this.naverProfile.setKey("ny5d4sdo0e");
-      // this.naverProfile.setMapType(this.baseMap);
-
-      this.proxyProfile = new Proxy();
-      // this.proxyProfile.setProxyUrl(apiUrl + "/image/storage");
-      // this.proxyProfile.setCompanyType(this.companyArr['카카오']);
-      // this.proxyProfile.setMapType(this.baseMap);
-
-      // this.proxyTile = new ProxyTile();
-
-      this.layerProfile = new Layer();
-      this.layerProfile.setUrl("https://pkhb969vta.execute-api.ap-northeast-2.amazonaws.com/default/vworld");
+      this.tile = new Tile()
+      this.coor = new LatLng()
+      this.mapRadius = Radius.Two
+      this.baseMap = ''
 
       this.currentMapStyle = this.baseMapStyles['일반']
     },
 
-    async addListeners() {
-      this.map.addListener('click', this.mapOnClick);
-      this.map.addListener('rightclick', this.removeRectangle);
+    async addListeners () {
+      this.map.addListener('click', this.mapOnClick)
+      this.map.addListener('rightclick', this.removeRectangle)
     },
 
-    async removeListeners() {
-      this.map.removeListener('click', this.mapOnClick);
-      this.map.removeListener('rightclick', this.removeRectangle);
+    async removeListeners () {
+      this.map.removeListener('click', this.mapOnClick)
+      this.map.removeListener('rightclick', this.removeRectangle)
     },
 
-    async startCapture() {
-      if (this.coor.getX() == undefined || this.coor.getY() == undefined) {
-        alert("먼저 지도를 클릭해서 좌표 설정을 진행해 주세요");
-        return;
+    async startCapture () {
+      if (this.isEmpty(this.coor.getX()) || this.isEmpty(this.coor.getY())) {
+        alert('먼저 지도를 클릭해서 좌표 설정을 진행해 주세요')
+        return
       }
 
-      if (this.mapRadius === '' || this.mapRadius === undefined) {
-        alert("반경을 선택해 주세요.");
-        return;
+      if (this.isEmpty(this.mapRadius)) {
+        alert('반경을 선택해 주세요.')
+        return
       }
 
-      if (this.baseMap === '' || this.baseMap === undefined) {
-        alert("지도 종류를 선택해 주세요.");
-        return;
+      if (this.isEmpty(this.baseMap)) {
+        alert('지도 종류를 선택해 주세요.')
+        return
       }
 
-      if (this.company === '' || this.company === undefined) {
-        alert("출력 회사를 선택해 주세요.");
-        return;
+      if (this.isEmpty(this.company) && !this.onlyLayers) {
+        alert('출력 회사를 선택해 주세요.')
+        return
       }
 
-      if (this.inProgress) {
-        alert("현재 작업이 진행중입니다.");
-        return;
+      if (this.onlyLayers && this.layers.length === 0) {
+        alert('레이어를 선택해 주세요')
+        return
       }
-
-
-      this.error = false;
-      this.inProgress = true;
 
       if (this.traceMode) {
-        this.makeTrace();
+        this.makeTrace()
       }
 
-      // if (this.company === "naver") {
-      //   this.naverCapture();
-      // }
+      if (this.onlyLayers) {
+        this.makeLayerTemplate()
+        return
+      }
 
-      if (this.company === "kakao" || this.company === "google") {
-        this.proxyCapture();
+      if (this.company === 'kakao') {
+        this.makeKakaoTemplate()
+      } else if (this.company === 'google') {
+        this.makeGoogleTemplate()
+      } else if (this.company === 'naver') {
+        this.makeNaverTemplate()
+      }
+
+    },
+
+    async makeKakaoTemplate () {
+
+      let layer = this.layers.join(',')
+      let centerLat = this.coor.getY()
+      let centerLng = this.coor.getX()
+
+      const params = new URLSearchParams({
+        lat: centerLat,
+        lng: centerLng,
+        level: this.mapRadius.level,
+        type: this.baseMap,
+        layerMode: this.layerMode
+      })
+
+      const newWindow = window.open('/templateKakao.html?' + params.toString(), '_blank')
+
+      if (!newWindow) {
+        alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
+      } else {
+        let checkMapInterval = setInterval(() => {
+
+          let element = newWindow.document.getElementById('checker_true')
+          if (element) {
+
+            if (!this.isEmpty(layer)) {
+              this.makeLayers(newWindow, element, layer, epsg5181)
+            }
+
+            clearInterval(checkMapInterval)
+          }
+        }, 500)
       }
     },
 
-    async makeTrace() {
+    async makeNaverTemplate () {
+
+      let layer = this.layers.join(',')
+      let centerLat = this.coor.getY()
+      let centerLng = this.coor.getX()
+
+      const params = new URLSearchParams({
+        lat: centerLat,
+        lng: centerLng,
+        level: this.mapRadius.level,
+        type: this.baseMap,
+      })
+
+      const newWindow = window.open('/templateNaver.html?' + params.toString(), '_blank')
+
+      if (!newWindow) {
+        alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
+      } else {
+        let checkMapInterval = setInterval(() => {
+
+          let element = newWindow.document.getElementById('checker_true')
+          if (element) {
+
+            if (!this.isEmpty(layer)) {
+              this.makeLayers(newWindow, element, layer, epsg5179)
+            }
+
+            clearInterval(checkMapInterval)
+          }
+        }, 500)
+      }
+    },
+
+    async makeGoogleTemplate () {
+
+      let layer = this.layers.join(',')
+      let centerLat = this.coor.getY()
+      let centerLng = this.coor.getX()
+
+      const params = new URLSearchParams({
+        lat: centerLat,
+        lng: centerLng,
+        level: this.mapRadius.level,
+        type: this.baseMap,
+        noLabel: this.noLabel
+      })
+
+      const newWindow = window.open('/templateGoogle.html?' + params.toString(), '_blank')
+
+      if (!newWindow) {
+        alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
+      } else {
+        let checkMapInterval = setInterval(() => {
+
+          let element = newWindow.document.getElementById('checker_true')
+          if (element) {
+
+            if (!this.isEmpty(layer)) {
+              this.makeLayers(newWindow, element, layer, epsg3857)
+            }
+
+            clearInterval(checkMapInterval)
+          }
+        }, 500)
+      }
+    },
+
+    async makeLayerTemplate () {
+      let layer = this.layers.join(',')
+      let centerLat = this.coor.getY()
+      let centerLng = this.coor.getX()
+
+      const params = new URLSearchParams({
+        lat: centerLat,
+        lng: centerLng,
+        level: this.mapRadius.level,
+        type: this.baseMap,
+        layerMode: this.layerMode
+      })
+
+      const newWindow = window.open('/templateLayer.html?' + params.toString(), '_blank')
+
+      if (!newWindow) {
+        alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
+      } else {
+        let checkMapInterval = setInterval(() => {
+
+          let element = newWindow.document.getElementById('checker_true')
+          if (element) {
+            this.makeLayers(newWindow, element, layer, epsg5181)
+            clearInterval(checkMapInterval)
+          }
+        }, 500)
+      }
+    },
+
+    async makeLayers (window, element, layers, targetEpsg) {
+      let neLat = element.getAttribute('neLat')
+      let neLng = element.getAttribute('neLng')
+      let swLat = element.getAttribute('swLat')
+      let swLng = element.getAttribute('swLng')
+      const neLngLat = [parseFloat(neLng), parseFloat(neLat)]
+      const swLngLat = [parseFloat(swLng), parseFloat(swLat)]
+      const topRightTransformed = proj4(epsg4326, targetEpsg, neLngLat)
+      const bottomLeftTransformed = proj4(epsg4326, targetEpsg, swLngLat)
+
+      let image = window.document.getElementById('layer')
+      image.src = layerUrl +
+        '?layer=' + layers +
+        '&crs=' + targetEpsg +
+        '&height=' + 2000 +
+        '&ymin=' + bottomLeftTransformed[1] +
+        '&xmin=' + bottomLeftTransformed[0] +
+        '&ymax=' + topRightTransformed[1] +
+        '&xmax=' + topRightTransformed[0]
+    },
+
+    async makeTrace () {
       let traceRec = new kakao.maps.Rectangle({
         bounds: this.rectangle.getBounds(),
         strokeWeight: 4,
@@ -186,144 +322,34 @@ export const useMapStore = defineStore("map", {
         strokeStyle: 'shortdot',
         fillColor: '#ecf4f3',
         fillOpacity: 0.8
-      });
-      traceRec.setMap(this.map);
+      })
+      traceRec.setMap(this.map)
     },
 
-
-    async naverTileOnLoadStart(event) {
-      this.progressBarMax = event.detail.total;
-      this.progressBarValue = 0;
-    },
-
-    async naverTileOnProgress() {
-      this.progressBarValue += 1;
-      this.statusMessage = this.progressBarValue + "/" + this.progressBarMax + " 수집 완료";
-    },
-
-
-    async naverTileOnError() {
-      this.error = true;
-      this.naverTileOnProgress();
-    },
-
-
-    async naverCapture() {
-      this.naverProfile.setLevel(this.mapRadius);
-      let addLayers = false;
-
-      if (this.layers.length > 0) {
-        addLayers = true;
-        this.layerProfile.setLayer(this.layers);
-      }
-
-      let fileName = this.bunziAddress;
-
-      if (this.onlyLayers) {
-        let imageExtension = this.layerExtension;
-
-        this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, null, (layerCanvas) => {
-          layerCanvas.toBlob((blob) => {
-            this.mapDownloadLink = URL.createObjectURL(blob);
-
-            if (imageExtension === "image/png") {
-              this.onCaptureEnded(fileName, "png");
-            } else {
-              this.onCaptureEnded(fileName, "jpg");
-            }
-
-          }, imageExtension);
-        });
-      } else {
-        this.naverTile.draw(this.coor, this.mapRadius, this.naverProfile, (canvas) => {
-          if (addLayers) {
-            this.naverTile.drawLayers(this.coor, this.mapRadius, this.layerProfile, canvas, (layerCanvas) => {
-              layerCanvas.toBlob((blob) => {
-                this.mapDownloadLink = URL.createObjectURL(blob);
-                this.onCaptureEnded(fileName, "jpg");
-
-              }, "image/jpeg");
-            });
-          } else {
-            canvas.toBlob((blob) => {
-              this.mapDownloadLink = URL.createObjectURL(blob);
-              this.onCaptureEnded(fileName, "jpg");
-
-            }, "image/jpeg");
-          }
-
-        });
-      }
-    },
-
-    async proxyCapture() {
-      this.progressBarValue = 0;
-      this.progressBarMax = 100;
-
-      this.progressBarLoading = true;
-      let fileName = this.bunziAddress;
-      let expectedEndTime = new Date();
-      expectedEndTime.setSeconds(expectedEndTime.getSeconds() + 60);
-
-      this.statusMessage = "지도 생성중 입니다. 예상 완료시간 -> " + expectedEndTime.toLocaleTimeString();
-
-      this.proxyProfile.setRadius(this.mapRadius);
-      this.proxyProfile.setLayerMode(this.layerMode);
-      this.proxyProfile.setNoLabel(this.noLabel);
-
-
-      let data = await requestImage(this.proxyProfile.getQueryString());
-
-      this.progressBarLoading = false;
-
-
-      if (data.length === 0) {
-        this.proxyTileOnError();
-        return;
-      }
-
-      this.mapDownloadLink = URL.createObjectURL(data);
-      this.onCaptureEnded(fileName, "jpg");
-    },
-
-    async proxyTileOnError() {
-      this.statusMessage = "서버 에러입니다. 잠시 후 다시 시도해주세요.";
-      this.error = true;
-      this.inProgress = false;
-    },
-
-    async onCaptureEnded(fileName, type) {
-      this.mapDownloadName = "mapshot_" + fileName + "." + type;
-      this.statusMessage = "완료되었습니다. 생성된 링크를 확인해 주세요";
-      this.inProgress = false;
-    },
-
-    async removeRectangle() {
+    async removeRectangle () {
       if (this.rectangle != null) {
-        this.rectangle.setMap(null);
+        this.rectangle.setMap(null)
       }
     },
 
-    async mapOnClick(mouseEvent) {
+    async mapOnClick (mouseEvent) {
       // 클릭한 위도, 경도 정보를 가져옵니다
-      let latlng = mouseEvent.latLng;
+      let latlng = mouseEvent.latLng
 
-      this.lat = latlng.getLat();
-      this.lng = latlng.getLng();
-      this.coor.init(this.lat, this.lng);
+      this.lat = latlng.getLat()
+      this.lng = latlng.getLng()
+      this.coor.init(this.lat, this.lng)
 
-      this.searchDetailAddrFromCoords(mouseEvent.latLng, this.insertAddressStr);
-
+      this.searchDetailAddrFromCoords(mouseEvent.latLng, this.insertAddressStr)
 
       if (this.rectangle != null) {
-        this.rectangle.setMap(null);
+        this.rectangle.setMap(null)
       }
 
-      this.naverTile.setLevel(this.mapRadius);
-      this.proxyProfile.setCenter(this.coor);
+      this.tile.setLevel(this.mapRadius)
 
-      let sw = this.naverTile.getSW(this.mapRadius, this.coor);
-      let ne = this.naverTile.getNE(this.mapRadius, this.coor);
+      let sw = this.tile.getSW(this.mapRadius, this.coor)
+      let ne = this.tile.getNE(this.mapRadius, this.coor)
 
       this.rectangle = new kakao.maps.Rectangle({
         bounds: new kakao.maps.LatLngBounds(new kakao.maps.LatLng(sw.getY(), sw.getX()), new kakao.maps.LatLng(ne.getY(), ne.getX())),
@@ -333,131 +359,127 @@ export const useMapStore = defineStore("map", {
         strokeStyle: 'shortdashdot',
         fillColor: '#FF8AEF',
         fillOpacity: 0.8
-      });
+      })
 
-      this.rectangle.setMap(this.map);
-
+      this.rectangle.setMap(this.map)
     },
 
-    async insertAddressStr(result, status) {
+    async insertAddressStr (result, status) {
       if (status === kakao.maps.services.Status.OK) {
-        this.roadAddress = !!result[0].road_address ? result[0].road_address.address_name : '';
-        this.bunziAddress = result[0].address.address_name;
-
+        this.roadAddress = !!result[0].road_address ? result[0].road_address.address_name : ''
+        this.bunziAddress = result[0].address.address_name
       }
     },
 
-    async changeRadius(rad, event) {
-      this.mapRadius = rad;
+    async changeRadius (rad, event) {
+      this.mapRadius = rad
     },
 
-    async changeBaseMap(map, event) {
-      this.baseMap = map;
-      this.naverProfile.setMapType(map);
-      this.proxyProfile.setMapType(map);
+    async changeBaseMap (map, event) {
+      this.baseMap = map
     },
 
-    async changeCompany(company, event) {
-      this.company = company;
-
-      if(this.company !== "naver"){
-        this.proxyProfile.setCompanyType(this.company);
-      }
-
-      if (this.company !== this.companyArr['카카오'] && this.layerMode) {
-        this.layerMode = false;
-      }
-
+    async changeCompany (company, event) {
+      this.company = company
     },
 
-    async changeMapStyle(mapStyle) {
-      this.currentMapStyle = mapStyle;
-      this.map.setMapTypeId(this.currentMapStyle);
+    async changeMapStyle (mapStyle) {
+      this.currentMapStyle = mapStyle
+      this.map.setMapTypeId(this.currentMapStyle)
+    },
+
+    isEmpty (input) {
+      return typeof input === 'undefined' ||
+        input === null ||
+        input === '' ||
+        input === 'null' ||
+        input.length === 0 ||
+        (typeof input === 'object' && !Object.keys(input).length)
     },
 
     // 이하 카카오 지도 api 문서 코드
-    placesSearchCB(data, status, pagination) {
+    placesSearchCB (data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
 
         // 정상적으로 검색이 완료됐으면
         // 검색 목록과 마커를 표출합니다
-        this.displayPlaces(data);
+        this.displayPlaces(data)
 
         // 페이지 번호를 표출합니다
-        this.displayPagination(pagination);
+        this.displayPagination(pagination)
 
       } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
 
-        alert('검색 결과가 존재하지 않습니다.');
-        return;
+        alert('검색 결과가 존재하지 않습니다.')
+        return
 
       } else if (status === kakao.maps.services.Status.ERROR) {
 
-        alert('검색 결과 중 오류가 발생했습니다.');
-        return;
+        alert('검색 결과 중 오류가 발생했습니다.')
+        return
 
       }
     },
 
-    displayPlaces(places) {
+    displayPlaces (places) {
 
       let listEl = document.getElementById('placesList'),
         menuEl = document.getElementById('menu_wrap'),
         fragment = document.createDocumentFragment(),
-        bounds = new kakao.maps.LatLngBounds();
+        bounds = new kakao.maps.LatLngBounds()
 
       // 검색 결과 목록에 추가된 항목들을 제거합니다
-      this.removeAllChildNods(listEl);
+      this.removeAllChildNods(listEl)
 
       // 지도에 표시되고 있는 마커를 제거합니다
-      this.removeMarker();
+      this.removeMarker()
 
       for (let i = 0; i < places.length; i++) {
 
         // 마커를 생성하고 지도에 표시합니다
         let placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
           marker = this.addMarker(placePosition, i),
-          itemEl = this.getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
+          itemEl = this.getListItem(i, places[i]) // 검색 결과 항목 Element를 생성합니다
 
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
         // LatLngBounds 객체에 좌표를 추가합니다
-        bounds.extend(placePosition);
+        bounds.extend(placePosition)
 
-        fragment.appendChild(itemEl);
+        fragment.appendChild(itemEl)
       }
 
       // 검색결과 항목들을 검색결과 목록 Element에 추가합니다
-      listEl.appendChild(fragment);
-      menuEl.scrollTop = 0;
+      listEl.appendChild(fragment)
+      menuEl.scrollTop = 0
 
       // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-      this.map.setBounds(bounds);
+      this.map.setBounds(bounds)
     },
 
-    getListItem(index, places) {
+    getListItem (index, places) {
 
       var el = document.createElement('li'),
         itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
           '<div class="info">' +
-          '   <h5>' + places.place_name + '</h5>';
+          '   <h5>' + places.place_name + '</h5>'
 
       if (places.road_address_name) {
         itemStr += '    <span>' + places.road_address_name + '</span>' +
-          '   <span class="jibun gray">' + places.address_name + '</span>';
+          '   <span class="jibun gray">' + places.address_name + '</span>'
       } else {
-        itemStr += '    <span>' + places.address_name + '</span>';
+        itemStr += '    <span>' + places.address_name + '</span>'
       }
 
       itemStr += '  <span class="tel">' + places.phone + '</span>' +
-        '</div>';
+        '</div>'
 
-      el.innerHTML = itemStr;
-      el.className = 'item';
+      el.innerHTML = itemStr
+      el.className = 'item'
 
-      return el;
+      return el
     },
 
-    addMarker(position, idx, title) {
+    addMarker (position, idx, title) {
       var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
         imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
         imgOptions = {
@@ -469,85 +491,85 @@ export const useMapStore = defineStore("map", {
         marker = new kakao.maps.Marker({
           position: position, // 마커의 위치
           image: markerImage
-        });
+        })
 
-      marker.setMap(this.map); // 지도 위에 마커를 표출합니다
-      this.markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+      marker.setMap(this.map) // 지도 위에 마커를 표출합니다
+      this.markers.push(marker)  // 배열에 생성된 마커를 추가합니다
 
-      return marker;
+      return marker
     },
 
-    searchPlaces() {
+    searchPlaces () {
 
-      let keyword = document.getElementById('keyword').value;
+      let keyword = document.getElementById('keyword').value
 
       if (!keyword.replace(/^\s+|\s+$/g, '')) {
-        alert('키워드를 입력해주세요!');
-        return false;
+        alert('키워드를 입력해주세요!')
+        return false
       }
 
-      this.ps.keywordSearch(keyword, this.placesSearchCB);
+      this.ps.keywordSearch(keyword, this.placesSearchCB)
     },
 
-    removeAllChildNods(el) {
+    removeAllChildNods (el) {
       while (el.hasChildNodes()) {
-        el.removeChild(el.lastChild);
+        el.removeChild(el.lastChild)
       }
     },
 
-    displayInfowindow(marker, title) {
-      var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+    displayInfowindow (marker, title) {
+      var content = '<div style="padding:5px;z-index:1;">' + title + '</div>'
 
-      infowindow.setContent(content);
-      infowindow.open(map, marker);
+      infowindow.setContent(content)
+      infowindow.open(map, marker)
     },
 
-    displayPagination(pagination) {
+    displayPagination (pagination) {
       var paginationEl = document.getElementById('pagination'),
         fragment = document.createDocumentFragment(),
-        i;
+        i
 
       // 기존에 추가된 페이지번호를 삭제합니다
       while (paginationEl.hasChildNodes()) {
-        paginationEl.removeChild(paginationEl.lastChild);
+        paginationEl.removeChild(paginationEl.lastChild)
       }
 
       for (i = 1; i <= pagination.last; i++) {
-        var el = document.createElement('a');
-        el.href = "#";
-        el.innerHTML = i;
+        var el = document.createElement('a')
+        el.href = '#'
+        el.innerHTML = i
 
         if (i === pagination.current) {
-          el.className = 'on';
+          el.className = 'on'
         } else {
           el.onclick = (function (i) {
             return function () {
-              pagination.gotoPage(i);
+              pagination.gotoPage(i)
             }
-          })(i);
+          })(i)
         }
 
-        fragment.appendChild(el);
+        fragment.appendChild(el)
       }
-      paginationEl.appendChild(fragment);
+      paginationEl.appendChild(fragment)
     },
 
-    removeMarker() {
+    removeMarker () {
       for (var i = 0; i < this.markers.length; i++) {
-        this.markers[i].setMap(null);
+        this.markers[i].setMap(null)
       }
-      this.markers = [];
+      this.markers = []
     },
 
-    searchAddrFromCoords(coords, callback) {
+    searchAddrFromCoords (coords, callback) {
       // 좌표로 행정동 주소 정보를 요청합니다
-      this.geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
+      this.geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback)
     },
 
-    searchDetailAddrFromCoords(coords, callback) {
+    searchDetailAddrFromCoords (coords, callback) {
       // 좌표로 법정동 상세 주소 정보를 요청합니다
-      this.geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+      this.geocoder.coord2Address(coords.getLng(), coords.getLat(), callback)
     },
 
   }
-});
+})
