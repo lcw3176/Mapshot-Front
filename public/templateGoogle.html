@@ -21,6 +21,8 @@
 <script type="text/javascript">
 
   function initMap () {
+    const queryString = window.location.search
+    const urlParams = new URLSearchParams(queryString)
 
     const level = parseInt(urlParams.get('level'))
     const lat = parseFloat(urlParams.get('lat'))
