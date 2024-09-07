@@ -8,8 +8,12 @@ const layerUrl = process.env.VUE_APP_LAYER_API_URL
 
 const epsg4326 = 'EPSG:4326'
 const epsg5181 = 'EPSG:5181'
+const epsg5179 = 'EPSG:5179'
+const epsg3857 = 'EPSG:3857'
 
+proj4.defs(epsg3857, '+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs +type=crs')
 proj4.defs(epsg5181, '+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=500000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs')
+proj4.defs(epsg5179, '+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs')
 
 async function requestImage (companyType, queryString) {
   try {
@@ -183,7 +187,7 @@ export const useMapStore = defineStore('map', {
           if (element) {
 
             if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer)
+              this.makeLayers(newWindow, element, layer, epsg5181)
             }
 
             clearInterval(checkMapInterval)
@@ -216,7 +220,7 @@ export const useMapStore = defineStore('map', {
           if (element) {
 
             if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer)
+              this.makeLayers(newWindow, element, layer, epsg5179)
             }
 
             clearInterval(checkMapInterval)
@@ -250,7 +254,7 @@ export const useMapStore = defineStore('map', {
           if (element) {
 
             if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer)
+              this.makeLayers(newWindow, element, layer, epsg3857)
             }
 
             clearInterval(checkMapInterval)
@@ -288,19 +292,20 @@ export const useMapStore = defineStore('map', {
       }
     },
 
-    async makeLayers (window, element, layers) {
+    async makeLayers (window, element, layers, targetEpsg) {
       let neLat = element.getAttribute('neLat')
       let neLng = element.getAttribute('neLng')
       let swLat = element.getAttribute('swLat')
       let swLng = element.getAttribute('swLng')
       const neLngLat = [parseFloat(neLng), parseFloat(neLat)]
       const swLngLat = [parseFloat(swLng), parseFloat(swLat)]
-      const topRightTransformed = proj4(epsg4326, epsg5181, neLngLat)
-      const bottomLeftTransformed = proj4(epsg4326, epsg5181, swLngLat)
+      const topRightTransformed = proj4(epsg4326, targetEpsg, neLngLat)
+      const bottomLeftTransformed = proj4(epsg4326, targetEpsg, swLngLat)
 
       let image = window.document.getElementById('layer')
       image.src = layerUrl +
         '?layer=' + layers +
+        '&crs=' + targetEpsg +
         '&height=' + 2000 +
         '&ymin=' + bottomLeftTransformed[1] +
         '&xmin=' + bottomLeftTransformed[0] +
