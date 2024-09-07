@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Template Sketch</title>
+</head>
+
+<body style="margin: 0px">
+<div id="checker">
+
+</div>
+
+<div id="map" style="z-index: 1; position: absolute">
+
+</div>
+
+<image id="layer" style="z-index: 2; position: absolute;">
+
+</image>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=46d97694c5e976ec8af172aebc94c130"></script>
+<script type="text/javascript">
+
+
+  window.onload = function () {
+    const queryString = window.location.search
+    const urlParams = new URLSearchParams(queryString)
+
+    const level = parseInt(urlParams.get('level'))
+    const lat = parseFloat(urlParams.get('lat'))
+    const lng = parseFloat(urlParams.get('lng'))
+    const type = urlParams.get('type')
+    const layerMode = urlParams.get('layerMode') === 'true'
+
+    let goalWidth
+    let zoomLevel
+    let maptype
+    let defaultLength = 500
+    let dynamicWidth = defaultLength
+
+    if (type === 'basic') {
+      maptype = kakao.maps.MapTypeId.ROADMAP
+    } else if (type === 'satellite_base') {
+      maptype = kakao.maps.MapTypeId.SKYVIEW
+    } else if (type === 'satellite') {
+      maptype = kakao.maps.MapTypeId.HYBRID
+    }
+
+    switch (level) {
+      case 1:
+        zoomLevel = 2
+        goalWidth = 5000
+        break
+      case 2:
+        zoomLevel = 3
+        goalWidth = 4000
+        break
+      case 5:
+        zoomLevel = 4
+        goalWidth = 5000
+        break
+      case 10:
+        zoomLevel = 5
+        goalWidth = 5000
+        break
+      default:
+        break
+    }
+
+    let container = document.getElementById('map')
+    let options = {
+      center: new kakao.maps.LatLng(lat, lng),
+      level: zoomLevel,
+      draggable: false,
+      zoomable: false,
+    }
+
+    let map = new kakao.maps.Map(container, options)
+    map.setMapTypeId(maptype)
+
+    if (layerMode) {
+      map.addOverlayMapTypeId(kakao.maps.MapTypeId.USE_DISTRICT)
+    }
+
+    let intervalCount = 0
+
+    let timerId = setInterval(function () {
+
+      intervalCount++
+      map.setCenter(new kakao.maps.LatLng(lat, lng))
+      map.relayout()
+
+      if (dynamicWidth <= goalWidth) {
+        container.style.height = dynamicWidth + 'px'
+        container.style.width = dynamicWidth + 'px'
+
+        dynamicWidth += defaultLength
+      } else if (dynamicWidth > goalWidth) {
+        document.getElementById('checker').setAttribute('id', 'checker_true')
+        document.getElementById('checker_true').setAttribute('neLat', map.getBounds().getNorthEast().getLat())
+        document.getElementById('checker_true').setAttribute('neLng', map.getBounds().getNorthEast().getLng())
+        document.getElementById('checker_true').setAttribute('swLat', map.getBounds().getSouthWest().getLat())
+        document.getElementById('checker_true').setAttribute('swLng', map.getBounds().getSouthWest().getLng())
+
+        document.getElementById('layer').style.height = goalWidth + 'px'
+        document.getElementById('layer').style.width = goalWidth + 'px'
+        clearInterval(timerId)
+      }
+
+      if (intervalCount >= 30) {
+        document.getElementById('checker').setAttribute('id', 'checker_true')
+
+        clearInterval(timerId)
+      }
+
+    }, 1000)
+
+  }
+
+
+</script>
+</body>
+</html>
