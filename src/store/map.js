@@ -285,7 +285,7 @@ export const useMapStore = defineStore('map', {
 
           let element = newWindow.document.getElementById('checker_true')
           if (element) {
-            this.makeLayers(newWindow, element, layer)
+            this.makeLayers(newWindow, element, layer, epsg5181)
             clearInterval(checkMapInterval)
           }
         }, 500)
