@@ -4,6 +4,7 @@ import axios from 'axios'
 import proj4 from 'proj4'
 
 const apiUrl = process.env.VUE_APP_API_URL
+const layerUrl = process.env.VUE_APP_LAYER_API_URL
 
 const epsg4326 = 'EPSG:4326'
 const epsg5181 = 'EPSG:5181'
@@ -265,8 +266,8 @@ export const useMapStore = defineStore('map', {
       const bottomLeftTransformed = proj4(epsg4326, epsg5181, swLngLat)
 
       let image = window.document.getElementById('layer')
-      image.src = 'https://4sltozpltpmcbqqv62cynw5lie0gqjrv.lambda-url.ap-northeast-2.on.aws/?' +
-        'layer=' + layers +
+      image.src = layerUrl +
+        '?layer=' + layers +
         '&height=' + 2000 +
         '&ymin=' + bottomLeftTransformed[1] +
         '&xmin=' + bottomLeftTransformed[0] +
