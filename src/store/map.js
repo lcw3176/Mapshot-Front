@@ -203,7 +203,7 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
-        layerMode: this.layerMode
+        noLabel: this.noLabel
       })
 
       const newWindow = window.open('/templateGoogle.html?' + params.toString(), '_blank')
