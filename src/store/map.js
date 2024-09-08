@@ -220,7 +220,7 @@ export const useMapStore = defineStore('map', {
           if (element) {
 
             if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer, epsg5179)
+              this.makeLayers(newWindow, element, layer, epsg4326)
             }
 
             clearInterval(checkMapInterval)
