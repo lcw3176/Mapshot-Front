@@ -9,7 +9,7 @@
     <v-app-bar elevation="1" v-if="display.mdAndUp">
       <template v-slot:prepend>
         <v-img
-          :width="300"
+          :width="200"
           aspect-ratio="16/9"
           src="/title.png"
           @click="this.$router.push('/') "
