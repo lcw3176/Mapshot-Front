@@ -1,22 +1,28 @@
 <template>
   <div v-if="loaderStore.isLoading" class="loading-container">
     <div class="loading">
-      <Moon-loader />
+      <Moon-loader/>
     </div>
   </div>
 
   <v-layout>
     <v-app-bar elevation="1" v-if="display.mdAndUp">
+      <template v-slot:prepend>
+        <v-img
+          :width="300"
+          aspect-ratio="16/9"
+          src="/title.png"
+          @click="this.$router.push('/') "
+          style="cursor: pointer"
+        >
+        </v-img>
 
-      <v-btn class="font-weight-bold text-h5" size="x-large" variant="text" to="/">
-        {{ appTitle }}
+      </template>
 
-      </v-btn>
 
       <v-spacer>
 
       </v-spacer>
-
 
 
       <div v-for="item in desktop" :key="item.title">
@@ -37,12 +43,10 @@
     </v-bottom-navigation>
 
 
-
     <v-main>
       <router-view></router-view>
       <AdsView v-if="display.mdAndUp"/>
     </v-main>
-
 
 
   </v-layout>
@@ -64,35 +68,70 @@ export default {
     MoonLoader
   },
 
-  data() {
+  data () {
     const display = ref(useDisplay())
 
     return {
-      appTitle: "MAPSHOT",
+      appTitle: 'MAPSHOT',
       sidebar: false,
       desktop: [
-        { title: "게시판", path: "/community", icon: "mdi-bulletin-board" },
-        { title: "사용법", path: "/manual", icon: "mdi-school-outline"  },
-        { title: "공지사항", path: "/notice", icon: "mdi-bullhorn-outline"  },
-        { title: "문의", path: "/contact", icon: "mdi mdi-email-edit-outline" },
-        { title: "FAQ", path: "/faq", icon: "mdi-frequently-asked-questions" },
+        {
+          title: '게시판',
+          path: '/community',
+          icon: 'mdi-bulletin-board'
+        },
+        {
+          title: '사용법',
+          path: '/manual',
+          icon: 'mdi-school-outline'
+        },
+        {
+          title: '공지사항',
+          path: '/notice',
+          icon: 'mdi-bullhorn-outline'
+        },
+        {
+          title: '문의',
+          path: '/contact',
+          icon: 'mdi mdi-email-edit-outline'
+        },
+        {
+          title: 'FAQ',
+          path: '/faq',
+          icon: 'mdi-frequently-asked-questions'
+        },
 
       ],
 
-
       mobile: [
-        { title: "홈", path: "/", icon: "mdi-home-outline" },
-        { title: "사용법", path: "/manual", icon: "mdi-school-outline" },
-        { title: "공지사항", path: "/notice", icon: "mdi-bullhorn-outline" },
-        { title: "게시판", path: "/community", icon: "mdi-bulletin-board"},
+        {
+          title: '홈',
+          path: '/',
+          icon: 'mdi-home-outline'
+        },
+        {
+          title: '사용법',
+          path: '/manual',
+          icon: 'mdi-school-outline'
+        },
+        {
+          title: '공지사항',
+          path: '/notice',
+          icon: 'mdi-bullhorn-outline'
+        },
+        {
+          title: '게시판',
+          path: '/community',
+          icon: 'mdi-bulletin-board'
+        },
       ],
 
       display,
-    };
+    }
   },
 
-  setup() {
-    const loaderStore = useLoaderStore();
+  setup () {
+    const loaderStore = useLoaderStore()
 
     return {
       loaderStore
