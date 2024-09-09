@@ -138,7 +138,7 @@ export const useMapStore = defineStore('map', {
         return
       }
 
-      if (this.onlyLayers && this.layers.length === 0) {
+      if (this.onlyLayers && this.isEmpty(this.layers)) {
         alert('레이어를 선택해 주세요')
         return
       }
