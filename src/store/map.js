@@ -303,7 +303,7 @@ export const useMapStore = defineStore('map', {
       const bottomLeftTransformed = proj4(epsg4326, targetEpsg, swLngLat)
 
       let image = window.document.getElementById('layer')
-      image.src = layerUrl +
+      let url = layerUrl +
         '?layer=' + layers +
         '&crs=' + targetEpsg +
         '&height=' + 2000 +
@@ -311,6 +311,17 @@ export const useMapStore = defineStore('map', {
         '&xmin=' + bottomLeftTransformed[0] +
         '&ymax=' + topRightTransformed[1] +
         '&xmax=' + topRightTransformed[0]
+
+      await this.loadImage(image, url)
+    },
+
+    async loadImage (img, URL, retries = 2) {
+      img.onerror = async () => {
+        if (retries > 0) {
+          await this.loadImage(img, URL, retries - 1)
+        }
+      }
+      img.src = URL
     },
 
     async makeTrace () {
