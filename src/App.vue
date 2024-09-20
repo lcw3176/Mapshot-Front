@@ -7,9 +7,6 @@
 
   <v-layout>
     <v-app-bar elevation="1" v-if="display.mdAndUp">
-      <v-spacer>
-
-      </v-spacer>
 
       <v-img
         :height="50"
@@ -33,10 +30,7 @@
         </v-btn>
 
       </div>
-
-      <v-spacer>
-
-      </v-spacer>
+      
     </v-app-bar>
 
     <v-bottom-navigation v-else grow>
