@@ -10,7 +10,7 @@
 
       <template v-slot:prepend>
         <v-img
-          :height="50"
+          :width="170"
           aspect-ratio="16/9"
           src="/title.png"
           @click="this.$router.push('/') "
