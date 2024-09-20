@@ -8,14 +8,17 @@
   <v-layout>
     <v-app-bar elevation="1" v-if="display.mdAndUp">
 
-      <v-img
-        :height="50"
-        aspect-ratio="16/9"
-        src="/title.png"
-        @click="this.$router.push('/') "
-        style="cursor: pointer"
-      >
-      </v-img>
+      <template v-slot:prepend>
+        <v-img
+          :height="50"
+          aspect-ratio="16/9"
+          src="/title.png"
+          @click="this.$router.push('/') "
+          style="cursor: pointer"
+        >
+        </v-img>
+
+      </template>
 
 
       <v-spacer>
@@ -30,7 +33,7 @@
         </v-btn>
 
       </div>
-      
+
     </v-app-bar>
 
     <v-bottom-navigation v-else grow>
