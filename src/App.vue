@@ -7,9 +7,10 @@
 
   <v-layout>
     <v-app-bar elevation="1" v-if="display.mdAndUp">
+
       <template v-slot:prepend>
         <v-img
-          :width="200"
+          :width="170"
           aspect-ratio="16/9"
           src="/title.png"
           @click="this.$router.push('/') "
@@ -27,12 +28,12 @@
 
       <div v-for="item in desktop" :key="item.title">
 
-        <v-btn stacked :to="item.path" class="me-2">
-          <v-icon :icon="item.icon"></v-icon>
+        <v-btn :to="item.path" variant="plain">
           {{ item.title }}
         </v-btn>
 
       </div>
+
     </v-app-bar>
 
     <v-bottom-navigation v-else grow>
