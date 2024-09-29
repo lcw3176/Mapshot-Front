@@ -2,11 +2,11 @@
 
 
   <v-alert
-    title="알림"
     type="info"
     variant="tonal"
   >지도 생성 방식이 변경되었습니다. <a href="https://kmapshot.com/notice/detail/36">공지사항</a>을 확인해주세요.
   </v-alert>
+
 
   <!-- 지도 -->
   <div class="map_wrap">
@@ -170,7 +170,6 @@
 
 
   </component>
-
 
 </template>
 
