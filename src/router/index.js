@@ -32,13 +32,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "noticeDetail" */ '../views/NoticeDetailView.vue'),
     props: true
   },
-
-  {
-    path: '/faq',
-    name: 'faq',
-    component: () => import(/* webpackChunkName: "faq" */ '../views/FAQView.vue')
-  },
-
+  
   {
     path: '/community',
     name: 'community',
