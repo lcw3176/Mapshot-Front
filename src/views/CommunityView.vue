@@ -21,14 +21,15 @@
             <th class="text-left">
               No
             </th>
-            <th class="text-left">
-              제목
-            </th>
 
             <th class="text-left">
               작성자
             </th>
 
+            <th class="text-left">
+              제목
+            </th>
+  
             <th class="text-left">
               작성일
             </th>
@@ -38,6 +39,13 @@
           <tr v-for="post in communityStore.posts" :key="post.id">
 
             <td>{{ post.id }}</td>
+
+            <td>
+              <v-chip variant="outlined">
+                {{ post.writer }}
+              </v-chip>
+            </td>
+
             <td>
               <v-list-item :to="{ path: `/community/${post.id}` }">
                 {{ post.title }}
@@ -50,7 +58,7 @@
                 </template>
               </v-list-item>
             </td>
-            <td>{{ post.writer }}</td>
+                
             <td>{{ communityStore.formatDateWithoutHour(post.createdDate) }}</td>
           </tr>
           </tbody>
