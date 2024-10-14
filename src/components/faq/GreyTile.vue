@@ -1,6 +1,6 @@
 <template>
   <v-card elevation="0">
-    <v-card-title class="text-h5">회색 타일 섞임 현상</v-card-title>
+    <v-card-title class="text-h5">회색 타일이 섞여요</v-card-title>
 
     <v-card elevation="0">
       <v-img :src="greytile" max-height="500"></v-img>

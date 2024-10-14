@@ -45,6 +45,7 @@
 <script>
 
 import GreyTile from '@/components/faq/GreyTile.vue'
+import HowToCapture from '@/components/faq/HowToCapture.vue'
 
 import { markRaw, ref } from 'vue'
 import { useDisplay } from 'vuetify'
@@ -59,13 +60,18 @@ export default {
       faqs: [
         {
           page: markRaw(GreyTile),
-          title: '회색 타일 섞임 현상',
+          title: '회색 타일이 섞여요',
+        },
+
+        {
+          page: markRaw(HowToCapture),
+          title: '캡쳐는 어떻게 하나요?',
         },
       ],
 
-      nowPage: markRaw(GreyTile),
+      nowPage: markRaw(HowToCapture),
       display,
-      tab: '회색 타일 섞임 현상',
+      tab: '캡쳐는 어떻게 하나요?',
     }
   },
 
