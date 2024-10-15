@@ -96,6 +96,11 @@ export default {
           path: '/contact',
           icon: 'mdi mdi-email-edit-outline'
         },
+        {
+          title: 'FAQ',
+          path: '/faq',
+          icon: 'mdi-frequently-asked-questions'
+        },
       ],
 
       mobile: [

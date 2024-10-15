@@ -15,6 +15,12 @@ const routes = [
   },
 
   {
+    path: '/faq',
+    name: 'faq',
+    component: () => import(/* webpackChunkName: "faq" */ '../views/FAQView.vue')
+  },
+
+  {
     path: '/manual',
     name: 'manual',
     component: () => import(/* webpackChunkName: "manual" */ '../views/ManualView.vue')
@@ -32,7 +38,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "noticeDetail" */ '../views/NoticeDetailView.vue'),
     props: true
   },
-  
+
   {
     path: '/community',
     name: 'community',
