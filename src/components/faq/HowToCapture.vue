@@ -10,13 +10,20 @@
     <v-card-text>
       대표적으로 2가지 프로그램을 추천드리는데요,
       full page screen capture 라는 프로그램과 fireshot이라는 프로그램을 추천드립니다. 링크는 다음과 같습니다.
+    </v-card-text>
 
-      full page screen capture
+    
+    <v-card-text>
+        full page screen capture
       - https://chromewebstore.google.com/detail/gofullpage-full-page-scre/fdpohaocaechififmbbbbbknoalclacl
 
-      fireshot
-      - https://chromewebstore.google.com/detail/take-webpage-screenshots/mcbpblocgmgfnpjjppndjkmgjaogfceg
-    </v-card-text>
+      </v-card-text>
+
+ 
+      <v-card-text>
+        fireshot
+        - https://chromewebstore.google.com/detail/take-webpage-screenshots/mcbpblocgmgfnpjjppndjkmgjaogfceg
+      </v-card-text>
 
       <v-card-text>
         해당 프로그램들을 이용하시면 jpg, png 등의 확장자로 웹 페이지를 고화질로 캡쳐하실 수 있습니다. 
