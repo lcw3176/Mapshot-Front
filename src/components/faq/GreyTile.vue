@@ -6,13 +6,15 @@
       <v-img :src="greytile" max-height="500"></v-img>
     </v-card>
 
-    <v-card-text>
+    <br>
+    <p>
       종종 지도 결과물에 회색 타일이 섞인 채 생성되는 경우가 존재합니다.
-    </v-card-text>
+    </p>
 
-    <v-card-text>
+    <br>
+    <p>
       해당 현상 발생 시 Ctrl + 휠을 통해 브라우저의 확대 수준을 조절하거나, 잠시만 기다려 주시면 로딩이 완료됩니다.
-    </v-card-text>
+    </p>
 
 
   </v-card>
