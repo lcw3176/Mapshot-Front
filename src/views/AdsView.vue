@@ -5,8 +5,8 @@
       <v-col>
         <Adsense adStyle="display:block"
                  format="autorelaxed"
-                 clientId="ca-pub-7390022674285155"
-                 slotId="6113438353">
+                 client="ca-pub-7390022674285155"
+                 slot="6113438353">
         </Adsense>
       </v-col>
 
