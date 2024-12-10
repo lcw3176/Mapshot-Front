@@ -128,7 +128,6 @@ export const useCommunityStore = defineStore('communityStore', {
     removeCommentId: '',
 
     nowPage: 1,
-    loading: false,
     totalPage: 0,
 
     isAlert: false,
@@ -142,36 +141,24 @@ export const useCommunityStore = defineStore('communityStore', {
   actions: {
 
     async loadSinglePost (id) {
-      this.loading = true
-
       this.post = ''
       this.post = await getPost(id)
-
-      this.loading = false
     },
 
     async loadPostList (id) {
-      this.loading = true
-
       this.posts = ''
       let data = await getPostList(id)
 
       this.totalPage = data.totalPage
       this.posts = data.posts
-
-      this.loading = false
     },
 
     async loadComments (page, id) {
-      this.loading = true
-
       this.comments = ''
       let data = await getComments(page, id)
 
       this.commentTotalPage = data.totalPage
       this.comments = data.comments
-
-      this.loading = false
     },
 
     async registerPost () {
