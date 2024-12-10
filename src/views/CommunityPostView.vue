@@ -6,16 +6,7 @@
 
                 </v-col>
 
-              <v-col cols="8" v-if="this.communityStore.loading" >
-                <v-skeleton-loader type="article">
-
-
-                </v-skeleton-loader>
-
-              </v-col>
-
-
-              <v-col v-else cols="8">
+              <v-col cols="8">
 
                     <v-sheet class="mx-auto pa-10"  elevation="1">
                       <v-chip color="success" variant="outlined">
@@ -115,15 +106,7 @@
             </v-row>
 
           <v-row v-else>
-            <v-col v-if="this.communityStore.loading" >
-              <v-skeleton-loader type="article">
-
-
-              </v-skeleton-loader>
-
-            </v-col>
-
-            <v-col v-else>
+            <v-col>
                 <div>
 
                   <v-chip color="success" variant="outlined">
