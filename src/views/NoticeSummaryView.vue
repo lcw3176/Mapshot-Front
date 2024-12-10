@@ -6,16 +6,7 @@
 
       </v-col>
 
-      <v-col cols="8" v-if="this.noticeStore.loading">
-        <v-skeleton-loader type="table">
-
-
-        </v-skeleton-loader>
-
-      </v-col>
-
-
-      <v-col v-else cols="8">
+      <v-col cols="8">
         <v-table class="text-body-1">
           <thead>
           <tr>
@@ -68,13 +59,7 @@
 
     <v-row v-else>
 
-      <v-col v-if="this.noticeStore.loading">
-        <v-skeleton-loader type="table">
-
-        </v-skeleton-loader>
-      </v-col>
-
-      <v-col v-else>
+      <v-col>
 
         <v-table>
           <thead>
