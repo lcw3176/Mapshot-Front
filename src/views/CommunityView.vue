@@ -5,15 +5,7 @@
 
       </v-col>
 
-      <v-col cols="8" v-if="this.communityStore.loading">
-        <v-skeleton-loader type="table">
-
-
-        </v-skeleton-loader>
-
-      </v-col>
-
-      <v-col cols="8" v-else>
+      <v-col cols="8">
         <v-table class="text-body-1">
 
           <thead>
@@ -82,13 +74,7 @@
 
     <v-row v-else>
 
-      <v-col v-if="this.communityStore.loading">
-        <v-skeleton-loader type="table">
-
-        </v-skeleton-loader>
-      </v-col>
-
-      <v-col v-else>
+      <v-col>
 
         <v-table>
           <thead>
