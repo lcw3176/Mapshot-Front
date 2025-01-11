@@ -1,12 +1,21 @@
 import { defineStore } from 'pinia'
 import dayjs from 'dayjs'
 
+import * as Sentry from '@sentry/vue'
 import axios from 'axios'
 import { cacheAdapterEnhancer } from 'axios-extensions'
 
 const api = axios.create({
   headers: { 'Cache-Control': 'no-cache' },
   adapter: cacheAdapterEnhancer(axios.getAdapter(axios.defaults.adapter)),
+})
+
+api.interceptors.request.use((config) => {
+  const currentTransaction = Sentry.getCurrentHub().getScope().getTransaction()
+  if (currentTransaction) {
+    config.headers['sentry-trace'] = currentTransaction.toTraceparent()
+  }
+  return config
 })
 
 api.interceptors.response.use(
