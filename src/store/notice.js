@@ -3,19 +3,10 @@ import dayjs from 'dayjs'
 
 import axios from 'axios'
 import { cacheAdapterEnhancer } from 'axios-extensions'
-import * as Sentry from '@sentry/vue'
 
 const api = axios.create({
   headers: { 'Cache-Control': 'no-cache' },
   adapter: cacheAdapterEnhancer(axios.getAdapter(axios.defaults.adapter)),
-})
-
-api.interceptors.request.use((config) => {
-  const currentTransaction = Sentry.getCurrentHub().getScope().getTransaction()
-  if (currentTransaction) {
-    config.headers['sentry-trace'] = currentTransaction.toTraceparent()
-  }
-  return config
 })
 
 const apiUrl = process.env.VUE_APP_API_URL
