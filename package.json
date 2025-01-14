@@ -10,7 +10,7 @@
   "dependencies": {
     "@emailjs/browser": "^3.10.0",
     "@mdi/font": "^7.2.96",
-    "@sentry/vue": "^7.48.0",
+    "@sentry/vue": "^7.120.3",
     "@vueup/vue-quill": "^1.2.0",
     "axios": "1.6.8",
     "axios-extensions": "3.1.7",
