@@ -140,12 +140,10 @@ export const useCommunityStore = defineStore('communityStore', {
   actions: {
 
     async loadSinglePost (id) {
-      this.post = ''
       this.post = await getPost(id)
     },
 
     async loadPostList (id) {
-      this.posts = ''
       let data = await getPostList(id)
 
       this.totalPage = data.totalPage
@@ -153,7 +151,6 @@ export const useCommunityStore = defineStore('communityStore', {
     },
 
     async loadComments (page, id) {
-      this.comments = ''
       let data = await getComments(page, id)
 
       this.commentTotalPage = data.totalPage
