@@ -59,8 +59,6 @@ export const useNoticeStore = defineStore('noticeStore', {
 
     async loadPostList (id) {
       this.loading = true
-
-      this.notices = ''
       let data = await getSummary(id)
 
       this.totalPage = data.totalPage
