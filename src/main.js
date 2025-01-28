@@ -2,7 +2,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
-import VueMobileDetection from 'vue-mobile-detection'
 import * as Sentry from '@sentry/vue'
 
 // Vuetify
@@ -35,4 +34,4 @@ const vuetify = createVuetify({
   directives,
 })
 
-createApp(App).use(createPinia()).use(router).use(vuetify).use(VueMobileDetection).mount('#app')
+createApp(App).use(createPinia()).use(router).use(vuetify).mount('#app')

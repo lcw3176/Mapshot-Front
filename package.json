@@ -19,9 +19,7 @@
     "pinia": "^2.0.28",
     "proj4": "^2.12.1",
     "vue": "^3.2.13",
-    "vue-mobile-detection": "^2.0.1",
     "vue-router": "^4.0.3",
-    "vue-showdown": "^4.0.0",
     "vue-spinner": "^1.0.4",
     "vue3-google-adsense": "^0.2.2",
     "vuetify": "^3.4.0"

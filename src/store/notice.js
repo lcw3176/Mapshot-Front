@@ -41,7 +41,6 @@ export const useNoticeStore = defineStore('noticeStore', {
     notice: Object,
     notices: [],
     nowPage: 0,
-    loading: false,
     totalPage: 0,
   }),
 
@@ -49,22 +48,14 @@ export const useNoticeStore = defineStore('noticeStore', {
 
   actions: {
     async loadPost (id) {
-      this.loading = true
-
-      this.notice = ''
       this.notice = await getContent(id)
-
-      this.loading = false
     },
 
     async loadPostList (id) {
-      this.loading = true
       let data = await getSummary(id)
 
       this.totalPage = data.totalPage
       this.notices = data.notices
-
-      this.loading = false
     },
 
     formatDate (dateString) {
