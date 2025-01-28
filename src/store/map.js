@@ -177,7 +177,7 @@ export const useMapStore = defineStore('map', {
       })
 
       const htmlContent = await requestImage(this.company, params.toString());
-      const newWindow = window.open('/templates.html?' +  + params.toString(), '_blank')
+      const newWindow = window.open('/templates.html', '_blank')
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
