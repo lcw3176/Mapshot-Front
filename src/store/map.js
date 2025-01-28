@@ -17,7 +17,7 @@ proj4.defs(epsg5179, '+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 
 
 async function requestImage (companyType, queryString) {
   try {
-    const response = await axios.get(apiUrl + '/image/template/' + companyType + '?' + queryString)
+    const response = await axios.get(apiUrl + '/map/' + companyType + '?' + queryString)
 
     return response.data
   } catch (error) {
@@ -176,11 +176,16 @@ export const useMapStore = defineStore('map', {
         layerMode: this.layerMode
       })
 
-      const newWindow = window.open('/templateKakao.html?' + params.toString(), '_blank')
+      const htmlContent = await requestImage(this.company, params.toString());
+      const newWindow = window.open('/templates.html', '_blank')
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
       } else {
+        newWindow.document.open();
+        newWindow.document.write(htmlContent);
+        newWindow.document.close();
+
         let checkMapInterval = setInterval(() => {
 
           let element = newWindow.document.getElementById('checker_true')
