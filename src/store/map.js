@@ -2,6 +2,10 @@ import { defineStore } from 'pinia'
 import { LatLng, Radius, Tile } from '@/assets/js/mapshot.min'
 import axios from 'axios'
 import proj4 from 'proj4'
+import templateNaver from '@/components/map/templateNaver.html'
+import templateGoogle from '@/components/map/templateGoogle.html'
+import templateKakao from '@/components/map/templateKakao.html'
+import templateLayer from '@/components/map/templateLayer.html'
 
 const apiUrl = process.env.VUE_APP_API_URL
 const layerUrl = process.env.VUE_APP_LAYER_API_URL
@@ -21,6 +25,23 @@ async function requestImage (companyType, queryString) {
 
     return response.data
   } catch (error) {
+
+    if(companyType === 'naver'){
+      return templateNaver;
+    }
+
+    if(companyType === 'kakao'){
+      return templateKakao;
+    }
+
+    if(companyType === 'google'){
+      return templateGoogle;
+    }
+
+    if(companyType === 'layer'){
+      return templateLayer;
+    }
+
 
     return []
   }
