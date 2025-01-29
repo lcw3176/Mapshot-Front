@@ -23,6 +23,8 @@ async function requestImage (companyType, queryString) {
   try {
     const response = await axios.get(apiUrl + '/map/' + companyType + '?' + queryString)
 
+    throw new Error('테스트');
+
     return response.data
   } catch (error) {
 
