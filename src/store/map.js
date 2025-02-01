@@ -176,15 +176,15 @@ export const useMapStore = defineStore('map', {
         layerMode: this.layerMode
       })
 
-      const htmlContent = await requestImage(this.company, params.toString());
+      const htmlContent = await requestImage(this.company, params.toString())
       const newWindow = window.open('/templates.html', '_blank')
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
       } else {
-        newWindow.document.open();
-        newWindow.document.write(htmlContent);
-        newWindow.document.close();
+        newWindow.document.open()
+        newWindow.document.write(htmlContent)
+        newWindow.document.close()
 
         let checkMapInterval = setInterval(() => {
 
@@ -214,16 +214,15 @@ export const useMapStore = defineStore('map', {
         type: this.baseMap,
       })
 
-      const htmlContent = await requestImage(this.company, params.toString());
+      const htmlContent = await requestImage(this.company, params.toString())
       const newWindow = window.open('/templates.html', '_blank')
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
       } else {
-        newWindow.document.open();
-        newWindow.document.write(htmlContent);
-        newWindow.document.close();
-
+        newWindow.document.open()
+        newWindow.document.write(htmlContent)
+        newWindow.document.close()
 
         let checkMapInterval = setInterval(() => {
 
@@ -254,15 +253,15 @@ export const useMapStore = defineStore('map', {
         noLabel: this.noLabel
       })
 
-      const htmlContent = await requestImage(this.company, params.toString());
+      const htmlContent = await requestImage(this.company, params.toString())
       const newWindow = window.open('/templates.html', '_blank')
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
       } else {
-        newWindow.document.open();
-        newWindow.document.write(htmlContent);
-        newWindow.document.close();
+        newWindow.document.open()
+        newWindow.document.write(htmlContent)
+        newWindow.document.close()
 
         let checkMapInterval = setInterval(() => {
 
@@ -292,15 +291,15 @@ export const useMapStore = defineStore('map', {
         layerMode: this.layerMode
       })
 
-      const htmlContent = await requestImage(this.company, params.toString());
+      const htmlContent = await requestImage('layer', params.toString())
       const newWindow = window.open('/templates.html', '_blank')
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
       } else {
-        newWindow.document.open();
-        newWindow.document.write(htmlContent);
-        newWindow.document.close();
+        newWindow.document.open()
+        newWindow.document.write(htmlContent)
+        newWindow.document.close()
 
         let checkMapInterval = setInterval(() => {
 
