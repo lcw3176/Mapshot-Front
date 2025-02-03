@@ -180,20 +180,10 @@ export const useMapStore = defineStore('map', {
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
-      } else {
-        let checkMapInterval = setInterval(() => {
-
-          let element = newWindow.document.getElementById('checker_true')
-          if (element) {
-
-            if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer, epsg5181)
-            }
-
-            clearInterval(checkMapInterval)
-          }
-        }, 500)
+        return
       }
+
+      await this.checkIfAddLayers(newWindow, layer)
     },
 
     async makeNaverTemplate () {
@@ -213,20 +203,10 @@ export const useMapStore = defineStore('map', {
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
-      } else {
-        let checkMapInterval = setInterval(() => {
-
-          let element = newWindow.document.getElementById('checker_true')
-          if (element) {
-
-            if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer, epsg4326)
-            }
-
-            clearInterval(checkMapInterval)
-          }
-        }, 500)
+        return
       }
+
+      await this.checkIfAddLayers(newWindow, layer)
     },
 
     async makeGoogleTemplate () {
@@ -247,20 +227,10 @@ export const useMapStore = defineStore('map', {
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
-      } else {
-        let checkMapInterval = setInterval(() => {
-
-          let element = newWindow.document.getElementById('checker_true')
-          if (element) {
-
-            if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer, epsg3857)
-            }
-
-            clearInterval(checkMapInterval)
-          }
-        }, 500)
+        return
       }
+
+      await this.checkIfAddLayers(newWindow, layer)
     },
 
     async makeLayerTemplate () {
@@ -280,16 +250,23 @@ export const useMapStore = defineStore('map', {
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
-      } else {
-        let checkMapInterval = setInterval(() => {
-
-          let element = newWindow.document.getElementById('checker_true')
-          if (element) {
-            this.makeLayers(newWindow, element, layer, epsg5181)
-            clearInterval(checkMapInterval)
-          }
-        }, 500)
+        return
       }
+
+      await this.checkIfAddLayers(newWindow, layer)
+    },
+
+    async checkIfAddLayers (newWindow, layer) {
+      window.addEventListener('message', (event) => {
+        if (event.data.action === 'map_ready') {
+          const element = newWindow.document.getElementById('checker_true')
+
+          if (element && !this.isEmpty(layer)) {
+            this.makeLayers(newWindow, element, layer, epsg5181)
+          }
+        }
+      }, { once: true })
+
     },
 
     async makeLayers (window, element, layers, targetEpsg) {
