@@ -144,20 +144,20 @@ export const useMapStore = defineStore('map', {
       }
 
       if (this.traceMode) {
-        this.makeTrace()
+        await this.makeTrace()
       }
 
       if (this.onlyLayers) {
-        this.makeLayerTemplate()
+        await this.makeLayerTemplate()
         return
       }
 
       if (this.company === 'kakao') {
-        this.makeKakaoTemplate()
+        await this.makeKakaoTemplate()
       } else if (this.company === 'google') {
-        this.makeGoogleTemplate()
+        await this.makeGoogleTemplate()
       } else if (this.company === 'naver') {
-        this.makeNaverTemplate()
+        await this.makeNaverTemplate()
       }
 
     },
@@ -182,7 +182,9 @@ export const useMapStore = defineStore('map', {
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
       } else {
-        newWindow.document.body.innerHTML = htmlContent
+        newWindow.onload = function () {
+          newWindow.document.body.innerHTML = htmlContent
+        }
 
         let checkMapInterval = setInterval(() => {
 
@@ -218,7 +220,9 @@ export const useMapStore = defineStore('map', {
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
       } else {
-        newWindow.document.body.innerHTML = htmlContent
+        newWindow.onload = function () {
+          newWindow.document.body.innerHTML = htmlContent
+        }
 
         let checkMapInterval = setInterval(() => {
 
@@ -255,7 +259,9 @@ export const useMapStore = defineStore('map', {
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
       } else {
-        newWindow.document.body.innerHTML = htmlContent
+        newWindow.onload = function () {
+          newWindow.document.body.innerHTML = htmlContent
+        }
 
         let checkMapInterval = setInterval(() => {
 
@@ -291,7 +297,9 @@ export const useMapStore = defineStore('map', {
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
       } else {
-        newWindow.document.body.innerHTML = htmlContent
+        newWindow.onload = function () {
+          newWindow.document.body.innerHTML = htmlContent
+        }
 
         let checkMapInterval = setInterval(() => {
 
