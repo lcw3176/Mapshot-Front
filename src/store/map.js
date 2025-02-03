@@ -262,10 +262,6 @@ export const useMapStore = defineStore('map', {
 
     async checkIfAddLayers (newWindow, layer) {
       window.addEventListener('message', (event) => {
-        if (event.origin !== window.location.origin) {
-          return
-        }
-
         if (event.data.action === 'map_ready') {
           const element = newWindow.document.getElementById('checker_true')
 
