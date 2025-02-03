@@ -173,7 +173,8 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
-        layerMode: this.layerMode
+        layerMode: this.layerMode,
+        url: window.location.origin
       })
 
       const newWindow = window.open(apiUrl + '/map/' + this.company + '?' + params.toString())
@@ -197,6 +198,7 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
+        url: window.location.origin
       })
 
       const newWindow = window.open(apiUrl + '/map/' + this.company + '?' + params.toString())
@@ -220,7 +222,8 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
-        noLabel: this.noLabel
+        noLabel: this.noLabel,
+        url: window.location.origin
       })
 
       const newWindow = window.open(apiUrl + '/map/' + this.company + '?' + params.toString())
@@ -243,7 +246,8 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
-        layerMode: this.layerMode
+        layerMode: this.layerMode,
+        url: window.location.origin
       })
 
       const newWindow = window.open(apiUrl + '/map/' + this.company + '?' + params.toString())
@@ -258,6 +262,10 @@ export const useMapStore = defineStore('map', {
 
     async checkIfAddLayers (newWindow, layer) {
       window.addEventListener('message', (event) => {
+        if (event.origin !== window.location.origin) {
+          return
+        }
+
         if (event.data.action === 'map_ready') {
           const element = newWindow.document.getElementById('checker_true')
 
@@ -266,7 +274,6 @@ export const useMapStore = defineStore('map', {
           }
         }
       }, { once: true })
-
     },
 
     async makeLayers (window, element, layers, targetEpsg) {
