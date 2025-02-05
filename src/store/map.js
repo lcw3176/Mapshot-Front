@@ -1,31 +1,7 @@
 import { defineStore } from 'pinia'
 import { LatLng, Radius, Tile } from '@/assets/js/mapshot.min'
-import axios from 'axios'
-import proj4 from 'proj4'
 
 const apiUrl = process.env.VUE_APP_API_URL
-const layerUrl = process.env.VUE_APP_LAYER_API_URL
-
-const epsg4326 = 'EPSG:4326'
-const epsg5181 = 'EPSG:5181'
-const epsg5179 = 'EPSG:5179'
-const epsg3857 = 'EPSG:3857'
-
-proj4.defs(epsg3857, '+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +wktext +no_defs +type=crs')
-proj4.defs(epsg5181, '+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=500000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs')
-proj4.defs(epsg5179, '+proj=tmerc +lat_0=38 +lon_0=127.5 +k=0.9996 +x_0=1000000 +y_0=2000000 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs')
-
-async function requestImage (companyType, queryString) {
-  try {
-    const response = await axios.get(apiUrl + '/image/template/' + companyType + '?' + queryString)
-
-    return response.data
-  } catch (error) {
-
-    return []
-  }
-
-}
 
 export const useMapStore = defineStore('map', {
 
@@ -144,20 +120,20 @@ export const useMapStore = defineStore('map', {
       }
 
       if (this.traceMode) {
-        this.makeTrace()
+        await this.makeTrace()
       }
 
       if (this.onlyLayers) {
-        this.makeLayerTemplate()
+        await this.makeLayerTemplate()
         return
       }
 
       if (this.company === 'kakao') {
-        this.makeKakaoTemplate()
+        await this.makeKakaoTemplate()
       } else if (this.company === 'google') {
-        this.makeGoogleTemplate()
+        await this.makeGoogleTemplate()
       } else if (this.company === 'naver') {
-        this.makeNaverTemplate()
+        await this.makeNaverTemplate()
       }
 
     },
@@ -173,26 +149,14 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
-        layerMode: this.layerMode
+        layerMode: this.layerMode,
+        layer: layer
       })
 
-      const newWindow = window.open('/templateKakao.html?' + params.toString(), '_blank')
+      const newWindow = window.open(apiUrl + '/map/' + this.company + '?' + params.toString())
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
-      } else {
-        let checkMapInterval = setInterval(() => {
-
-          let element = newWindow.document.getElementById('checker_true')
-          if (element) {
-
-            if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer, epsg5181)
-            }
-
-            clearInterval(checkMapInterval)
-          }
-        }, 500)
       }
     },
 
@@ -207,25 +171,13 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
+        layer: layer
       })
 
-      const newWindow = window.open('/templateNaver.html?' + params.toString(), '_blank')
+      const newWindow = window.open(apiUrl + '/map/' + this.company + '?' + params.toString())
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
-      } else {
-        let checkMapInterval = setInterval(() => {
-
-          let element = newWindow.document.getElementById('checker_true')
-          if (element) {
-
-            if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer, epsg4326)
-            }
-
-            clearInterval(checkMapInterval)
-          }
-        }, 500)
       }
     },
 
@@ -240,26 +192,14 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
-        noLabel: this.noLabel
+        noLabel: this.noLabel,
+        layer: layer
       })
 
-      const newWindow = window.open('/templateGoogle.html?' + params.toString(), '_blank')
+      const newWindow = window.open(apiUrl + '/map/' + this.company + '?' + params.toString())
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
-      } else {
-        let checkMapInterval = setInterval(() => {
-
-          let element = newWindow.document.getElementById('checker_true')
-          if (element) {
-
-            if (!this.isEmpty(layer)) {
-              this.makeLayers(newWindow, element, layer, epsg3857)
-            }
-
-            clearInterval(checkMapInterval)
-          }
-        }, 500)
       }
     },
 
@@ -273,55 +213,15 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
-        layerMode: this.layerMode
+        layerMode: this.layerMode,
+        layer: layer
       })
 
-      const newWindow = window.open('/templateLayer.html?' + params.toString(), '_blank')
+      const newWindow = window.open(apiUrl + '/map/' + this.company + '?' + params.toString())
 
       if (!newWindow) {
         alert('새 창을 열 수 없습니다. 팝업이 차단되었을 수 있습니다.')
-      } else {
-        let checkMapInterval = setInterval(() => {
-
-          let element = newWindow.document.getElementById('checker_true')
-          if (element) {
-            this.makeLayers(newWindow, element, layer, epsg5181)
-            clearInterval(checkMapInterval)
-          }
-        }, 500)
       }
-    },
-
-    async makeLayers (window, element, layers, targetEpsg) {
-      let neLat = element.getAttribute('neLat')
-      let neLng = element.getAttribute('neLng')
-      let swLat = element.getAttribute('swLat')
-      let swLng = element.getAttribute('swLng')
-      const neLngLat = [parseFloat(neLng), parseFloat(neLat)]
-      const swLngLat = [parseFloat(swLng), parseFloat(swLat)]
-      const topRightTransformed = proj4(epsg4326, targetEpsg, neLngLat)
-      const bottomLeftTransformed = proj4(epsg4326, targetEpsg, swLngLat)
-
-      let image = window.document.getElementById('layer')
-      let url = layerUrl +
-        '?layer=' + layers +
-        '&crs=' + targetEpsg +
-        '&height=' + 2000 +
-        '&ymin=' + bottomLeftTransformed[1] +
-        '&xmin=' + bottomLeftTransformed[0] +
-        '&ymax=' + topRightTransformed[1] +
-        '&xmax=' + topRightTransformed[0]
-
-      await this.loadImage(image, url)
-    },
-
-    async loadImage (img, URL, retries = 2) {
-      img.onerror = async () => {
-        if (retries > 0) {
-          await this.loadImage(img, URL, retries - 1)
-        }
-      }
-      img.src = URL
     },
 
     async makeTrace () {
