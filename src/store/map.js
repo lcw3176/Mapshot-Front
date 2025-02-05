@@ -172,7 +172,6 @@ export const useMapStore = defineStore('map', {
         level: this.mapRadius.level,
         type: this.baseMap,
         layerMode: this.layerMode,
-        url: window.location.origin,
         layer: layer
       })
 
@@ -194,7 +193,6 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
-        url: window.location.origin,
         layer: layer
       })
 
@@ -217,7 +215,6 @@ export const useMapStore = defineStore('map', {
         level: this.mapRadius.level,
         type: this.baseMap,
         noLabel: this.noLabel,
-        url: window.location.origin,
         layer: layer
       })
 
@@ -239,7 +236,6 @@ export const useMapStore = defineStore('map', {
         level: this.mapRadius.level,
         type: this.baseMap,
         layerMode: this.layerMode,
-        url: window.location.origin,
         layer: layer
       })
 
