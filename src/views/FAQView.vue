@@ -59,17 +59,17 @@ export default {
     return {
       faqs: [
         {
+          page: markRaw(HowToCapture),
+          title: '캡쳐는 어떻게 하나요?',
+        },
+
+        {
           page: markRaw(GreyTile),
           title: '회색 타일이 섞여요',
         },
 
-        {
-          page: markRaw(HowToCapture),
-          title: '캡쳐는 어떻게 하나요?',
-        },
       ],
-
-      nowPage: markRaw(HowToCapture),
+      
       display,
       tab: '캡쳐는 어떻게 하나요?',
     }
