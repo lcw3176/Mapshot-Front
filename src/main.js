@@ -24,7 +24,7 @@ Sentry.init({
 
   tracePropagationTargets: ['kmapshot.com', /^\//],
   tracesSampleRate: 1.0,
-  replaysSessionSampleRate: 0.1,
+  replaysSessionSampleRate: 0.0,
   replaysOnErrorSampleRate: 1.0,
 
 })
