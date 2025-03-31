@@ -20,7 +20,7 @@
     </div>
     <div class="custom_typecontrol">
       <v-list theme="dark">
-        <v-list-item v-for="(value, key) in mapStore.baseMapStyles" :key="key" :value="value" active-color="info"
+        <v-list-item v-for="(value, key) in mapStore.baseMapStyles" :key="key" :value="value" color="info"
                      @click="mapStore.changeMapStyle(value)" density="compact"
                      :active="value === mapStore.currentMapStyle">
           {{ key }}
@@ -73,7 +73,7 @@
       </v-list-subheader>
 
       <v-divider></v-divider>
-      <v-list-item v-for="(value, key) in mapStore.radiusArr" :key="key" :value="value" active-color="info"
+      <v-list-item v-for="(value, key) in mapStore.radiusArr" :key="key" :value="value" color="info"
                    @click="mapStore.changeRadius(value, $event)" density="compact"
                    :active="value === mapStore.mapRadius">
         {{ key }}km
@@ -88,7 +88,7 @@
       </v-list-subheader>
 
       <v-divider></v-divider>
-      <v-list-item v-for="(value, key) in mapStore.baseMapArr" :key="key" :value="value" active-color="info"
+      <v-list-item v-for="(value, key) in mapStore.baseMapArr" :key="key" :value="value" color="info"
                    @click="mapStore.changeBaseMap(value, $event)" density="compact">
         {{ key }}
       </v-list-item>
@@ -102,7 +102,7 @@
       </v-list-subheader>
 
       <v-divider></v-divider>
-      <v-list-item v-for="(value, key) in mapStore.companyArr" :key="key" :value="value" active-color="info"
+      <v-list-item v-for="(value, key) in mapStore.companyArr" :key="key" :value="value" color="info"
                    @click="mapStore.changeCompany(value, $event)" density="compact">
         {{ key }}
       </v-list-item>
@@ -115,7 +115,7 @@
 
       <v-divider></v-divider>
       <v-list-item density="compact" @click="overlay = !overlay"
-                   active-color="info">
+                   color="info">
         도시 계획 레이어
       </v-list-item>
 
