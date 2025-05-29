@@ -13,7 +13,7 @@ import * as directives from 'vuetify/directives'
 
 Sentry.init({
   App,
-  dsn: 'https://1c1f8712a989433cb34416dd0bfde82e@o4505030048284672.ingest.sentry.io/4505030053330944',
+  dsn: 'https://ce27534403d191ed62d363bdee996542@sentry.kmapshot.com/3',
   integrations: [
     Sentry.browserTracingIntegration({ router }),
     Sentry.replayIntegration({
