@@ -20,7 +20,7 @@
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vue-spinner": "^1.0.4",
-    "vue3-google-adsense": "^0.2.2",
+    "vue3-google-adsense": "^1.2.2-b1",
     "vuetify": "^3.4.0"
   },
   "devDependencies": {
