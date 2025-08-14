@@ -1,8 +1,13 @@
+@import "./lib/font/pretendard.css";
+@import "./lib/style/theme.css";
+
 html {
   width: 100dvw;
   height: 100dvh;
 
   font-size: 62.5%;
+
+  font-family: var(--font-pretendard);
 }
 
 body {
