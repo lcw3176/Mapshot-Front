@@ -29,7 +29,7 @@ const Button = ({ children, onClick, className, ...rest }: ButtonProps) => {
         className,
       )}
       onClick={handleClick}
-      whileTap={{ scale: "0.98" }}
+      whileTap={{ scale: 0.98 }}
       {...rest}>
       {children}
       <ButtonRipple ref={rippleRef} />
