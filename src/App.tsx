@@ -3,7 +3,7 @@ import { Button } from "@lib/components";
 const App = () => {
   return (
     <main>
-      Hello World <Button />
+      Hello World <Button className="bg-amber-300">Button</Button>
     </main>
   );
 };
