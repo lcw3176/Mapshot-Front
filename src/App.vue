@@ -76,10 +76,20 @@ export default {
       appTitle: 'MAPSHOT',
       sidebar: false,
       desktop: [
+        // {
+        //   title: '게시판',
+        //   path: '/community',
+        //   icon: 'mdi-bulletin-board'
+        // },
         {
           title: '사용법',
           path: '/manual',
           icon: 'mdi-school-outline'
+        },
+        {
+          title: '공지사항',
+          path: '/notice',
+          icon: 'mdi-bullhorn-outline'
         },
         {
           title: '문의',
@@ -105,14 +115,14 @@ export default {
           icon: 'mdi-school-outline'
         },
         {
+          title: '공지사항',
+          path: '/notice',
+          icon: 'mdi-bullhorn-outline'
+        },
+        {
           title: '문의',
           path: '/contact',
           icon: 'mdi mdi-email-edit-outline'
-        },
-        {
-          title: 'FAQ',
-          path: '/faq',
-          icon: 'mdi-frequently-asked-questions'
         },
       ],
 

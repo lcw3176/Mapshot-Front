@@ -25,7 +25,39 @@ const routes = [
     name: 'manual',
     component: () => import(/* webpackChunkName: "manual" */ '../views/ManualView.vue')
   },
-  
+
+  {
+    path: '/notice',
+    name: 'noticeSummary',
+    component: () => import(/* webpackChunkName: "noticeSummary" */ '../views/NoticeSummaryView.vue')
+  },
+
+  {
+    path: '/notice/detail/:postNumber',
+    name: 'noticeDetail',
+    component: () => import(/* webpackChunkName: "noticeDetail" */ '../views/NoticeDetailView.vue'),
+    props: true
+  },
+
+  // {
+  //   path: '/community',
+  //   name: 'community',
+  //   component: () => import(/* webpackChunkName: "community" */ '../views/CommunityView.vue')
+  // },
+  //
+  // {
+  //   path: '/community/:postNumber',
+  //   name: 'communityPost',
+  //   component: () => import(/* webpackChunkName: "communityPost" */ '../views/CommunityPostView.vue'),
+  //   props: true
+  // },
+  //
+  // {
+  //   path: '/community/register',
+  //   name: 'communityRegister',
+  //   component: () => import(/* webpackChunkName: "communityRegister" */ '../views/CommunityRegisterView.vue')
+  // },
+
   {
     path: '/:pathMatch(.*)*',
     redirect: '/404'
