@@ -153,6 +153,8 @@
 
         <v-switch density="compact" color="info" v-model="mapStore.onlyLayers" label="레이어만 출력하기"/>
 
+        <v-switch density="compact" color="info" v-model="mapStore.addTopography" label="지형도 덧입히기"/>
+
         <v-switch density="compact" color="info" v-model="mapStore.traceMode" label="흔적 남기기"/>
 
         <v-btn class="outlined" block color="success" @click="mapStore.startCapture">템플릿 제작</v-btn>
