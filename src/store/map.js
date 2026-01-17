@@ -26,6 +26,7 @@ export const useMapStore = defineStore('map', {
     inProgress: false,
     noLabel: false,
     onlyLayers: false,
+    addTopography: false,
 
     radiusArr: {
       1: Radius.One,
@@ -150,6 +151,7 @@ export const useMapStore = defineStore('map', {
         level: this.mapRadius.level,
         type: this.baseMap,
         layerMode: this.layerMode,
+        topography: this.addTopography,
         layer: layer
       })
 
@@ -171,6 +173,7 @@ export const useMapStore = defineStore('map', {
         lng: centerLng,
         level: this.mapRadius.level,
         type: this.baseMap,
+        topography: this.addTopography,
         layer: layer
       })
 
@@ -193,6 +196,7 @@ export const useMapStore = defineStore('map', {
         level: this.mapRadius.level,
         type: this.baseMap,
         noLabel: this.noLabel,
+        topography: this.addTopography,
         layer: layer
       })
 
@@ -214,6 +218,7 @@ export const useMapStore = defineStore('map', {
         level: this.mapRadius.level,
         type: this.baseMap,
         layerMode: this.layerMode,
+        topography: this.addTopography,
         layer: layer
       })
 
