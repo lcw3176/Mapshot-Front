@@ -2,6 +2,9 @@ import { defineStore } from 'pinia'
 import { LatLng, Radius, Tile } from '@/assets/js/mapshot.min'
 
 const apiUrl = process.env.VUE_APP_API_URL
+const MAP_SETTINGS_KEY = 'mapshot_map_settings'
+
+const SAVEABLE_KEYS = ['baseMap', 'company', 'layers', 'layerMode', 'traceMode', 'noLabel', 'onlyLayers', 'addTopography']
 
 export const useMapStore = defineStore('map', {
 
@@ -82,6 +85,38 @@ export const useMapStore = defineStore('map', {
       this.baseMap = ''
 
       this.currentMapStyle = this.baseMapStyles['일반']
+
+      this.loadSettings()
+
+      // 설정 변경 시 자동 저장
+      this.$subscribe((mutation, state) => {
+        this.saveSettings()
+      })
+    },
+
+    saveSettings () {
+      const radiusKey = Object.entries(this.radiusArr).find(([, v]) => v === this.mapRadius)?.[0] ?? null
+      const data = { mapRadiusKey: radiusKey }
+      SAVEABLE_KEYS.forEach(k => { data[k] = this[k] })
+      localStorage.setItem(MAP_SETTINGS_KEY, JSON.stringify(data))
+    },
+
+    loadSettings () {
+      try {
+        const raw = localStorage.getItem(MAP_SETTINGS_KEY)
+        if (!raw) return
+        const saved = JSON.parse(raw)
+
+        if (saved.mapRadiusKey != null && this.radiusArr[saved.mapRadiusKey]) {
+          this.mapRadius = this.radiusArr[saved.mapRadiusKey]
+        }
+
+        SAVEABLE_KEYS.forEach(k => {
+          if (saved[k] !== undefined) this[k] = saved[k]
+        })
+      } catch {
+        // 저장된 값이 손상된 경우 무시
+      }
     },
 
     async addListeners () {
