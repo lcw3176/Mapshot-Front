@@ -19,18 +19,6 @@
             </v-window-item>
           </v-window>
 
-          <!-- 콘텐츠 하단 인라인 광고 -->
-          <v-row justify="center" class="mt-4">
-            <v-col cols="12">
-              <Adsense
-                adStyle="display:block"
-                format="auto"
-                :fullWidthResponsive="true"
-                clientId="ca-pub-7390022674285155"
-                slotId="6113438353"
-              />
-            </v-col>
-          </v-row>
 
         </v-col>
         <v-col></v-col>
@@ -44,14 +32,6 @@
         </v-lazy>
       </v-card>
 
-      <!-- 모바일 인라인 광고 -->
-      <Adsense
-        adStyle="display:block"
-        format="auto"
-        :fullWidthResponsive="true"
-        clientId="ca-pub-7390022674285155"
-        slotId="6113438353"
-      />
     </div>
   </v-container>
 </template>
@@ -64,14 +44,11 @@ import ChooseRange from '@/components/manual/ChooseRange.vue'
 import ChooseMapType from '@/components/manual/ChooseMapType.vue'
 import ChooseCompany from '@/components/manual/ChooseCompany.vue'
 import PrintResult from '@/components/manual/PrintResult.vue'
-import { Adsense } from 'vue3-google-adsense'
 import { markRaw, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 
 export default {
   name: 'ManualView',
-  components: { Adsense },
-
   data() {
     const display = ref(useDisplay());
 

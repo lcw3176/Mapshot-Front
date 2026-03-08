@@ -30,12 +30,6 @@
         {{ item.title }}
       </v-btn>
 
-      <v-btn
-        :icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-        variant="text"
-        class="ml-2"
-        @click="toggleTheme"
-      />
 
     </v-app-bar>
 
@@ -44,15 +38,11 @@
         <v-icon>{{ item.icon }}</v-icon>
         <span style="font-size:0.65rem">{{ item.title }}</span>
       </v-btn>
-      <v-btn color="success" @click="toggleTheme">
-        <v-icon>{{ isDark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
-        <span style="font-size:0.65rem">{{ isDark ? '라이트' : '다크' }}</span>
-      </v-btn>
     </v-bottom-navigation>
 
     <v-main>
       <router-view></router-view>
-      <AdsView/>
+      <AdsView v-if="display.mdAndUp"/>
     </v-main>
 
   </v-layout>
@@ -61,8 +51,8 @@
 <script>
 import AdsView from './views/AdsView'
 import { useLoaderStore } from '@/store/loader'
-import { useDisplay, useTheme } from 'vuetify'
-import { ref, computed } from 'vue'
+import { useDisplay } from 'vuetify'
+import { ref } from 'vue'
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 export default {
@@ -73,14 +63,7 @@ export default {
 
   setup () {
     const loaderStore = useLoaderStore()
-    const theme = useTheme()
-
-    const isDark = computed(() => theme.global.current.value.dark)
-    const toggleTheme = () => {
-      theme.global.name.value = isDark.value ? 'light' : 'dark'
-    }
-
-    return { loaderStore, isDark, toggleTheme }
+    return { loaderStore }
   },
 
   data () {

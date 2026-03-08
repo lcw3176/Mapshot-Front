@@ -37,15 +37,7 @@
 .map_wrap {
     position: relative;
     width: 100%;
-    height: calc(100vh - 64px - 80px);
-    min-height: 350px;
-}
-
-@media (max-width: 960px) {
-    .map_wrap {
-        height: calc(100vh - 56px - 80px - 100px);
-        min-height: 280px;
-    }
+    height: 600px;
 }
 
 #menu_wrap {

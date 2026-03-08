@@ -77,7 +77,7 @@
     :location="display.mdAndUp ? 'right' : 'bottom'"
     width="280"
   >
-    <v-expansion-panels variant="accordion" :multiple="true" :model-value="[0,1,2,3]" class="settings-panels">
+    <v-expansion-panels variant="accordion" multiple v-model="openPanels" class="settings-panels">
 
       <!-- 반경 설정 -->
       <v-expansion-panel>
@@ -177,10 +177,13 @@
               <v-divider/>
               <v-card-text>
                 <p class="text-caption text-medium-emphasis mb-2 font-weight-bold">도시계획</p>
-                <v-checkbox-btn v-model="mapStore.layers" label="도로" color="info" value="lt_c_upisuq151" density="compact"/>
-                <v-checkbox-btn v-model="mapStore.layers" label="토지이용계획도" color="info" value="lt_c_lhblpn" density="compact"/>
+                <v-checkbox-btn v-model="mapStore.layers" label="도로" color="info" value="lt_c_upisuq151"
+                                density="compact"/>
+                <v-checkbox-btn v-model="mapStore.layers" label="토지이용계획도" color="info" value="lt_c_lhblpn"
+                                density="compact"/>
                 <p class="text-caption text-medium-emphasis mt-3 mb-2 font-weight-bold">토지</p>
-                <v-checkbox-btn v-model="mapStore.layers" label="연속지적도" color="info" value="lp_pa_cbnd_bubun,lp_pa_cbnd_bonbun" density="compact"/>
+                <v-checkbox-btn v-model="mapStore.layers" label="연속지적도" color="info"
+                                value="lp_pa_cbnd_bubun,lp_pa_cbnd_bonbun" density="compact"/>
               </v-card-text>
               <v-card-actions>
                 <v-spacer/>
@@ -189,27 +192,35 @@
             </v-card>
           </v-overlay>
 
-          <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'" v-model="mapStore.layerMode" label="지적 편집도" hide-details class="mb-1"/>
-          <v-switch density="compact" color="info" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel" label="명칭 없애기" hide-details class="mb-1"/>
-          <v-switch density="compact" color="info" v-model="mapStore.onlyLayers" label="레이어만 출력" hide-details class="mb-1"/>
-          <v-switch density="compact" color="info" v-model="mapStore.addTopography" label="지형도 덧입히기" hide-details class="mb-1"/>
-          <v-switch density="compact" color="info" v-model="mapStore.traceMode" label="흔적 남기기" hide-details class="mb-3"/>
-
-          <v-btn
-            block
-            color="success"
-            variant="elevated"
-            size="large"
-            prepend-icon="mdi-camera"
-            @click="mapStore.startCapture"
-            rounded="lg"
-          >
-            템플릿 제작
-          </v-btn>
+          <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'" v-model="mapStore.layerMode"
+                    label="지적 편집도" hide-details class="mb-1"/>
+          <v-switch density="compact" color="info" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel"
+                    label="명칭 없애기" hide-details class="mb-1"/>
+          <v-switch density="compact" color="info" v-model="mapStore.onlyLayers" label="레이어만 출력" hide-details
+                    class="mb-1"/>
+          <v-switch density="compact" color="info" v-model="mapStore.addTopography" label="지형도 덧입히기" hide-details
+                    class="mb-1"/>
+          <v-switch density="compact" color="info" v-model="mapStore.traceMode" label="흔적 남기기" hide-details/>
         </v-expansion-panel-text>
       </v-expansion-panel>
 
     </v-expansion-panels>
+
+    <!-- 템플릿 제작 버튼 - 패널 외부 고정 -->
+    <div class="capture-btn-wrap">
+      <v-btn
+        block
+        color="success"
+        variant="elevated"
+        size="large"
+        prepend-icon="mdi-camera"
+        @click="mapStore.startCapture"
+        rounded="lg"
+      >
+        템플릿 제작
+      </v-btn>
+    </div>
+
   </component>
 
 </template>
@@ -219,6 +230,18 @@ import { useMapStore } from '@/store/map'
 import '../assets/css/map.css'
 import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
+
+const STORAGE_KEY = 'mapshot_open_panels'
+const DEFAULT_OPEN = [0, 1, 2, 3]
+
+function loadPanels () {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    return saved !== null ? JSON.parse(saved) : DEFAULT_OPEN
+  } catch {
+    return DEFAULT_OPEN
+  }
+}
 
 export default {
   name: 'MapView',
@@ -233,7 +256,14 @@ export default {
     return {
       overlay: null,
       display,
+      openPanels: loadPanels(),
     }
+  },
+
+  watch: {
+    openPanels (val) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
+    },
   },
 
   mounted () {
@@ -251,9 +281,15 @@ export default {
 .settings-panels {
   border-radius: 0 !important;
 }
+
 .panel-title {
   font-size: 0.85rem !important;
   font-weight: 700 !important;
   min-height: 40px !important;
+}
+
+.capture-btn-wrap {
+  padding: 12px;
+  border-top: 1px solid rgba(128, 128, 128, 0.2);
 }
 </style>
