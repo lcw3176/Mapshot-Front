@@ -39,27 +39,32 @@
   <!-- 지도 끝 -->
 
 
-  <v-container fluid class="py-2 coord-bar">
-    <v-row dense justify="center" align="center" class="flex-wrap">
-      <v-col cols="auto" class="pa-1">
-        <v-chip prepend-icon="mdi-crosshairs-gps" variant="tonal" color="info" size="small" label>
-          <span class="text-caption font-weight-bold mr-1">위도</span>{{ mapStore.lat }}
-        </v-chip>
+  <v-container fluid>
+    <v-row>
+      <v-col>
+        <div>
+          <p class="text-center text-overline">위도</p>
+          <p class="text-center text-body-1">{{ mapStore.lat }}</p>
+        </div>
       </v-col>
-      <v-col cols="auto" class="pa-1">
-        <v-chip prepend-icon="mdi-crosshairs-gps" variant="tonal" color="info" size="small" label>
-          <span class="text-caption font-weight-bold mr-1">경도</span>{{ mapStore.lng }}
-        </v-chip>
+
+      <v-col>
+        <div>
+          <p class="text-center text-overline">경도</p>
+          <p class="text-center text-body-1">{{ mapStore.lng }}</p>
+        </div>
       </v-col>
-      <v-col cols="auto" class="pa-1" v-if="mapStore.roadAddress">
-        <v-chip prepend-icon="mdi-road-variant" variant="tonal" color="success" size="small" label>
-          {{ mapStore.roadAddress }}
-        </v-chip>
+
+      <v-col>
+        <p class="text-center text-overline">도로명주소</p>
+        <p class="text-center text-body-1">{{ mapStore.roadAddress }}</p>
       </v-col>
-      <v-col cols="auto" class="pa-1" v-if="mapStore.bunziAddress">
-        <v-chip prepend-icon="mdi-map-marker-outline" variant="tonal" size="small" label>
-          {{ mapStore.bunziAddress }}
-        </v-chip>
+
+      <v-col>
+        <div>
+          <p class="text-center text-overline">지번주소</p>
+          <p class="text-center text-body-1">{{ mapStore.bunziAddress }}</p>
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -92,9 +97,6 @@
               density="compact"
               :active="value === mapStore.mapRadius"
             >
-              <template v-slot:prepend>
-                <v-icon size="small">mdi-circle-outline</v-icon>
-              </template>
               {{ key }}km
             </v-list-item>
           </v-list>
@@ -118,9 +120,6 @@
               @click="mapStore.changeBaseMap(value, $event)"
               density="compact"
             >
-              <template v-slot:prepend>
-                <v-icon size="small">mdi-map-outline</v-icon>
-              </template>
               {{ key }}
             </v-list-item>
           </v-list>
@@ -144,9 +143,6 @@
               @click="mapStore.changeCompany(value, $event)"
               density="compact"
             >
-              <template v-slot:prepend>
-                <v-icon size="small">mdi-domain</v-icon>
-              </template>
               {{ key }}
             </v-list-item>
           </v-list>
@@ -259,8 +255,5 @@ export default {
   font-size: 0.85rem !important;
   font-weight: 700 !important;
   min-height: 40px !important;
-}
-.coord-bar {
-  border-top: 1px solid rgba(128, 128, 128, 0.15);
 }
 </style>
