@@ -32,6 +32,35 @@ Sentry.init({
 const vuetify = createVuetify({
   components,
   directives,
+  theme: {
+    defaultTheme: 'light',
+    themes: {
+      light: {
+        colors: {
+          primary: '#1976D2',
+          secondary: '#546E7A',
+          success: '#43A047',
+          info: '#039BE5',
+          warning: '#FB8C00',
+          error: '#E53935',
+          surface: '#FFFFFF',
+          background: '#F5F5F5',
+        },
+      },
+      dark: {
+        colors: {
+          primary: '#42A5F5',
+          secondary: '#78909C',
+          success: '#66BB6A',
+          info: '#29B6F6',
+          warning: '#FFA726',
+          error: '#EF5350',
+          surface: '#1E1E1E',
+          background: '#121212',
+        },
+      },
+    },
+  },
 })
 
 createApp(App).use(createPinia()).use(router).use(vuetify).mount('#app')

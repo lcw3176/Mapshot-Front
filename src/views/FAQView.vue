@@ -14,30 +14,46 @@
           <v-window v-model="tab">
             <v-window-item v-for="(item, i) in faqs" :key="i">
               <v-container fluid>
-
-                <component v-bind:is="item.page">
-
-                </component>
-
+                <component v-bind:is="item.page"/>
               </v-container>
             </v-window-item>
           </v-window>
 
+          <!-- 콘텐츠 하단 인라인 광고 -->
+          <v-row justify="center" class="mt-4">
+            <v-col cols="12">
+              <Adsense
+                adStyle="display:block"
+                format="auto"
+                :fullWidthResponsive="true"
+                clientId="ca-pub-7390022674285155"
+                slotId="6113438353"
+              />
+            </v-col>
+          </v-row>
+
         </v-col>
         <v-col></v-col>
       </v-row>
-
     </div>
-
 
     <div v-else>
       <v-card v-for="(item, i) in faqs" :key="i" elevation="0">
         <v-lazy>
-          <component :is="item.page" class="mb-10"></component>
+          <component :is="item.page" class="mb-10"/>
         </v-lazy>
       </v-card>
 
+      <!-- 모바일 인라인 광고 -->
+      <Adsense
+        adStyle="display:block"
+        format="auto"
+        :fullWidthResponsive="true"
+        clientId="ca-pub-7390022674285155"
+        slotId="6113438353"
+      />
     </div>
+
   </v-container>
 </template>
 
@@ -46,12 +62,14 @@
 
 import GreyTile from '@/components/faq/GreyTile.vue'
 import HowToCapture from '@/components/faq/HowToCapture.vue'
+import { Adsense } from 'vue3-google-adsense'
 
 import { markRaw, ref } from 'vue'
 import { useDisplay } from 'vuetify'
 
 export default {
   name: 'FAQView',
+  components: { Adsense },
 
   data () {
     const display = ref(useDisplay())

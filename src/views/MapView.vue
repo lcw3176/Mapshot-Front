@@ -5,16 +5,23 @@
   <div class="map_wrap">
     <div id="map" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
 
-    <div id="menu_wrap" class="bg_white" v-if="display.mdAndUp">
-      <div class="option">
-        <div>
-          <form id="searchPlaces" @submit.prevent="mapStore.searchPlaces">
-            키워드 : <input type="text" id="keyword" size="15">
-            <button type="submit">검색하기</button>
-          </form>
-        </div>
-      </div>
-      <hr>
+    <div id="menu_wrap" v-if="display.mdAndUp">
+      <v-form id="searchPlaces" @submit.prevent="mapStore.searchPlaces" class="pa-2">
+        <v-text-field
+          id="keyword"
+          label="장소 검색"
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          density="compact"
+          hide-details
+          class="mb-2"
+          bg-color="surface"
+        />
+        <v-btn type="submit" color="info" variant="tonal" block size="small" prepend-icon="mdi-map-search">
+          검색하기
+        </v-btn>
+      </v-form>
+      <v-divider/>
       <ul id="placesList"></ul>
       <div id="pagination"></div>
     </div>
@@ -32,138 +39,181 @@
   <!-- 지도 끝 -->
 
 
-  <v-container fluid>
-
-    <v-row>
-      <v-col>
-        <div>
-          <p class="text-center text-overline">위도</p>
-          <p class="text-center text-body-1">{{ mapStore.lat }}</p>
-        </div>
+  <v-container fluid class="py-2 coord-bar">
+    <v-row dense justify="center" align="center" class="flex-wrap">
+      <v-col cols="auto" class="pa-1">
+        <v-chip prepend-icon="mdi-crosshairs-gps" variant="tonal" color="info" size="small" label>
+          <span class="text-caption font-weight-bold mr-1">위도</span>{{ mapStore.lat }}
+        </v-chip>
       </v-col>
-
-      <v-col>
-        <div>
-          <p class="text-center text-overline">경도</p>
-          <p class="text-center text-body-1">{{ mapStore.lng }}</p>
-        </div>
+      <v-col cols="auto" class="pa-1">
+        <v-chip prepend-icon="mdi-crosshairs-gps" variant="tonal" color="info" size="small" label>
+          <span class="text-caption font-weight-bold mr-1">경도</span>{{ mapStore.lng }}
+        </v-chip>
       </v-col>
-
-      <v-col>
-        <p class="text-center text-overline">도로명주소</p>
-        <p class="text-center text-body-1">{{ mapStore.roadAddress }}</p>
+      <v-col cols="auto" class="pa-1" v-if="mapStore.roadAddress">
+        <v-chip prepend-icon="mdi-road-variant" variant="tonal" color="success" size="small" label>
+          {{ mapStore.roadAddress }}
+        </v-chip>
       </v-col>
-
-      <v-col>
-        <div>
-          <p class="text-center text-overline">지번주소</p>
-          <p class="text-center text-body-1">{{ mapStore.bunziAddress }}</p>
-        </div>
+      <v-col cols="auto" class="pa-1" v-if="mapStore.bunziAddress">
+        <v-chip prepend-icon="mdi-map-marker-outline" variant="tonal" size="small" label>
+          {{ mapStore.bunziAddress }}
+        </v-chip>
       </v-col>
     </v-row>
   </v-container>
 
 
-  <component :is=" display.mdAndUp ? 'v-navigation-drawer' : 'v-container'" permanent touchless="true"
-             :location="display.mdAndUp ? 'right' : 'bottom'" width="300">
-    <v-list nav>
+  <component
+    :is="display.mdAndUp ? 'v-navigation-drawer' : 'v-container'"
+    permanent
+    touchless="true"
+    :location="display.mdAndUp ? 'right' : 'bottom'"
+    width="280"
+  >
+    <v-expansion-panels variant="accordion" :multiple="true" :model-value="[0,1,2,3]" class="settings-panels">
 
-      <v-list-subheader>
-        반경 설정
-      </v-list-subheader>
+      <!-- 반경 설정 -->
+      <v-expansion-panel>
+        <v-expansion-panel-title class="panel-title">
+          <v-icon size="small" class="mr-2" color="info">mdi-radius-outline</v-icon>
+          반경 설정
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-list nav density="compact" class="pa-0">
+            <v-list-item
+              v-for="(value, key) in mapStore.radiusArr"
+              :key="key"
+              :value="value"
+              color="info"
+              rounded="lg"
+              @click="mapStore.changeRadius(value, $event)"
+              density="compact"
+              :active="value === mapStore.mapRadius"
+            >
+              <template v-slot:prepend>
+                <v-icon size="small">mdi-circle-outline</v-icon>
+              </template>
+              {{ key }}km
+            </v-list-item>
+          </v-list>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
 
-      <v-divider></v-divider>
-      <v-list-item v-for="(value, key) in mapStore.radiusArr" :key="key" :value="value" color="info"
-                   @click="mapStore.changeRadius(value, $event)" density="compact"
-                   :active="value === mapStore.mapRadius">
-        {{ key }}km
-      </v-list-item>
-    </v-list>
+      <!-- 지도 종류 -->
+      <v-expansion-panel>
+        <v-expansion-panel-title class="panel-title">
+          <v-icon size="small" class="mr-2" color="info">mdi-layers-outline</v-icon>
+          지도 종류
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-list nav density="compact" class="pa-0">
+            <v-list-item
+              v-for="(value, key) in mapStore.baseMapArr"
+              :key="key"
+              :value="value"
+              color="info"
+              rounded="lg"
+              @click="mapStore.changeBaseMap(value, $event)"
+              density="compact"
+            >
+              <template v-slot:prepend>
+                <v-icon size="small">mdi-map-outline</v-icon>
+              </template>
+              {{ key }}
+            </v-list-item>
+          </v-list>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
 
-    <v-list>
+      <!-- 출력 회사 -->
+      <v-expansion-panel>
+        <v-expansion-panel-title class="panel-title">
+          <v-icon size="small" class="mr-2" color="info">mdi-office-building-outline</v-icon>
+          출력 회사
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-list nav density="compact" class="pa-0">
+            <v-list-item
+              v-for="(value, key) in mapStore.companyArr"
+              :key="key"
+              :value="value"
+              color="info"
+              rounded="lg"
+              @click="mapStore.changeCompany(value, $event)"
+              density="compact"
+            >
+              <template v-slot:prepend>
+                <v-icon size="small">mdi-domain</v-icon>
+              </template>
+              {{ key }}
+            </v-list-item>
+          </v-list>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
 
+      <!-- 부가 설정 -->
+      <v-expansion-panel>
+        <v-expansion-panel-title class="panel-title">
+          <v-icon size="small" class="mr-2" color="info">mdi-tune-variant</v-icon>
+          부가 설정
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <v-list nav density="compact" class="pa-0 mb-2">
+            <v-list-item
+              density="compact"
+              rounded="lg"
+              color="info"
+              @click="overlay = !overlay"
+              prepend-icon="mdi-city-variant-outline"
+            >
+              도시 계획 레이어
+            </v-list-item>
+          </v-list>
 
-      <v-list-subheader>
-        지도 종류
-      </v-list-subheader>
+          <v-overlay :model-value="overlay" class="align-center justify-center">
+            <v-card min-width="300" rounded="lg" elevation="8">
+              <v-card-title class="d-flex align-center">
+                <v-icon class="mr-2" color="info">mdi-city-variant-outline</v-icon>
+                레이어 설정
+              </v-card-title>
+              <v-divider/>
+              <v-card-text>
+                <p class="text-caption text-medium-emphasis mb-2 font-weight-bold">도시계획</p>
+                <v-checkbox-btn v-model="mapStore.layers" label="도로" color="info" value="lt_c_upisuq151" density="compact"/>
+                <v-checkbox-btn v-model="mapStore.layers" label="토지이용계획도" color="info" value="lt_c_lhblpn" density="compact"/>
+                <p class="text-caption text-medium-emphasis mt-3 mb-2 font-weight-bold">토지</p>
+                <v-checkbox-btn v-model="mapStore.layers" label="연속지적도" color="info" value="lp_pa_cbnd_bubun,lp_pa_cbnd_bonbun" density="compact"/>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer/>
+                <v-btn variant="tonal" color="info" @click="overlay = !overlay" prepend-icon="mdi-close">닫기</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-overlay>
 
-      <v-divider></v-divider>
-      <v-list-item v-for="(value, key) in mapStore.baseMapArr" :key="key" :value="value" color="info"
-                   @click="mapStore.changeBaseMap(value, $event)" density="compact">
-        {{ key }}
-      </v-list-item>
-    </v-list>
+          <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'" v-model="mapStore.layerMode" label="지적 편집도" hide-details class="mb-1"/>
+          <v-switch density="compact" color="info" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel" label="명칭 없애기" hide-details class="mb-1"/>
+          <v-switch density="compact" color="info" v-model="mapStore.onlyLayers" label="레이어만 출력" hide-details class="mb-1"/>
+          <v-switch density="compact" color="info" v-model="mapStore.addTopography" label="지형도 덧입히기" hide-details class="mb-1"/>
+          <v-switch density="compact" color="info" v-model="mapStore.traceMode" label="흔적 남기기" hide-details class="mb-3"/>
 
-    <v-list>
+          <v-btn
+            block
+            color="success"
+            variant="elevated"
+            size="large"
+            prepend-icon="mdi-camera"
+            @click="mapStore.startCapture"
+            rounded="lg"
+          >
+            템플릿 제작
+          </v-btn>
+        </v-expansion-panel-text>
+      </v-expansion-panel>
 
-
-      <v-list-subheader>
-        출력 회사
-      </v-list-subheader>
-
-      <v-divider></v-divider>
-      <v-list-item v-for="(value, key) in mapStore.companyArr" :key="key" :value="value" color="info"
-                   @click="mapStore.changeCompany(value, $event)" density="compact">
-        {{ key }}
-      </v-list-item>
-
-    </v-list>
-    <v-list>
-      <v-list-subheader>
-        부가 설정
-      </v-list-subheader>
-
-      <v-divider></v-divider>
-      <v-list-item density="compact" @click="overlay = !overlay"
-                   color="info">
-        도시 계획 레이어
-      </v-list-item>
-
-      <v-overlay :model-value="overlay" class="align-center justify-center">
-        <v-card>
-          <v-container>
-            <v-card-title>도시계획</v-card-title>
-            <v-divider></v-divider>
-            <v-card-item>
-              <v-checkbox-btn v-model="mapStore.layers" label="도로" color="info" value="lt_c_upisuq151"/>
-              <v-checkbox-btn v-model="mapStore.layers" label="토지이용계획도" color="info" value="lt_c_lhblpn"/>
-            </v-card-item>
-
-            <v-card-title>토지</v-card-title>
-            <v-divider></v-divider>
-            <v-card-item>
-              <v-checkbox-btn v-model="mapStore.layers" label="연속지적도" color="info"
-                              value="lp_pa_cbnd_bubun,lp_pa_cbnd_bonbun"/>
-            </v-card-item>
-
-            <v-card-actions>
-              <v-btn variant="text" color="info" @click="overlay = !overlay">닫기</v-btn>
-            </v-card-actions>
-          </v-container>
-        </v-card>
-      </v-overlay>
-
-      <v-container fluid>
-        <v-switch density="compact" color="info" v-if="mapStore.company === 'kakao'" v-model="mapStore.layerMode"
-                  label="지적 편집도"/>
-
-        <v-switch density="compact" color="info" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel"
-                  label=" 지형지물 명칭 없애기"/>
-
-
-        <v-switch density="compact" color="info" v-model="mapStore.onlyLayers" label="레이어만 출력하기"/>
-
-        <v-switch density="compact" color="info" v-model="mapStore.addTopography" label="지형도 덧입히기"/>
-
-        <v-switch density="compact" color="info" v-model="mapStore.traceMode" label="흔적 남기기"/>
-
-        <v-btn class="outlined" block color="success" @click="mapStore.startCapture">템플릿 제작</v-btn>
-      </v-container>
-
-
-    </v-list>
-
-
+    </v-expansion-panels>
   </component>
 
 </template>
@@ -179,25 +229,20 @@ export default {
 
   setup () {
     const mapStore = useMapStore()
-
-    return {
-      mapStore
-    }
+    return { mapStore }
   },
 
   data () {
     const display = ref(useDisplay())
-
     return {
       overlay: null,
-      display
+      display,
     }
   },
 
   mounted () {
     this.mapStore.init()
     this.mapStore.addListeners()
-
   },
 
   beforeUnmount () {
@@ -205,3 +250,17 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.settings-panels {
+  border-radius: 0 !important;
+}
+.panel-title {
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  min-height: 40px !important;
+}
+.coord-bar {
+  border-top: 1px solid rgba(128, 128, 128, 0.15);
+}
+</style>

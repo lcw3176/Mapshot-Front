@@ -1,153 +1,106 @@
 <template>
-  <div v-if="loaderStore.isLoading" class="loading-container">
-    <div class="loading">
-      <Moon-loader/>
-    </div>
-  </div>
+  <v-overlay :model-value="loaderStore.isLoading" class="align-center justify-center" z-index="9999" persistent>
+    <Moon-loader color="#43A047" size="60px"/>
+  </v-overlay>
 
   <v-layout>
-    <v-app-bar elevation="1" v-if="display.mdAndUp">
+    <v-app-bar elevation="2" v-if="display.mdAndUp">
 
       <template v-slot:prepend>
         <v-img
           :width="180"
           aspect-ratio="16/9"
           src="/title.png"
-          @click="this.$router.push('/') "
+          @click="this.$router.push('/')"
           style="cursor: pointer"
-        >
-        </v-img>
-
+        />
       </template>
 
+      <v-spacer/>
 
-      <v-spacer>
+      <v-btn
+        v-for="item in desktop"
+        :key="item.title"
+        :to="item.path"
+        :prepend-icon="item.icon"
+        variant="text"
+        rounded="lg"
+        class="mx-1"
+      >
+        {{ item.title }}
+      </v-btn>
 
-      </v-spacer>
-
-
-      <div v-for="item in desktop" :key="item.title">
-
-        <v-btn :to="item.path" variant="plain">
-          {{ item.title }}
-        </v-btn>
-
-      </div>
+      <v-btn
+        :icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+        variant="text"
+        class="ml-2"
+        @click="toggleTheme"
+      />
 
     </v-app-bar>
 
-    <v-bottom-navigation v-else grow>
-      <v-btn v-for="item in mobile" :key="item.title" color="teal" :to="item.path">
+    <v-bottom-navigation v-else grow bg-color="surface" elevation="4">
+      <v-btn v-for="item in mobile" :key="item.title" color="success" :to="item.path">
         <v-icon>{{ item.icon }}</v-icon>
-        {{ item.title }}
+        <span style="font-size:0.65rem">{{ item.title }}</span>
+      </v-btn>
+      <v-btn color="success" @click="toggleTheme">
+        <v-icon>{{ isDark ? 'mdi-weather-sunny' : 'mdi-weather-night' }}</v-icon>
+        <span style="font-size:0.65rem">{{ isDark ? '라이트' : '다크' }}</span>
       </v-btn>
     </v-bottom-navigation>
 
-
     <v-main>
       <router-view></router-view>
-      <AdsView v-if="display.mdAndUp"/>
+      <AdsView/>
     </v-main>
-
 
   </v-layout>
 </template>
 
 <script>
-
-
 import AdsView from './views/AdsView'
 import { useLoaderStore } from '@/store/loader'
-import { useDisplay } from 'vuetify'
-import { ref } from 'vue'
-
+import { useDisplay, useTheme } from 'vuetify'
+import { ref, computed } from 'vue'
 import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 
 export default {
   components: {
     AdsView,
-    MoonLoader
+    MoonLoader,
+  },
+
+  setup () {
+    const loaderStore = useLoaderStore()
+    const theme = useTheme()
+
+    const isDark = computed(() => theme.global.current.value.dark)
+    const toggleTheme = () => {
+      theme.global.name.value = isDark.value ? 'light' : 'dark'
+    }
+
+    return { loaderStore, isDark, toggleTheme }
   },
 
   data () {
     const display = ref(useDisplay())
 
     return {
-      appTitle: 'MAPSHOT',
-      sidebar: false,
-      desktop: [
-        // {
-        //   title: '게시판',
-        //   path: '/community',
-        //   icon: 'mdi-bulletin-board'
-        // },
-        {
-          title: '사용법',
-          path: '/manual',
-          icon: 'mdi-school-outline'
-        },
-        {
-          title: '공지사항',
-          path: '/notice',
-          icon: 'mdi-bullhorn-outline'
-        },
-        {
-          title: '문의',
-          path: '/contact',
-          icon: 'mdi mdi-email-edit-outline'
-        },
-        {
-          title: 'FAQ',
-          path: '/faq',
-          icon: 'mdi-frequently-asked-questions'
-        },
-      ],
-
-      mobile: [
-        {
-          title: '홈',
-          path: '/',
-          icon: 'mdi-home-outline'
-        },
-        {
-          title: '사용법',
-          path: '/manual',
-          icon: 'mdi-school-outline'
-        },
-        {
-          title: '공지사항',
-          path: '/notice',
-          icon: 'mdi-bullhorn-outline'
-        },
-        {
-          title: '문의',
-          path: '/contact',
-          icon: 'mdi mdi-email-edit-outline'
-        },
-      ],
-
       display,
+      desktop: [
+        { title: '사용법', path: '/manual', icon: 'mdi-school-outline' },
+        { title: '공지사항', path: '/notice', icon: 'mdi-bullhorn-outline' },
+        { title: '문의', path: '/contact', icon: 'mdi-email-edit-outline' },
+        { title: 'FAQ', path: '/faq', icon: 'mdi-frequently-asked-questions' },
+      ],
+      mobile: [
+        { title: '홈', path: '/', icon: 'mdi-home-outline' },
+        { title: '사용법', path: '/manual', icon: 'mdi-school-outline' },
+        { title: '공지사항', path: '/notice', icon: 'mdi-bullhorn-outline' },
+        { title: '문의', path: '/contact', icon: 'mdi-email-edit-outline' },
+      ],
     }
   },
-
-  setup () {
-    const loaderStore = useLoaderStore()
-
-    return {
-      loaderStore
-    }
-  },
-
 }
 </script>
-
-
-<style scoped>
-.loading {
-  z-index: 2;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-</style>
