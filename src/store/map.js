@@ -86,9 +86,10 @@ export const useMapStore = defineStore('map', {
 
       this.currentMapStyle = this.baseMapStyles['일반']
 
+      // 기본값 할당 이후에 저장된 값으로 덮어씀
       this.loadSettings()
 
-      // 설정 변경 시 자동 저장
+      // 설정 변경 시 자동 저장 (loadSettings 이후 등록)
       this.$subscribe((mutation, state) => {
         this.saveSettings()
       })

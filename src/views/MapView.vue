@@ -119,6 +119,7 @@
               rounded="lg"
               @click="mapStore.changeBaseMap(value, $event)"
               density="compact"
+              :active="value === mapStore.baseMap"
             >
               {{ key }}
             </v-list-item>
@@ -142,6 +143,7 @@
               rounded="lg"
               @click="mapStore.changeCompany(value, $event)"
               density="compact"
+              :active="value === mapStore.company"
             >
               {{ key }}
             </v-list-item>
