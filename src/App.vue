@@ -7,13 +7,10 @@
     <v-app-bar elevation="2" v-if="display.mdAndUp">
 
       <template v-slot:prepend>
-        <v-img
-          :width="180"
-          aspect-ratio="16/9"
-          src="/title.png"
+        <span
           @click="this.$router.push('/')"
-          style="cursor: pointer"
-        />
+          style="cursor: pointer; font-size: 1.4rem; font-weight: 700; letter-spacing: 0.08em; padding: 0 12px;"
+        >Mapshot</span>
       </template>
 
       <v-spacer/>
