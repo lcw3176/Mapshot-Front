@@ -162,7 +162,6 @@
               rounded="lg"
               color="info"
               @click="overlay = !overlay"
-              prepend-icon="mdi-city-variant-outline"
             >
               도시 계획 레이어
             </v-list-item>
@@ -171,7 +170,6 @@
           <v-overlay :model-value="overlay" class="align-center justify-center">
             <v-card min-width="300" rounded="lg" elevation="8">
               <v-card-title class="d-flex align-center">
-                <v-icon class="mr-2" color="info">mdi-city-variant-outline</v-icon>
                 레이어 설정
               </v-card-title>
               <v-divider/>
