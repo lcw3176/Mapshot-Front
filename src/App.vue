@@ -70,6 +70,7 @@ export default {
       display,
       desktop: [
         { title: '사용법', path: '/manual', icon: 'mdi-school-outline' },
+        { title: '도시뉴스', path: '/news', icon: 'mdi-newspaper-variant-outline' },
         { title: '공지사항', path: '/notice', icon: 'mdi-bullhorn-outline' },
         { title: '문의', path: '/contact', icon: 'mdi-email-edit-outline' },
         { title: 'FAQ', path: '/faq', icon: 'mdi-frequently-asked-questions' },
@@ -77,8 +78,8 @@ export default {
       mobile: [
         { title: '홈', path: '/', icon: 'mdi-home-outline' },
         { title: '사용법', path: '/manual', icon: 'mdi-school-outline' },
+        { title: '도시뉴스', path: '/news', icon: 'mdi-newspaper-variant-outline' },
         { title: '공지사항', path: '/notice', icon: 'mdi-bullhorn-outline' },
-        { title: '문의', path: '/contact', icon: 'mdi-email-edit-outline' },
       ],
     }
   },

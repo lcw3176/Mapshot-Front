@@ -39,6 +39,12 @@ const routes = [
     props: true
   },
 
+  {
+    path: '/news',
+    name: 'news',
+    component: () => import(/* webpackChunkName: "news" */ '../views/NewsView.vue')
+  },
+
   // {
   //   path: '/community',
   //   name: 'community',
