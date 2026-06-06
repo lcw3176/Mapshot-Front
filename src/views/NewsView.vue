@@ -4,14 +4,14 @@
       <v-col cols="12" md="9" lg="8">
 
         <!-- 헤더 -->
-        <div class="d-flex align-center justify-space-between flex-wrap mb-1">
+        <div class="d-flex align-center justify-space-between flex-wrap mb-3">
           <div>
             <h1 class="text-h5 font-weight-bold mb-1">
               <v-icon icon="mdi-newspaper-variant-outline" color="success" class="mr-1"/>
               도시뉴스
             </h1>
             <p class="text-body-2 text-medium-emphasis mb-0">
-              도시공학·도시계획 뉴스를 모아 AI가 요약해 드려요
+              도시공학·도시계획 뉴스를 모아 AI가 한 편으로 요약해 드려요
             </p>
           </div>
           <v-btn
@@ -24,26 +24,6 @@
             새로고침
           </v-btn>
         </div>
-
-        <!-- 키워드 필터 -->
-        <v-chip-group
-          v-if="!newsStore.isLoading && newsStore.articles.length"
-          v-model="selectedKeyword"
-          selected-class="text-success"
-          mandatory
-          column
-          class="mb-2"
-        >
-          <v-chip
-            v-for="keyword in newsStore.keywords"
-            :key="keyword"
-            :value="keyword"
-            variant="outlined"
-            filter
-          >
-            {{ keyword }}
-          </v-chip>
-        </v-chip-group>
 
         <!-- 로딩 -->
         <div v-if="newsStore.isLoading" class="text-center py-16">
@@ -62,106 +42,60 @@
 
         <!-- 빈 상태 -->
         <div
-          v-else-if="!newsStore.filteredArticles.length"
+          v-else-if="!newsStore.posts.length"
           class="text-center text-medium-emphasis py-16"
         >
-          표시할 뉴스가 없어요.
+          아직 발행된 도시뉴스 요약이 없어요.
         </div>
 
-        <!-- 기사 카드 목록 -->
+        <!-- 요약 게시글 목록 -->
         <template v-else>
           <v-card
-            v-for="article in newsStore.filteredArticles"
-            :key="article.id"
+            v-for="post in newsStore.posts"
+            :key="post.id"
             variant="outlined"
             rounded="lg"
             class="mb-4"
           >
             <v-card-item>
-              <div class="d-flex align-center mb-1" style="gap: 8px;">
-                <v-chip
-                  v-if="article.keyword"
-                  size="small"
-                  color="success"
-                  variant="tonal"
-                  label
-                >
-                  {{ article.keyword }}
-                </v-chip>
-                <span class="text-caption text-medium-emphasis">
-                  {{ newsStore.formatDate(article.publishedAt || article.collectedDate) }}
-                </span>
-              </div>
               <v-card-title class="text-wrap text-h6 px-0" style="line-height: 1.4;">
-                <a
-                  :href="article.originalUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="article-title"
-                >
-                  {{ article.title }}
-                </a>
+                {{ post.title }}
               </v-card-title>
+              <span class="text-caption text-medium-emphasis">
+                {{ newsStore.formatDate(post.createdDate) }}
+              </span>
             </v-card-item>
 
+            <!-- LLM 요약 본문 (HTML) -->
             <v-card-text>
-              <template v-if="hasStructuredSummary(article)">
-                <p
-                  v-if="parsed(article).core"
-                  class="text-body-1 font-weight-medium mb-3"
-                >
-                  {{ parsed(article).core }}
-                </p>
+              <div class="news-body" v-html="post.content"></div>
+            </v-card-text>
 
-                <v-list
-                  v-if="parsed(article).points.length"
-                  density="compact"
-                  class="bg-transparent py-0 mb-2"
-                >
+            <!-- 출처 (본문과 분리된 별도 블록) -->
+            <template v-if="post.sources && post.sources.length">
+              <v-divider/>
+              <v-card-text class="pb-2">
+                <div class="text-overline text-medium-emphasis mb-1">출처</div>
+                <v-list density="compact" class="bg-transparent py-0">
                   <v-list-item
-                    v-for="(point, i) in parsed(article).points"
+                    v-for="(source, i) in post.sources"
                     :key="i"
+                    :href="source.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     class="px-0"
                     min-height="28"
                   >
                     <template v-slot:prepend>
-                      <v-icon icon="mdi-circle-small" size="small" color="success"/>
+                      <v-icon icon="mdi-link-variant" size="small" color="success"/>
                     </template>
-                    <v-list-item-title class="text-body-2 text-wrap">
-                      {{ point }}
+                    <v-list-item-title class="text-body-2 text-wrap source-link">
+                      {{ source.title }}
                     </v-list-item-title>
                   </v-list-item>
                 </v-list>
-
-                <p
-                  v-if="parsed(article).implication"
-                  class="text-body-2 text-medium-emphasis mt-2"
-                >
-                  <v-icon icon="mdi-lightbulb-on-outline" size="small" color="warning" class="mr-1"/>
-                  {{ parsed(article).implication }}
-                </p>
-              </template>
-
-              <!-- 고정 포맷이 아닌 경우 원문 그대로 -->
-              <p v-else class="text-body-2" style="white-space: pre-wrap;">
-                {{ parsed(article).raw || '요약이 아직 준비되지 않았어요.' }}
-              </p>
-            </v-card-text>
-
-            <v-divider/>
-            <v-card-actions>
-              <v-btn
-                :href="article.originalUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="text"
-                size="small"
-                color="success"
-                append-icon="mdi-open-in-new"
-              >
-                원문 보기
-              </v-btn>
-            </v-card-actions>
+              </v-card-text>
+            </template>
           </v-card>
         </template>
 
@@ -181,29 +115,8 @@ export default {
     return { newsStore }
   },
 
-  computed: {
-    selectedKeyword: {
-      get () {
-        return this.newsStore.activeKeyword
-      },
-      set (value) {
-        this.newsStore.setKeyword(value || '전체')
-      },
-    },
-  },
-
   methods: {
-    parsed (article) {
-      return this.newsStore.parseSummary(article.summary)
-    },
-
-    hasStructuredSummary (article) {
-      const p = this.parsed(article)
-      return !!(p.core || p.points.length || p.implication)
-    },
-
     refresh () {
-      this.newsStore.setKeyword('전체')
       this.newsStore.loadRecent()
     },
   },
@@ -215,12 +128,32 @@ export default {
 </script>
 
 <style scoped>
-.article-title {
-  color: rgb(var(--v-theme-on-surface));
-  text-decoration: none;
+.news-body :deep(h3) {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 12px 0 6px;
 }
 
-.article-title:hover {
+.news-body :deep(p) {
+  margin: 6px 0;
+  line-height: 1.6;
+}
+
+.news-body :deep(ul) {
+  padding-left: 20px;
+  margin: 6px 0;
+}
+
+.news-body :deep(li) {
+  margin: 2px 0;
+  line-height: 1.5;
+}
+
+.source-link {
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.source-link:hover {
   color: rgb(var(--v-theme-success));
   text-decoration: underline;
 }
