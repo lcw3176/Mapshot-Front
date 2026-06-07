@@ -15,12 +15,21 @@ async function getRecent () {
   return response.data
 }
 
+async function getDetail (id) {
+  // 상세 조회 시 서버에서 조회수가 1 증가한다.
+  const response = await api.get(apiUrl + '/news/' + id)
+  return response.data
+}
+
 export const useNewsStore = defineStore('newsStore', {
 
   state: () => ({
     posts: [],
+    post: null,
     isLoading: false,
     isError: false,
+    isDetailLoading: false,
+    isDetailError: false,
   }),
 
   actions: {
@@ -34,6 +43,20 @@ export const useNewsStore = defineStore('newsStore', {
         this.posts = []
       } finally {
         this.isLoading = false
+      }
+    },
+
+    async loadDetail (id) {
+      this.isDetailLoading = true
+      this.isDetailError = false
+      this.post = null
+      try {
+        this.post = await getDetail(id)
+      } catch (e) {
+        this.isDetailError = true
+        this.post = null
+      } finally {
+        this.isDetailLoading = false
       }
     },
 

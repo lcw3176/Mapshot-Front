@@ -4,7 +4,7 @@
       <v-col cols="12" md="9" lg="8">
 
         <!-- 헤더 -->
-        <div class="d-flex align-center justify-space-between flex-wrap mb-3">
+        <div class="d-flex align-center justify-space-between flex-wrap mb-4">
           <div>
             <h1 class="text-h5 font-weight-bold mb-1">
               <v-icon icon="mdi-newspaper-variant-outline" color="success" class="mr-1"/>
@@ -48,56 +48,33 @@
           아직 발행된 도시뉴스 요약이 없어요.
         </div>
 
-        <!-- 요약 게시글 목록 -->
-        <template v-else>
-          <v-card
-            v-for="post in newsStore.posts"
-            :key="post.id"
-            variant="outlined"
-            rounded="lg"
-            class="mb-4"
-          >
-            <v-card-item>
-              <v-card-title class="text-wrap text-h6 px-0" style="line-height: 1.4;">
-                {{ post.title }}
-              </v-card-title>
-              <span class="text-caption text-medium-emphasis">
-                {{ newsStore.formatDate(post.createdDate) }}
-              </span>
-            </v-card-item>
-
-            <!-- LLM 요약 본문 (HTML) -->
-            <v-card-text>
-              <div class="news-body" v-html="post.content"></div>
-            </v-card-text>
-
-            <!-- 출처 (본문과 분리된 별도 블록) -->
-            <template v-if="post.sources && post.sources.length">
-              <v-divider/>
-              <v-card-text class="pb-2">
-                <div class="text-overline text-medium-emphasis mb-1">출처</div>
-                <v-list density="compact" class="bg-transparent py-0">
-                  <v-list-item
-                    v-for="(source, i) in post.sources"
-                    :key="i"
-                    :href="source.url"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="px-0"
-                    min-height="28"
-                  >
-                    <template v-slot:prepend>
-                      <v-icon icon="mdi-link-variant" size="small" color="success"/>
-                    </template>
-                    <v-list-item-title class="text-body-2 text-wrap source-link">
-                      {{ source.title }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-card-text>
+        <!-- 게시글 목록 (클릭 → 상세) -->
+        <v-card v-else variant="outlined" rounded="lg">
+          <v-list class="py-0">
+            <template v-for="(post, i) in newsStore.posts" :key="post.id">
+              <v-divider v-if="i !== 0"/>
+              <v-list-item
+                :to="`/news/${post.id}`"
+                class="py-3"
+              >
+                <v-list-item-title class="text-subtitle-1 font-weight-medium text-wrap mb-1">
+                  {{ post.title }}
+                </v-list-item-title>
+                <v-list-item-subtitle class="text-body-2 text-medium-emphasis text-wrap">
+                  {{ preview(post.content) }}
+                </v-list-item-subtitle>
+                <template v-slot:append>
+                  <div class="text-caption text-medium-emphasis text-right" style="white-space:nowrap;">
+                    <div>{{ newsStore.formatDate(post.createdDate) }}</div>
+                    <div class="mt-1">
+                      <v-icon icon="mdi-eye-outline" size="x-small" class="mr-1"/>{{ post.viewCount }}
+                    </div>
+                  </div>
+                </template>
+              </v-list-item>
             </template>
-          </v-card>
-        </template>
+          </v-list>
+        </v-card>
 
       </v-col>
     </v-row>
@@ -119,6 +96,13 @@ export default {
     refresh () {
       this.newsStore.loadRecent()
     },
+
+    // HTML 본문에서 태그를 제거해 한 줄 미리보기 텍스트를 만든다.
+    preview (html) {
+      if (!html) return ''
+      const text = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+      return text.length > 120 ? text.slice(0, 120) + '…' : text
+    },
   },
 
   created () {
@@ -126,35 +110,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.news-body :deep(h3) {
-  font-size: 1rem;
-  font-weight: 700;
-  margin: 12px 0 6px;
-}
-
-.news-body :deep(p) {
-  margin: 6px 0;
-  line-height: 1.6;
-}
-
-.news-body :deep(ul) {
-  padding-left: 20px;
-  margin: 6px 0;
-}
-
-.news-body :deep(li) {
-  margin: 2px 0;
-  line-height: 1.5;
-}
-
-.source-link {
-  color: rgb(var(--v-theme-on-surface));
-}
-
-.source-link:hover {
-  color: rgb(var(--v-theme-success));
-  text-decoration: underline;
-}
-</style>
