@@ -9,9 +9,15 @@ const api = axios.create({
 const apiUrl = process.env.VUE_APP_API_URL
 
 async function getRecent () {
-  // 원본 기사가 아니라 LLM이 요약해 발행한 '도시뉴스' 게시글이 내려온다.
-  // 형식: [{ id, title, content(HTML), sources:[{title,url}], viewCount, createdDate }]
+  // LLM이 요약해 발행한 '도시뉴스' 게시글 목록(경량).
+  // 형식: [{ id, title, preview, createdDate }] — 본문/출처는 상세에서 받음
   const response = await api.get(apiUrl + '/news/recent')
+  return response.data
+}
+
+async function getDetail (id) {
+  // 상세 조회 시 서버에서 조회수가 증가한다(어드민 집계용, 사용자에겐 비노출).
+  const response = await api.get(apiUrl + '/news/' + id)
   return response.data
 }
 
@@ -19,8 +25,11 @@ export const useNewsStore = defineStore('newsStore', {
 
   state: () => ({
     posts: [],
+    post: null,
     isLoading: false,
     isError: false,
+    isDetailLoading: false,
+    isDetailError: false,
   }),
 
   actions: {
@@ -34,6 +43,20 @@ export const useNewsStore = defineStore('newsStore', {
         this.posts = []
       } finally {
         this.isLoading = false
+      }
+    },
+
+    async loadDetail (id) {
+      this.isDetailLoading = true
+      this.isDetailError = false
+      this.post = null
+      try {
+        this.post = await getDetail(id)
+      } catch (e) {
+        this.isDetailError = true
+        this.post = null
+      } finally {
+        this.isDetailLoading = false
       }
     },
 
