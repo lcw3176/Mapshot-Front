@@ -61,11 +61,14 @@
                   {{ post.title }}
                 </v-list-item-title>
                 <v-list-item-subtitle class="text-body-2 text-medium-emphasis text-wrap">
-                  {{ post.preview }}
+                  {{ preview(post.content) }}
                 </v-list-item-subtitle>
                 <template v-slot:append>
                   <div class="text-caption text-medium-emphasis text-right" style="white-space:nowrap;">
-                    {{ newsStore.formatDate(post.createdDate) }}
+                    <div>{{ newsStore.formatDate(post.createdDate) }}</div>
+                    <div class="mt-1">
+                      <v-icon icon="mdi-eye-outline" size="x-small" class="mr-1"/>{{ post.viewCount }}
+                    </div>
                   </div>
                 </template>
               </v-list-item>
@@ -92,6 +95,13 @@ export default {
   methods: {
     refresh () {
       this.newsStore.loadRecent()
+    },
+
+    // HTML 본문에서 태그를 제거해 한 줄 미리보기 텍스트를 만든다.
+    preview (html) {
+      if (!html) return ''
+      const text = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+      return text.length > 120 ? text.slice(0, 120) + '…' : text
     },
   },
 
