@@ -35,9 +35,8 @@
             <v-card-title class="text-wrap text-h5" style="line-height: 1.4;">
               {{ newsStore.post.title }}
             </v-card-title>
-            <div class="d-flex align-center text-caption text-medium-emphasis mt-2" style="gap:12px;">
-              <span>{{ newsStore.formatDate(newsStore.post.createdDate) }}</span>
-              <span><v-icon icon="mdi-eye-outline" size="x-small" class="mr-1"/>{{ newsStore.post.viewCount }}</span>
+            <div class="text-caption text-medium-emphasis mt-2">
+              {{ newsStore.formatDate(newsStore.post.createdDate) }}
             </div>
           </v-card-item>
 
