@@ -9,8 +9,8 @@ const api = axios.create({
 const apiUrl = process.env.VUE_APP_API_URL
 
 async function getRecent () {
-  // 원본 기사가 아니라 LLM이 요약해 발행한 '도시뉴스' 게시글이 내려온다.
-  // 형식: [{ id, title, content(HTML), sources:[{title,url}], viewCount, createdDate }]
+  // LLM이 요약해 발행한 '도시뉴스' 게시글 목록(경량).
+  // 형식: [{ id, title, preview, viewCount, createdDate }] — 본문/출처는 상세에서 받음
   const response = await api.get(apiUrl + '/news/recent')
   return response.data
 }
