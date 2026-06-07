@@ -10,13 +10,13 @@ const apiUrl = process.env.VUE_APP_API_URL
 
 async function getRecent () {
   // LLM이 요약해 발행한 '도시뉴스' 게시글 목록(경량).
-  // 형식: [{ id, title, preview, viewCount, createdDate }] — 본문/출처는 상세에서 받음
+  // 형식: [{ id, title, preview, createdDate }] — 본문/출처는 상세에서 받음
   const response = await api.get(apiUrl + '/news/recent')
   return response.data
 }
 
 async function getDetail (id) {
-  // 상세 조회 시 서버에서 조회수가 1 증가한다.
+  // 상세 조회 시 서버에서 조회수가 증가한다(어드민 집계용, 사용자에겐 비노출).
   const response = await api.get(apiUrl + '/news/' + id)
   return response.data
 }

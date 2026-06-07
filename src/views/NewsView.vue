@@ -65,10 +65,7 @@
                 </v-list-item-subtitle>
                 <template v-slot:append>
                   <div class="text-caption text-medium-emphasis text-right" style="white-space:nowrap;">
-                    <div>{{ newsStore.formatDate(post.createdDate) }}</div>
-                    <div class="mt-1">
-                      <v-icon icon="mdi-eye-outline" size="x-small" class="mr-1"/>{{ post.viewCount }}
-                    </div>
+                    {{ newsStore.formatDate(post.createdDate) }}
                   </div>
                 </template>
               </v-list-item>
