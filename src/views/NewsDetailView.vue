@@ -31,47 +31,67 @@
 
         <!-- 본문 -->
         <v-card v-else variant="outlined" rounded="lg">
+
+          <!-- ① 헤더 -->
           <v-card-item>
             <v-card-title class="text-wrap text-h5" style="line-height: 1.4;">
               {{ newsStore.post.title }}
             </v-card-title>
-            <div class="text-caption text-medium-emphasis mt-2">
-              {{ newsStore.formatDate(newsStore.post.createdDate) }}
+            <div class="d-flex align-center flex-wrap mt-2" style="gap: 8px;">
+              <span class="text-caption text-medium-emphasis">
+                {{ newsStore.formatDate(newsStore.post.createdDate) }}
+              </span>
+              <v-chip
+                v-if="sources.length"
+                size="x-small"
+                variant="tonal"
+                color="success"
+                prepend-icon="mdi-link-variant"
+              >
+                출처 {{ sources.length }}건
+              </v-chip>
             </div>
           </v-card-item>
 
           <v-divider/>
 
-          <!-- LLM 요약 본문 (HTML) -->
           <v-card-text>
-            <div class="news-body" v-html="newsStore.post.content"></div>
-          </v-card-text>
+            <!-- digest 가 있으면 풍부 UI, 없으면 기존 HTML 본문으로 폴백 -->
+            <NewsDigest
+              v-if="newsStore.post.digest"
+              :digest="newsStore.post.digest"
+              :sources="sources"
+              :related-posts="relatedPosts"
+            />
 
-          <!-- 출처 (본문과 분리된 별도 블록) -->
-          <template v-if="newsStore.post.sources && newsStore.post.sources.length">
-            <v-divider/>
-            <v-card-text class="pb-3">
-              <div class="text-overline text-medium-emphasis mb-1">출처</div>
-              <v-list density="compact" class="bg-transparent py-0">
-                <v-list-item
-                  v-for="(source, i) in newsStore.post.sources"
-                  :key="i"
-                  :href="source.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="px-0"
-                  min-height="28"
-                >
-                  <template v-slot:prepend>
-                    <v-icon icon="mdi-link-variant" size="small" color="success"/>
-                  </template>
-                  <v-list-item-title class="text-body-2 text-wrap source-link">
-                    {{ source.title }}
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-          </template>
+            <template v-else>
+              <div class="news-body" v-html="newsStore.post.content"></div>
+
+              <!-- 폴백 경로의 출처 블록 -->
+              <template v-if="sources.length">
+                <v-divider class="my-4"/>
+                <div class="text-overline text-medium-emphasis mb-1">출처</div>
+                <v-list density="compact" class="bg-transparent py-0">
+                  <v-list-item
+                    v-for="(source, i) in sources"
+                    :key="i"
+                    :href="source.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="px-0"
+                    min-height="28"
+                  >
+                    <template v-slot:prepend>
+                      <v-icon icon="mdi-link-variant" size="small" color="success"/>
+                    </template>
+                    <v-list-item-title class="text-body-2 text-wrap source-link">
+                      {{ source.title }}
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </template>
+            </template>
+          </v-card-text>
         </v-card>
 
       </v-col>
@@ -81,9 +101,12 @@
 
 <script>
 import { useNewsStore } from '@/store/news'
+import NewsDigest from '@/components/news/NewsDigest.vue'
 
 export default {
   name: 'NewsDetailView',
+
+  components: { NewsDigest },
 
   props: {
     id: [Number, String],
@@ -92,6 +115,15 @@ export default {
   setup () {
     const newsStore = useNewsStore()
     return { newsStore }
+  },
+
+  computed: {
+    sources () {
+      return (this.newsStore.post && this.newsStore.post.sources) || []
+    },
+    relatedPosts () {
+      return (this.newsStore.post && this.newsStore.post.relatedPosts) || []
+    },
   },
 
   created () {
