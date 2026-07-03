@@ -84,6 +84,25 @@
               size="x-small" variant="text" color="success" class="ma-1"
             >#{{ k }}</v-chip>
           </div>
+
+          <!-- 기사 원문 링크 -->
+          <div v-if="(s.sources || []).length" class="source-row">
+            <v-chip
+              v-for="(src, si) in s.sources"
+              :key="`src-${si}`"
+              :href="src.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              :title="src.title"
+              size="x-small"
+              variant="outlined"
+              color="grey-darken-1"
+              class="ma-1 source-chip"
+            >
+              <v-icon start icon="mdi-open-in-new" size="11"/>
+              {{ src.title }}
+            </v-chip>
+          </div>
         </v-card-text>
       </v-card>
     </section>
@@ -338,6 +357,25 @@ export default {
   display: flex;
   flex-wrap: wrap;
   margin: 8px -4px 0;
+}
+
+.source-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 6px -4px 0;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.source-chip {
+  max-width: 100%;
+}
+
+.source-chip :deep(.v-chip__content) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
 }
 
 /* 부가 코너 */
