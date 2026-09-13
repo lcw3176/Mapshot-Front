@@ -1,191 +1,144 @@
 <template>
-  <div class="news-digest">
+  <article class="news-digest">
 
-    <!-- ② 히어로 -->
-    <section class="digest-hero">
-      <p v-if="digest.intro" class="digest-intro">{{ digest.intro }}</p>
+    <!-- ① 들어가며 (리드) -->
+    <p v-if="digest.intro" class="digest-lede">{{ digest.intro }}</p>
 
-      <!-- 오늘의 숫자 -->
-      <div v-if="hasHighlight" class="highlight-card">
-        <div class="highlight-eyebrow">오늘의 숫자</div>
-        <div class="highlight-number">{{ digest.highlight.number }}</div>
-        <div v-if="digest.highlight.label" class="highlight-label">
-          {{ digest.highlight.label }}
-        </div>
-        <div v-if="digest.highlight.description" class="highlight-desc">
-          {{ digest.highlight.description }}
-        </div>
+    <!-- ② 한눈에 보기: 카테고리별 헤드라인 목차. 소식이 적으면(3건 이하) 생략 -->
+    <nav v-if="showToc" class="digest-toc" aria-label="오늘의 소식 목차">
+      <div class="toc-heading">오늘의 소식 {{ sections.length }}건</div>
+      <div v-for="g in groups" :key="g.category" class="toc-group">
+        <span class="toc-category">{{ g.category }}</span>
+        <ul class="toc-list">
+          <li v-for="s in g.items" :key="s.index">
+            <!--
+              href 는 접근성/복사용으로만 두고 실제 이동은 JS 로 한다.
+              해시 이동을 브라우저에 맡기면 popstate → router.beforeEach 가 돌면서
+              전역 로딩 오버레이가 깜빡인다(router/index.js 참고).
+            -->
+            <a
+              :href="`#${anchorId(s.index)}`"
+              class="toc-link"
+              @click.prevent="jumpTo(s.index)"
+            >{{ s.title }}</a>
+          </li>
+        </ul>
       </div>
+    </nav>
 
-      <!-- 키워드 클라우드 -->
-      <div v-if="keywordCloud.length" class="keyword-cloud">
-        <v-chip
-          v-for="k in keywordCloud"
-          :key="k.text"
-          size="small"
-          variant="tonal"
-          color="success"
-          class="ma-1"
-          :class="`kw-${sizeFor(k.count)}`"
-        >
-          {{ k.text }}
-        </v-chip>
-      </div>
-    </section>
+    <!-- ③ 본문: 카테고리별 묶음. 카드·칩 없이 신문 지면처럼 흐르게 -->
+    <section v-for="g in groups" :key="g.category" class="digest-group">
+      <h2 class="group-title">{{ g.category }}</h2>
 
-    <!-- ③ 오늘의 도시 소식 (섹션 카드) -->
-    <section v-if="sections.length" class="digest-sections">
-      <h2 class="block-title">오늘의 도시 소식</h2>
-
-      <v-card
-        v-for="(s, i) in sections"
-        :key="i"
-        variant="outlined"
-        rounded="lg"
-        class="section-card mb-3"
-        :style="{ borderLeft: `4px solid ${colorFor(s.category)}` }"
+      <article
+        v-for="s in g.items"
+        :key="s.index"
+        :id="anchorId(s.index)"
+        class="story"
       >
-        <v-card-text>
-          <v-chip
-            size="x-small"
-            label
-            class="mb-2 font-weight-medium"
-            :style="{ backgroundColor: colorFor(s.category), color: '#fff' }"
-          >
-            {{ s.category || '기타' }}
-          </v-chip>
+        <h3 class="story-title">{{ s.title }}</h3>
+        <p class="story-body">{{ s.body }}</p>
 
-          <h3 class="section-title">{{ s.title }}</h3>
-          <p class="section-body">{{ s.body }}</p>
+        <p v-if="s.nextStep" class="story-next">
+          <span class="story-next-label">다음 일정</span>{{ s.nextStep }}
+        </p>
 
-          <div v-if="s.whyMatters" class="callout callout-why">
-            <span class="callout-label">왜 중요한가요</span>
-            <span>{{ s.whyMatters }}</span>
-          </div>
-          <div v-if="s.nextStep" class="callout callout-next">
-            <span class="callout-label">다음은</span>
-            <span>{{ s.nextStep }}</span>
-          </div>
+        <!--
+          지역만 남기고 entities/keywords/whyMatters 는 렌더하지 않는다.
+          - keywords, entities: 본문에 이미 있는 단어를 칩으로 반복할 뿐이다.
+          - whyMatters: "~이 중요해지고 있습니다" 류 상투구가 매 꼭지마다 붙어
+            글 전체를 AI 생성물처럼 보이게 만든다. 데이터는 그대로 오므로
+            나중에 필요하면 v-if 한 줄로 되살릴 수 있다.
+          지역은 맵샷 독자(도시계획)에게 실질 정보라 한 줄 메타로 남긴다.
+        -->
+        <p v-if="regionsOf(s).length" class="story-regions">
+          <v-icon icon="mdi-map-marker-outline" size="14" class="mr-1"/>
+          {{ regionsOf(s).join(', ') }}
+        </p>
 
-          <div v-if="hasTags(s)" class="tag-row">
-            <v-chip
-              v-for="r in (s.regions || [])"
-              :key="`r-${r}`"
-              size="x-small" variant="tonal" color="blue-grey" class="ma-1"
-            >{{ r }}</v-chip>
-            <v-chip
-              v-for="e in (s.entities || [])"
-              :key="`e-${e}`"
-              size="x-small" variant="tonal" color="indigo" class="ma-1"
-            >{{ e }}</v-chip>
-            <v-chip
-              v-for="k in (s.keywords || [])"
-              :key="`k-${k}`"
-              size="x-small" variant="text" color="success" class="ma-1"
-            >#{{ k }}</v-chip>
-          </div>
-        </v-card-text>
-      </v-card>
+        <ul v-if="(s.sources || []).length" class="story-sources">
+          <li v-for="(src, si) in s.sources" :key="si">
+            <a
+              :href="src.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              :title="src.title"
+              class="source-link"
+            >
+              <span class="source-title">{{ src.title }}</span>
+              <v-icon icon="mdi-open-in-new" size="12" class="ml-1 flex-shrink-0"/>
+            </a>
+          </li>
+        </ul>
+      </article>
     </section>
 
-    <!-- ④ 부가 코너 -->
-    <!-- 언급된 지역 -->
-    <section v-if="regionStats.length" class="digest-extra">
-      <h2 class="block-title">언급된 지역</h2>
-      <v-chip
-        v-for="r in regionStats"
-        :key="r.name"
-        size="small" variant="tonal" color="blue-grey" class="ma-1"
+    <!-- ④ 이런 뜻이에요: 용어 2~3개라 아코디언보다 펼쳐진 정의 목록이 읽기 편하다 -->
+    <section v-if="glossary.length" class="digest-glossary">
+      <h2 class="group-title">이런 뜻이에요</h2>
+      <dl class="glossary-list">
+        <template v-for="(g, i) in glossary" :key="i">
+          <dt>{{ g.term }}</dt>
+          <dd>{{ g.explanation }}</dd>
+        </template>
+      </dl>
+    </section>
+
+    <!-- ⑤ 마치며: 본문과 같은 서체로 닫는다. 박스·로봇 아이콘 없음 -->
+    <section v-if="digest.outro" class="digest-outro">
+      <h2 class="group-title">마치며</h2>
+      <p class="story-body">{{ digest.outro }}</p>
+    </section>
+
+    <!-- ⑥ 함께 보면 좋아요 -->
+    <section v-if="relatedPosts.length" class="digest-related">
+      <h2 class="group-title">함께 보면 좋아요</h2>
+      <router-link
+        v-for="p in relatedPosts"
+        :key="p.id"
+        :to="`/news/${p.id}`"
+        class="related-row"
       >
-        {{ r.name }}
-        <span v-if="r.count" class="region-count">{{ r.count }}</span>
-      </v-chip>
+        <span class="related-date">{{ formatDate(p.createdDate) }}</span>
+        <span class="related-text">
+          <span class="related-title">{{ p.title }}</span>
+          <span class="related-preview">{{ cleanPreview(p.preview) }}</span>
+        </span>
+      </router-link>
     </section>
 
-    <!-- 이런 뜻이에요 -->
-    <section v-if="glossary.length" class="digest-extra">
-      <h2 class="block-title">이런 뜻이에요</h2>
-      <v-expansion-panels variant="accordion" class="glossary-panels">
-        <v-expansion-panel
-          v-for="(g, i) in glossary"
-          :key="i"
-          :title="g.term"
-          :text="g.explanation"
-        />
-      </v-expansion-panels>
-    </section>
-
-    <!-- 출처 (접힘) -->
-    <section v-if="sources.length" class="digest-extra">
-      <v-expansion-panels variant="accordion">
-        <v-expansion-panel :title="`출처 ${sources.length}건 보기`">
+    <!-- ⑦ 출처 전체 (접힘) -->
+    <section v-if="sources.length" class="digest-sources">
+      <v-expansion-panels variant="accordion" flat>
+        <v-expansion-panel :title="`출처 ${sources.length}건 보기`" class="sources-panel">
           <template v-slot:text>
-            <v-list density="compact" class="bg-transparent py-0">
-              <v-list-item
-                v-for="(src, i) in sources"
-                :key="i"
-                :href="src.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="px-0"
-                min-height="28"
-              >
-                <template v-slot:prepend>
-                  <v-icon icon="mdi-link-variant" size="small" color="success"/>
-                </template>
-                <v-list-item-title class="text-body-2 text-wrap source-link">
-                  {{ src.title }}
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
+            <ul class="story-sources">
+              <li v-for="(src, i) in sources" :key="i">
+                <a
+                  :href="src.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :title="src.title"
+                  class="source-link"
+                >
+                  <span class="source-title">{{ src.title }}</span>
+                  <v-icon icon="mdi-open-in-new" size="12" class="ml-1 flex-shrink-0"/>
+                </a>
+              </li>
+            </ul>
           </template>
         </v-expansion-panel>
       </v-expansion-panels>
     </section>
 
-    <!-- ⑤ 함께 보면 좋아요 -->
-    <section v-if="relatedPosts.length" class="digest-extra">
-      <h2 class="block-title">함께 보면 좋아요</h2>
-      <v-card
-        v-for="p in relatedPosts"
-        :key="p.id"
-        variant="outlined"
-        rounded="lg"
-        class="related-card mb-2"
-        :to="`/news/${p.id}`"
-      >
-        <v-card-text class="py-3">
-          <div class="related-title">{{ p.title }}</div>
-          <div class="related-preview">{{ p.preview }}</div>
-          <div class="related-date">{{ formatDate(p.createdDate) }}</div>
-        </v-card-text>
-      </v-card>
-    </section>
-
-    <!-- ⑥ 맵샷AI의 한마디 -->
-    <section v-if="digest.outro" class="signature-block">
-      <div class="signature-eyebrow">
-        <v-icon icon="mdi-robot-happy-outline" size="small" color="success" class="mr-1"/>
-        맵샷AI의 한마디
-      </div>
-      <p class="signature-text">{{ digest.outro }}</p>
-    </section>
-
-  </div>
+  </article>
 </template>
 
 <script>
 import dayjs from 'dayjs'
 
-// 카테고리 → 액센트 컬러. 모르는 값은 회색으로 폴백한다(LLM이 새 값을 만들 수 있음).
-const CATEGORY_COLORS = {
-  정책: '#3b82f6',
-  기술: '#8b5cf6',
-  재생: '#22c55e',
-  제도: '#f59e0b',
-  시장: '#f43f5e',
-  기타: '#6b7280',
-}
+// 목차를 보여줄 최소 꼭지 수. 그 아래면 목차가 본문보다 길어 보인다.
+const TOC_MIN_SECTIONS = 4
 
 export default {
   name: 'NewsDigest',
@@ -200,35 +153,48 @@ export default {
     sections () {
       return this.digest.sections || []
     },
-    keywordCloud () {
-      return this.digest.keywordCloud || []
-    },
-    regionStats () {
-      return this.digest.regionStats || []
-    },
     glossary () {
       return this.digest.glossary || []
     },
-    hasHighlight () {
-      const h = this.digest.highlight
-      return !!(h && h.number)
+    showToc () {
+      return this.sections.length >= TOC_MIN_SECTIONS
+    },
+    // 카테고리별 묶음. 순서는 첫 등장 순. LLM 이 같은 카테고리를 떨어뜨려 놓아도
+    // (예: 기술 3건 뒤에 다른 카테고리, 맨 끝에 기술 1건) 한 묶음으로 모은다.
+    // index 는 원본 순서로, 목차 링크와 본문 anchor 를 잇는 키다.
+    groups () {
+      const byCategory = {}
+      const order = []
+      this.sections.forEach((s, index) => {
+        const category = s.category || '기타'
+        if (!byCategory[category]) {
+          byCategory[category] = { category, items: [] }
+          order.push(byCategory[category])
+        }
+        byCategory[category].items.push({ ...s, index })
+      })
+      return order
     },
   },
 
   methods: {
-    colorFor (category) {
-      return CATEGORY_COLORS[category] || CATEGORY_COLORS['기타']
+    anchorId (index) {
+      return `digest-story-${index}`
     },
-    // count 크기에 비례해 폰트 크기 3단계.
-    sizeFor (n) {
-      if (n >= 4) return 'lg'
-      if (n >= 2) return 'md'
-      return 'sm'
+    jumpTo (index) {
+      const el = this.$el.querySelector(`#${this.anchorId(index)}`)
+      if (!el) return
+      const reduce = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
     },
-    hasTags (s) {
-      return (s.regions && s.regions.length) ||
-        (s.entities && s.entities.length) ||
-        (s.keywords && s.keywords.length)
+    regionsOf (s) {
+      return s.regions || []
+    },
+    // 서버 preview 는 본문 HTML 의 첫 소제목("들어가며")까지 같이 잘라 보낸다.
+    // 목록에서는 그대로 두고, 여기서만 앞머리를 떼어 문장부터 보이게 한다.
+    cleanPreview (preview) {
+      return (preview || '').replace(/^들어가며\s*/, '')
     },
     formatDate (dateString) {
       if (!dateString) return ''
@@ -239,172 +205,271 @@ export default {
 </script>
 
 <style scoped>
+/*
+ * 한국어 본문 가독성의 핵심 두 가지:
+ * - word-break: keep-all  → 어절 중간에서 줄이 끊기지 않는다.
+ * - overflow-wrap: anywhere → 긴 URL/영문이 컨테이너를 밀어내지 않는다.
+ * 색은 전부 Vuetify 테마 토큰(on-surface / success)만 써서 다크 테마에서도 유지된다.
+ */
 .news-digest {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  color: rgba(var(--v-theme-on-surface), 0.87);
   padding: 4px 0 8px;
 }
 
-/* 히어로 */
-.digest-intro {
+/* ① 리드 */
+.digest-lede {
   font-size: 1.0625rem;
-  line-height: 1.75;
-  margin: 4px 0 16px;
+  line-height: 1.8;
+  margin: 0 0 24px;
 }
 
-.highlight-card {
-  border: 1px solid rgba(var(--v-theme-success), 0.35);
-  background: rgba(var(--v-theme-success), 0.06);
-  border-radius: 14px;
-  padding: 16px 20px;
-  margin: 8px 0 16px;
-  text-align: center;
+/* ② 목차 */
+.digest-toc {
+  border-radius: 12px;
+  background: rgba(var(--v-theme-on-surface), 0.035);
+  padding: 16px 18px 14px;
+  margin: 0 0 8px;
 }
 
-.highlight-eyebrow {
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  color: rgb(var(--v-theme-success));
-  font-weight: 700;
-}
-
-.highlight-number {
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1.2;
-  margin: 4px 0 2px;
-}
-
-.highlight-label {
-  font-size: 0.9375rem;
-  font-weight: 600;
-}
-
-.highlight-desc {
+.toc-heading {
   font-size: 0.8125rem;
-  color: rgba(var(--v-theme-on-surface), 0.7);
-  margin-top: 4px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.keyword-cloud {
+.toc-group {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2px 12px;
+  padding: 6px 0;
+}
+
+.toc-group + .toc-group {
+  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+}
+
+@media (min-width: 600px) {
+  .toc-group {
+    grid-template-columns: 3.5rem 1fr;
+  }
+}
+
+.toc-category {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: rgb(var(--v-theme-success));
+  line-height: 1.9;
+}
+
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.toc-link {
+  display: inline-block;
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  color: inherit;
+  text-decoration: none;
+}
+
+.toc-link:hover {
+  color: rgb(var(--v-theme-success));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ③ 묶음 제목: 신문 지면의 섹션명처럼 작은 라벨 + 가로선 */
+.group-title {
   display: flex;
-  flex-wrap: wrap;
-  margin: 4px -4px 8px;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgb(var(--v-theme-success));
+  margin: 36px 0 16px;
 }
 
-.kw-lg { font-size: 0.95rem !important; font-weight: 700; }
-.kw-md { font-size: 0.825rem !important; font-weight: 600; }
-.kw-sm { font-size: 0.72rem !important; }
+.group-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(var(--v-theme-on-surface), 0.12);
+}
 
-/* 블록 제목 */
-.block-title {
+.story {
+  /* 앱바(64px)에 제목이 가려지지 않게 목차 점프 여백 */
+  scroll-margin-top: 80px;
+}
+
+.story + .story {
+  margin-top: 32px;
+}
+
+.story-title {
   font-size: 1.125rem;
   font-weight: 700;
-  margin: 28px 0 12px;
+  line-height: 1.45;
+  margin: 0 0 8px;
 }
 
-/* 섹션 카드 */
-.section-title {
-  font-size: 1.0625rem;
-  font-weight: 700;
-  margin: 2px 0 6px;
-  line-height: 1.4;
-}
-
-.section-body {
-  font-size: 0.95rem;
-  line-height: 1.65;
+.story-body {
+  font-size: 1rem;
+  line-height: 1.8;
   margin: 0 0 10px;
 }
 
-.callout {
-  font-size: 0.8625rem;
-  line-height: 1.55;
-  padding: 7px 10px;
-  border-radius: 8px;
-  margin: 6px 0;
-  background: rgba(var(--v-theme-on-surface), 0.04);
+.story-next {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0 0 8px;
 }
 
-.callout-label {
+.story-next-label {
   font-weight: 700;
-  margin-right: 6px;
   color: rgb(var(--v-theme-success));
+  margin-right: 8px;
 }
 
-.callout-next .callout-label {
-  color: rgba(var(--v-theme-on-surface), 0.6);
-}
-
-.tag-row {
+.story-regions {
   display: flex;
-  flex-wrap: wrap;
-  margin: 8px -4px 0;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  margin: 0 0 6px;
 }
 
-/* 부가 코너 */
-.region-count {
-  font-size: 0.7rem;
-  font-weight: 700;
-  margin-left: 4px;
-  opacity: 0.65;
+.story-sources {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.glossary-panels :deep(.v-expansion-panel-title) {
-  font-weight: 600;
-  min-height: 44px;
+.story-sources li {
+  margin: 2px 0;
+  /* 링크가 inline-flex 라 li 자체가 폭을 갖도록 */
+  display: flex;
 }
 
 .source-link {
-  color: rgb(var(--v-theme-on-surface));
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-width: 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  text-decoration: none;
+}
+
+/*
+ * 한 줄 말줄임은 nowrap+ellipsis 대신 line-clamp 로 한다. nowrap 은 긴 기사 제목을
+ * 줄바꿈 불가 텍스트로 만들어, flex/grid 조상의 min-content 폭을 밀어 올릴 수 있다
+ * (min-width: auto 가 max-width 를 이긴다). line-clamp 는 줄바꿈이 가능해 안전하다.
+ */
+.source-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .source-link:hover {
   color: rgb(var(--v-theme-success));
   text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-/* 관련글 */
-.related-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 2px;
+/* ④ 용어 */
+.glossary-list {
+  margin: 0;
 }
 
-.related-preview {
-  font-size: 0.825rem;
-  color: rgba(var(--v-theme-on-surface), 0.7);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.glossary-list dt {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.glossary-list dt:first-child {
+  margin-top: 0;
+}
+
+.glossary-list dd {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: rgba(var(--v-theme-on-surface), 0.75);
+  margin: 2px 0 0;
+}
+
+/* ⑥ 관련 브리핑 */
+.related-row {
+  display: grid;
+  grid-template-columns: 5.25rem 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.related-row + .related-row {
+  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.08);
 }
 
 .related-date {
-  font-size: 0.72rem;
-  color: rgba(var(--v-theme-on-surface), 0.55);
-  margin-top: 4px;
-}
-
-/* 맵샷AI의 한마디 */
-.signature-block {
-  margin-top: 28px;
-  padding: 16px 18px;
-  border-radius: 14px;
-  background: rgba(var(--v-theme-success), 0.06);
-  border: 1px dashed rgba(var(--v-theme-success), 0.4);
-}
-
-.signature-eyebrow {
-  display: flex;
-  align-items: center;
   font-size: 0.8125rem;
-  font-weight: 700;
-  color: rgb(var(--v-theme-success));
-  margin-bottom: 6px;
+  color: rgba(var(--v-theme-on-surface), 0.55);
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
 }
 
-.signature-text {
-  font-size: 1rem;
-  line-height: 1.7;
-  margin: 0;
+.related-text {
+  min-width: 0;
+}
+
+.related-title {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.related-row:hover .related-title {
+  color: rgb(var(--v-theme-success));
+}
+
+.related-preview {
+  /* 같은 이유로 nowrap 대신 line-clamp (.source-title 주석 참고) */
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.8125rem;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  line-height: 1.5;
+}
+
+/* ⑦ 출처 전체 */
+.digest-sources {
+  margin-top: 28px;
+  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+}
+
+.sources-panel :deep(.v-expansion-panel-title) {
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+}
+
+.sources-panel :deep(.v-expansion-panel-text__wrapper) {
+  padding-left: 0;
+  padding-right: 0;
 }
 </style>
