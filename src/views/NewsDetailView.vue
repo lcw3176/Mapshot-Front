@@ -1,7 +1,8 @@
 <template>
-  <v-container class="py-6">
+  <v-container class="py-6 news-reader">
     <v-row justify="center">
-      <v-col cols="12" md="9" lg="8">
+      <!-- 목록(md9/lg8)보다 한 단계 좁게. 1rem 한글 본문은 700px 안쪽이 읽기 편하다 -->
+      <v-col cols="12" md="8" lg="7" xl="6">
 
         <!-- 상단 뒤로가기 -->
         <v-btn
@@ -34,22 +35,13 @@
 
           <!-- ① 헤더 -->
           <v-card-item>
-            <v-card-title class="text-wrap text-h5" style="line-height: 1.4;">
+            <!-- text-h5 를 안 쓰는 이유: Vuetify 타이포 유틸이 Roboto 를 박아 넣어 .news-reader 서체를 덮는다 -->
+            <v-card-title class="text-wrap news-title">
               {{ newsStore.post.title }}
             </v-card-title>
-            <div class="d-flex align-center flex-wrap mt-2" style="gap: 8px;">
-              <span class="text-caption text-medium-emphasis">
-                {{ newsStore.formatDate(newsStore.post.createdDate) }}
-              </span>
-              <v-chip
-                v-if="sources.length"
-                size="x-small"
-                variant="tonal"
-                color="success"
-                prepend-icon="mdi-link-variant"
-              >
-                출처 {{ sources.length }}건
-              </v-chip>
+            <div class="text-caption text-medium-emphasis mt-2 news-meta">
+              <span>{{ newsStore.formatDate(newsStore.post.createdDate) }}</span>
+              <span v-if="sources.length"> · 출처 {{ sources.length }}건</span>
             </div>
           </v-card-item>
 
@@ -57,11 +49,11 @@
 
           <v-card-text>
             <!-- digest 가 있으면 풍부 UI, 없으면 기존 HTML 본문으로 폴백 -->
+            <!-- relatedPosts 는 응답에 오지만 그리지 않는다: 제목이 전부 "도시뉴스 브리핑 (날짜)"라 고를 정보가 없다 -->
             <NewsDigest
               v-if="newsStore.post.digest"
               :digest="newsStore.post.digest"
               :sources="sources"
-              :related-posts="relatedPosts"
             />
 
             <template v-else>
@@ -121,9 +113,6 @@ export default {
     sources () {
       return (this.newsStore.post && this.newsStore.post.sources) || []
     },
-    relatedPosts () {
-      return (this.newsStore.post && this.newsStore.post.relatedPosts) || []
-    },
   },
 
   created () {
@@ -133,6 +122,25 @@ export default {
 </script>
 
 <style scoped>
+/* 읽기 화면 서체. Pretendard 는 public/index.html 에서 동적 서브셋으로 불러온다 */
+.news-reader {
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+    'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+}
+
+.news-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  word-break: keep-all;
+  text-wrap: balance;
+}
+
+.news-meta {
+  font-variant-numeric: tabular-nums;
+}
+
 .news-body :deep(h3) {
   font-size: 1rem;
   font-weight: 700;
