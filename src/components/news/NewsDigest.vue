@@ -4,76 +4,98 @@
     <!-- ① 들어가며 (리드) -->
     <p v-if="digest.intro" class="digest-lede">{{ digest.intro }}</p>
 
-    <!-- ② 한눈에 보기: 카테고리별 헤드라인 목차. 소식이 적으면(3건 이하) 생략 -->
-    <nav v-if="showToc" class="digest-toc" aria-label="오늘의 소식 목차">
-      <div class="toc-heading">오늘의 소식 {{ sections.length }}건</div>
-      <div v-for="g in groups" :key="g.category" class="toc-group">
-        <span class="toc-category">{{ g.category }}</span>
-        <ul class="toc-list">
-          <li v-for="s in g.items" :key="s.index">
-            <!--
-              href 는 접근성/복사용으로만 두고 실제 이동은 JS 로 한다.
-              해시 이동을 브라우저에 맡기면 popstate → router.beforeEach 가 돌면서
-              전역 로딩 오버레이가 깜빡인다(router/index.js 참고).
-            -->
-            <a
-              :href="`#${anchorId(s.index)}`"
-              class="toc-link"
-              @click.prevent="jumpTo(s.index)"
-            >{{ s.title }}</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <!-- ③ 본문: 카테고리별 묶음. 카드·칩 없이 신문 지면처럼 흐르게 -->
-    <section v-for="g in groups" :key="g.category" class="digest-group">
-      <h2 class="group-title">{{ g.category }}</h2>
+    <!--
+      ② 본문. 신문 1면처럼 첫 꼭지는 '톱기사'(큰 이미지 + 큰 제목)로 세우고,
+      나머지는 카테고리 묶음 안에서 썸네일 + 제목 + 본문 행으로 흐른다.
+      blocks 가 [톱기사, 묶음제목, 기사, 기사, 묶음제목, ...] 순서의 평면 배열이라
+      기사 마크업을 한 번만 쓴다(톱기사/일반 차이는 클래스와 v-if 로만).
+    -->
+    <template v-for="b in blocks" :key="b.key">
+      <h2 v-if="b.type === 'group'" class="group-title">{{ b.category }}</h2>
 
       <article
-        v-for="s in g.items"
-        :key="s.index"
-        :id="anchorId(s.index)"
+        v-else
         class="story"
+        :class="{ 'story-lead': b.lead, 'has-thumb': !b.lead && imageOk(b.story) }"
       >
-        <h3 class="story-title">{{ s.title }}</h3>
-        <p class="story-body">{{ s.body }}</p>
+        <!-- 톱기사 이미지: 지면 상단의 시각 앵커. 클릭하면 첫 출처 기사로 -->
+        <a
+          v-if="b.lead && imageOk(b.story)"
+          class="lead-figure"
+          v-bind="sourceLinkAttrs(firstSource(b.story))"
+        >
+          <img
+            :src="b.story.image"
+            :alt="b.story.title"
+            decoding="async"
+            referrerpolicy="no-referrer"
+            @error="markBroken(b.story.image)"
+          >
+        </a>
 
-        <p v-if="s.nextStep" class="story-next">
-          <span class="story-next-label">다음 일정</span>{{ s.nextStep }}
-        </p>
+        <!-- 톱기사엔 카테고리 라벨을 달지 않는다: 바로 아래 첫 묶음 제목과 같은 글자가 겹쳐 보인다 -->
+        <component :is="b.lead ? 'h2' : 'h3'" class="story-title">
+          {{ b.story.title }}
+        </component>
 
-        <!--
-          지역만 남기고 entities/keywords/whyMatters 는 렌더하지 않는다.
-          - keywords, entities: 본문에 이미 있는 단어를 칩으로 반복할 뿐이다.
-          - whyMatters: "~이 중요해지고 있습니다" 류 상투구가 매 꼭지마다 붙어
-            글 전체를 AI 생성물처럼 보이게 만든다. 데이터는 그대로 오므로
-            나중에 필요하면 v-if 한 줄로 되살릴 수 있다.
-          지역은 맵샷 독자(도시계획)에게 실질 정보라 한 줄 메타로 남긴다.
-        -->
-        <p v-if="regionsOf(s).length" class="story-regions">
-          <v-icon icon="mdi-map-marker-outline" size="14" class="mr-1"/>
-          {{ regionsOf(s).join(', ') }}
-        </p>
+        <!-- 일반 기사 썸네일: 데스크톱은 오른쪽 4:3, 모바일은 제목 옆 정사각 -->
+        <a
+          v-if="!b.lead && imageOk(b.story)"
+          class="story-thumb"
+          v-bind="sourceLinkAttrs(firstSource(b.story))"
+        >
+          <img
+            :src="b.story.image"
+            :alt="b.story.title"
+            loading="lazy"
+            decoding="async"
+            referrerpolicy="no-referrer"
+            @error="markBroken(b.story.image)"
+          >
+        </a>
 
-        <ul v-if="(s.sources || []).length" class="story-sources">
-          <li v-for="(src, si) in s.sources" :key="si">
-            <a
-              :href="src.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              :title="src.title"
-              class="source-link"
-            >
-              <span class="source-title">{{ src.title }}</span>
-              <v-icon icon="mdi-open-in-new" size="12" class="ml-1 flex-shrink-0"/>
-            </a>
-          </li>
-        </ul>
+        <div class="story-rest">
+          <p class="story-body">{{ b.story.body }}</p>
+
+          <p v-if="b.story.nextStep" class="story-next">
+            <span class="story-next-label">다음 일정</span>{{ b.story.nextStep }}
+          </p>
+
+          <!--
+            지역만 남기고 entities/keywords/whyMatters 는 렌더하지 않는다.
+            - keywords, entities: 본문에 이미 있는 단어를 칩으로 반복할 뿐이다.
+            - whyMatters: "~이 중요해지고 있습니다" 류 상투구가 매 꼭지마다 붙어
+              글 전체를 AI 생성물처럼 보이게 만든다. 데이터는 그대로 오므로
+              나중에 필요하면 v-if 한 줄로 되살릴 수 있다.
+            지역은 맵샷 독자(도시계획)에게 실질 정보라 한 줄 메타로 남긴다.
+          -->
+          <p v-if="(b.story.regions || []).length" class="story-regions">
+            <v-icon icon="mdi-map-marker-outline" size="14" class="mr-1"/>
+            {{ b.story.regions.join(', ') }}
+          </p>
+
+          <ul v-if="(b.story.sources || []).length" class="story-sources">
+            <li v-for="(src, si) in b.story.sources" :key="si">
+              <a class="source-link" v-bind="sourceLinkAttrs(src)" :title="src.title">
+                <img
+                  v-if="faviconOk(src.url)"
+                  :src="faviconFor(src.url)"
+                  alt=""
+                  width="16"
+                  height="16"
+                  loading="lazy"
+                  class="source-favicon"
+                  @error="markBroken(faviconFor(src.url))"
+                >
+                <span class="source-title">{{ src.title }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
       </article>
-    </section>
+    </template>
 
-    <!-- ④ 이런 뜻이에요: 용어 2~3개라 아코디언보다 펼쳐진 정의 목록이 읽기 편하다 -->
+    <!-- ③ 이런 뜻이에요: 용어 2~3개라 아코디언보다 펼쳐진 정의 목록이 읽기 편하다 -->
     <section v-if="glossary.length" class="digest-glossary">
       <h2 class="group-title">이런 뜻이에요</h2>
       <dl class="glossary-list">
@@ -84,45 +106,31 @@
       </dl>
     </section>
 
-    <!-- ⑤ 마치며: 본문과 같은 서체로 닫는다. 박스·로봇 아이콘 없음 -->
+    <!-- ④ 마치며: 본문과 같은 서체로 닫는다. 박스·로봇 아이콘 없음 -->
     <section v-if="digest.outro" class="digest-outro">
       <h2 class="group-title">마치며</h2>
       <p class="story-body">{{ digest.outro }}</p>
     </section>
 
-    <!-- ⑥ 함께 보면 좋아요 -->
-    <section v-if="relatedPosts.length" class="digest-related">
-      <h2 class="group-title">함께 보면 좋아요</h2>
-      <router-link
-        v-for="p in relatedPosts"
-        :key="p.id"
-        :to="`/news/${p.id}`"
-        class="related-row"
-      >
-        <span class="related-date">{{ formatDate(p.createdDate) }}</span>
-        <span class="related-text">
-          <span class="related-title">{{ p.title }}</span>
-          <span class="related-preview">{{ cleanPreview(p.preview) }}</span>
-        </span>
-      </router-link>
-    </section>
-
-    <!-- ⑦ 출처 전체 (접힘) -->
+    <!-- ⑤ 출처 전체 (접힘) -->
     <section v-if="sources.length" class="digest-sources">
       <v-expansion-panels variant="accordion" flat>
         <v-expansion-panel :title="`출처 ${sources.length}건 보기`" class="sources-panel">
           <template v-slot:text>
             <ul class="story-sources">
               <li v-for="(src, i) in sources" :key="i">
-                <a
-                  :href="src.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  :title="src.title"
-                  class="source-link"
-                >
+                <a class="source-link" v-bind="sourceLinkAttrs(src)" :title="src.title">
+                  <img
+                    v-if="faviconOk(src.url)"
+                    :src="faviconFor(src.url)"
+                    alt=""
+                    width="16"
+                    height="16"
+                    loading="lazy"
+                    class="source-favicon"
+                    @error="markBroken(faviconFor(src.url))"
+                  >
                   <span class="source-title">{{ src.title }}</span>
-                  <v-icon icon="mdi-open-in-new" size="12" class="ml-1 flex-shrink-0"/>
                 </a>
               </li>
             </ul>
@@ -135,18 +143,20 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
-
-// 목차를 보여줄 최소 꼭지 수. 그 아래면 목차가 본문보다 길어 보인다.
-const TOC_MIN_SECTIONS = 4
-
 export default {
   name: 'NewsDigest',
 
   props: {
     digest: { type: Object, required: true },
     sources: { type: Array, default: () => [] },
-    relatedPosts: { type: Array, default: () => [] },
+  },
+
+  data () {
+    return {
+      // 로드에 실패한 이미지 URL. 기사 썸네일은 원본 언론사 CDN 핫링크라 언제든 깨질 수 있고,
+      // 깨진 이미지 아이콘을 보여주느니 칸을 통째로 접는 편이 낫다.
+      brokenImages: {},
+    }
   },
 
   computed: {
@@ -156,49 +166,58 @@ export default {
     glossary () {
       return this.digest.glossary || []
     },
-    showToc () {
-      return this.sections.length >= TOC_MIN_SECTIONS
-    },
-    // 카테고리별 묶음. 순서는 첫 등장 순. LLM 이 같은 카테고리를 떨어뜨려 놓아도
-    // (예: 기술 3건 뒤에 다른 카테고리, 맨 끝에 기술 1건) 한 묶음으로 모은다.
-    // index 는 원본 순서로, 목차 링크와 본문 anchor 를 잇는 키다.
-    groups () {
+    // 렌더 순서의 평면 배열. 첫 섹션은 톱기사로 빼고, 나머지는 카테고리 첫 등장 순으로 묶는다.
+    // LLM 이 같은 카테고리를 떨어뜨려 놓아도(기술 3건 뒤 다른 카테고리, 맨 끝에 기술 1건) 한 묶음이 된다.
+    blocks () {
+      const sections = this.sections
+      if (!sections.length) return []
+
+      const out = [{ key: 'lead', type: 'story', lead: true, story: sections[0] }]
+
       const byCategory = {}
       const order = []
-      this.sections.forEach((s, index) => {
-        const category = s.category || '기타'
+      sections.slice(1).forEach((story, i) => {
+        const category = story.category || '기타'
         if (!byCategory[category]) {
-          byCategory[category] = { category, items: [] }
-          order.push(byCategory[category])
+          byCategory[category] = []
+          order.push(category)
         }
-        byCategory[category].items.push({ ...s, index })
+        byCategory[category].push({ key: `s-${i + 1}`, type: 'story', lead: false, story })
       })
-      return order
+      order.forEach((category) => {
+        out.push({ key: `g-${category}`, type: 'group', category })
+        out.push(...byCategory[category])
+      })
+      return out
     },
   },
 
   methods: {
-    anchorId (index) {
-      return `digest-story-${index}`
+    imageOk (story) {
+      return !!story.image && !this.brokenImages[story.image]
     },
-    jumpTo (index) {
-      const el = this.$el.querySelector(`#${this.anchorId(index)}`)
-      if (!el) return
-      const reduce = window.matchMedia &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+    markBroken (url) {
+      this.brokenImages[url] = true
     },
-    regionsOf (s) {
-      return s.regions || []
+    firstSource (story) {
+      return (story.sources || [])[0] || null
     },
-    // 서버 preview 는 본문 HTML 의 첫 소제목("들어가며")까지 같이 잘라 보낸다.
-    // 목록에서는 그대로 두고, 여기서만 앞머리를 떼어 문장부터 보이게 한다.
-    cleanPreview (preview) {
-      return (preview || '').replace(/^들어가며\s*/, '')
+    // 출처가 없으면 링크 속성을 비워 <a> 가 그냥 래퍼로만 남게 한다.
+    sourceLinkAttrs (src) {
+      if (!src || !src.url) return {}
+      return { href: src.url, target: '_blank', rel: 'noopener noreferrer' }
     },
-    formatDate (dateString) {
-      if (!dateString) return ''
-      return dayjs(dateString).format('YYYY.MM.DD')
+    // 언론사 파비콘. 구글 s2 서비스는 키 없이 <img> 로 바로 쓸 수 있고 없는 도메인은 기본 아이콘을 준다.
+    faviconFor (url) {
+      try {
+        return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=32`
+      } catch (e) {
+        return ''
+      }
+    },
+    faviconOk (url) {
+      const favicon = this.faviconFor(url)
+      return !!favicon && !this.brokenImages[favicon]
     },
   },
 }
@@ -210,6 +229,7 @@ export default {
  * - word-break: keep-all  → 어절 중간에서 줄이 끊기지 않는다.
  * - overflow-wrap: anywhere → 긴 URL/영문이 컨테이너를 밀어내지 않는다.
  * 색은 전부 Vuetify 테마 토큰(on-surface / success)만 써서 다크 테마에서도 유지된다.
+ * 서체는 상위 .news-reader(뷰)에서 지정한다.
  */
 .news-digest {
   word-break: keep-all;
@@ -222,68 +242,10 @@ export default {
 .digest-lede {
   font-size: 1.0625rem;
   line-height: 1.8;
-  margin: 0 0 24px;
+  margin: 0 0 28px;
 }
 
-/* ② 목차 */
-.digest-toc {
-  border-radius: 12px;
-  background: rgba(var(--v-theme-on-surface), 0.035);
-  padding: 16px 18px 14px;
-  margin: 0 0 8px;
-}
-
-.toc-heading {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.toc-group {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2px 12px;
-  padding: 6px 0;
-}
-
-.toc-group + .toc-group {
-  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.08);
-}
-
-@media (min-width: 600px) {
-  .toc-group {
-    grid-template-columns: 3.5rem 1fr;
-  }
-}
-
-.toc-category {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: rgb(var(--v-theme-success));
-  line-height: 1.9;
-}
-
-.toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.toc-link {
-  display: inline-block;
-  font-size: 0.9375rem;
-  line-height: 1.9;
-  color: inherit;
-  text-decoration: none;
-}
-
-.toc-link:hover {
-  color: rgb(var(--v-theme-success));
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* ③ 묶음 제목: 신문 지면의 섹션명처럼 작은 라벨 + 가로선 */
+/* ② 묶음 제목: 신문 지면의 섹션명처럼 작은 라벨 + 가로선 */
 .group-title {
   display: flex;
   align-items: center;
@@ -292,7 +254,7 @@ export default {
   font-weight: 700;
   letter-spacing: 0.02em;
   color: rgb(var(--v-theme-success));
-  margin: 36px 0 16px;
+  margin: 40px 0 18px;
 }
 
 .group-title::after {
@@ -302,11 +264,7 @@ export default {
   background: rgba(var(--v-theme-on-surface), 0.12);
 }
 
-.story {
-  /* 앱바(64px)에 제목이 가려지지 않게 목차 점프 여백 */
-  scroll-margin-top: 80px;
-}
-
+/* 기사 공통 */
 .story + .story {
   margin-top: 32px;
 }
@@ -315,6 +273,8 @@ export default {
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.45;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
   margin: 0 0 8px;
 }
 
@@ -344,6 +304,89 @@ export default {
   margin: 0 0 6px;
 }
 
+/* 톱기사 */
+.story-lead .story-title {
+  font-size: 1.5rem;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  margin-bottom: 10px;
+}
+
+.lead-figure {
+  display: block;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(var(--v-theme-on-surface), 0.06);
+  margin: 0 0 16px;
+}
+
+/* 일반 기사 + 썸네일: 제목·본문 영역과 그림 영역을 그리드로 배치 */
+.story.has-thumb {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 88px;
+  grid-template-areas:
+    'title thumb'
+    'rest  rest';
+  column-gap: 14px;
+  row-gap: 4px;
+  align-items: start;
+}
+
+.story.has-thumb .story-title { grid-area: title; margin-bottom: 4px; }
+.story.has-thumb .story-thumb { grid-area: thumb; }
+.story.has-thumb .story-rest  { grid-area: rest; min-width: 0; }
+
+.story-thumb {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(var(--v-theme-on-surface), 0.06);
+}
+
+@media (min-width: 600px) {
+  .story.has-thumb {
+    grid-template-columns: minmax(0, 1fr) 168px;
+    grid-template-areas:
+      'title thumb'
+      'rest  thumb';
+    column-gap: 22px;
+  }
+
+  .story-thumb {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+.lead-figure img,
+.story-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* 그림이 링크임을 알리는 최소한의 피드백 */
+a.lead-figure:hover img,
+a.story-thumb:hover img {
+  transform: scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lead-figure img,
+  .story-thumb img {
+    transition: none;
+  }
+
+  a.lead-figure:hover img,
+  a.story-thumb:hover img {
+    transform: none;
+  }
+}
+
+/* 출처 링크 */
 .story-sources {
   list-style: none;
   margin: 0;
@@ -351,7 +394,7 @@ export default {
 }
 
 .story-sources li {
-  margin: 2px 0;
+  margin: 3px 0;
   /* 링크가 inline-flex 라 li 자체가 폭을 갖도록 */
   display: flex;
 }
@@ -365,6 +408,15 @@ export default {
   line-height: 1.6;
   color: rgba(var(--v-theme-on-surface), 0.6);
   text-decoration: none;
+  transition: color 0.15s ease-out;
+}
+
+.source-favicon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  margin-right: 8px;
 }
 
 /*
@@ -385,7 +437,7 @@ export default {
   text-underline-offset: 3px;
 }
 
-/* ④ 용어 */
+/* ③ 용어 */
 .glossary-list {
   margin: 0;
 }
@@ -407,54 +459,7 @@ export default {
   margin: 2px 0 0;
 }
 
-/* ⑥ 관련 브리핑 */
-.related-row {
-  display: grid;
-  grid-template-columns: 5.25rem 1fr;
-  gap: 12px;
-  padding: 10px 0;
-  color: inherit;
-  text-decoration: none;
-}
-
-.related-row + .related-row {
-  border-top: 1px solid rgba(var(--v-theme-on-surface), 0.08);
-}
-
-.related-date {
-  font-size: 0.8125rem;
-  color: rgba(var(--v-theme-on-surface), 0.55);
-  line-height: 1.6;
-  font-variant-numeric: tabular-nums;
-}
-
-.related-text {
-  min-width: 0;
-}
-
-.related-title {
-  display: block;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  line-height: 1.6;
-}
-
-.related-row:hover .related-title {
-  color: rgb(var(--v-theme-success));
-}
-
-.related-preview {
-  /* 같은 이유로 nowrap 대신 line-clamp (.source-title 주석 참고) */
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  font-size: 0.8125rem;
-  color: rgba(var(--v-theme-on-surface), 0.6);
-  line-height: 1.5;
-}
-
-/* ⑦ 출처 전체 */
+/* ⑤ 출처 전체 */
 .digest-sources {
   margin-top: 28px;
   border-top: 1px solid rgba(var(--v-theme-on-surface), 0.12);
