@@ -92,11 +92,21 @@
     overflow: hidden;
     cursor: pointer;
     min-height: 65px;
+    font-family: 'NanumSquareNeo', 'Malgun Gothic', sans-serif;
+    font-size: 12px;
+    line-height: 1.45;
 }
 
 #placesList .item span {
     display: block;
     margin-top: 4px;
+    font-size: 12px;
+}
+
+#placesList .item h5 {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
 }
 
 #placesList .item h5, #placesList .item .info {
