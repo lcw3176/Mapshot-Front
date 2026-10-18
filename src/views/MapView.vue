@@ -1,12 +1,11 @@
 <template>
-
-
+  <div class="map-page">
   <!-- 지도 -->
   <div class="map_wrap">
-    <div id="map" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+    <div id="map" ref="mapElement" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
 
-    <div id="menu_wrap" v-if="display.mdAndUp">
-      <v-form id="searchPlaces" @submit.prevent="mapStore.searchPlaces" class="pa-2">
+    <div id="menu_wrap" v-if="display.mdAndUp" :class="{ 'parcel-active': parcelStore.enabled }">
+      <v-form v-if="!parcelStore.enabled" id="searchPlaces" @submit.prevent="mapStore.searchPlaces" class="pa-2">
         <v-text-field
           id="keyword"
           label="장소 검색"
@@ -21,9 +20,30 @@
           검색하기
         </v-btn>
       </v-form>
+      <div class="parcel-mode-control">
+        <v-btn :color="parcelStore.enabled ? 'info' : undefined"
+               :variant="parcelStore.enabled ? 'flat' : 'tonal'"
+               :prepend-icon="parcelStore.enabled ? 'mdi-check' : 'mdi-vector-square'"
+               block size="small" @click="parcelStore.toggle()">
+          {{ parcelStore.enabled ? '필지 선택 중 · 종료' : '필지 선택하기' }}
+        </v-btn>
+      </div>
       <v-divider/>
-      <ul id="placesList"></ul>
-      <div id="pagination"></div>
+      <div v-show="!parcelStore.enabled" class="place-results">
+        <ul id="placesList"></ul>
+        <div id="pagination"></div>
+      </div>
+      <ParcelInfoCard v-if="parcelStore.enabled" class="desktop-parcel-workspace"/>
+    </div>
+
+    <v-btn v-if="!display.mdAndUp" class="mobile-parcel-toggle" size="small"
+           :color="parcelStore.enabled ? 'info' : 'surface'"
+           :prepend-icon="parcelStore.enabled ? 'mdi-check' : 'mdi-vector-square'"
+           @click="parcelStore.toggle()">
+      {{ parcelStore.enabled ? '필지 선택 중' : '필지 선택' }}
+    </v-btn>
+    <div v-if="!display.mdAndUp && parcelStore.enabled" class="mobile-parcel-workspace">
+      <ParcelInfoCard mobile/>
     </div>
     <div class="custom_typecontrol">
       <v-list theme="dark">
@@ -39,28 +59,28 @@
   <!-- 지도 끝 -->
 
 
-  <v-container fluid>
+  <v-container fluid class="map-details">
     <v-row>
-      <v-col>
+      <v-col cols="6" md="3">
         <div>
           <p class="text-center text-overline">위도</p>
           <p class="text-center text-body-1">{{ mapStore.lat }}</p>
         </div>
       </v-col>
 
-      <v-col>
+      <v-col cols="6" md="3">
         <div>
           <p class="text-center text-overline">경도</p>
           <p class="text-center text-body-1">{{ mapStore.lng }}</p>
         </div>
       </v-col>
 
-      <v-col>
+      <v-col cols="6" md="3">
         <p class="text-center text-overline">도로명주소</p>
         <p class="text-center text-body-1">{{ mapStore.roadAddress }}</p>
       </v-col>
 
-      <v-col>
+      <v-col cols="6" md="3">
         <div>
           <p class="text-center text-overline">지번주소</p>
           <p class="text-center text-body-1">{{ mapStore.bunziAddress }}</p>
@@ -68,12 +88,13 @@
       </v-col>
     </v-row>
   </v-container>
+  </div>
 
 
   <component
     :is="display.mdAndUp ? 'v-navigation-drawer' : 'v-container'"
     permanent
-    touchless="true"
+    :touchless="true"
     :location="display.mdAndUp ? 'right' : 'bottom'"
     width="280"
   >
@@ -227,6 +248,8 @@
 
 <script>
 import { useMapStore } from '@/store/map'
+import { useParcelStore } from '@/store/parcel'
+import ParcelInfoCard from '@/components/map/ParcelInfoCard'
 import '../assets/css/map.css'
 import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
@@ -246,9 +269,12 @@ function loadPanels () {
 export default {
   name: 'MapView',
 
+  components: { ParcelInfoCard },
+
   setup () {
     const mapStore = useMapStore()
-    return { mapStore }
+    const parcelStore = useParcelStore()
+    return { mapStore, parcelStore }
   },
 
   data () {
@@ -257,6 +283,7 @@ export default {
       overlay: null,
       display,
       openPanels: loadPanels(),
+      mapResizeObserver: null,
     }
   },
 
@@ -264,20 +291,56 @@ export default {
     openPanels (val) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
     },
+    'parcelStore.enabled' (enabled) {
+      if (enabled) this.mapStore.removeRectangle()
+      else this.mapStore.removeParcelMarker()
+    },
+    'parcelStore.parcel' (parcel) {
+      if (!parcel) this.mapStore.removeParcelMarker()
+    },
   },
 
   mounted () {
     this.mapStore.init()
     this.mapStore.addListeners()
+    this.mapResizeObserver = new ResizeObserver(() => this.mapStore.map?.relayout?.())
+    this.mapResizeObserver.observe(this.$refs.mapElement)
   },
 
   beforeUnmount () {
+    this.mapResizeObserver?.disconnect()
+    this.mapStore.removeParcelMarker()
     this.mapStore.removeListeners()
   },
 }
 </script>
 
 <style scoped>
+.map-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+  height: calc(100dvh - 64px);
+  min-height: 400px;
+}
+
+.map-details {
+  flex: 0 0 15%;
+  display: flex;
+  align-items: center;
+  min-height: 96px;
+  overflow-y: auto;
+}
+
+.map-details .v-row {
+  align-items: center;
+  width: 100%;
+}
+
+.map-details .v-col {
+  overflow-wrap: anywhere;
+}
+
 .settings-panels {
   border-radius: 0 !important;
 }
@@ -291,5 +354,58 @@ export default {
 .capture-btn-wrap {
   padding: 12px;
   border-top: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.parcel-mode-control {
+  padding: 0 8px 10px;
+}
+
+.place-results {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.desktop-parcel-workspace {
+  flex: 1;
+  min-height: 0;
+}
+
+#menu_wrap.parcel-active {
+  width: 360px;
+}
+
+.mobile-parcel-toggle {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 3;
+}
+
+.mobile-parcel-workspace {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  z-index: 3;
+  height: min(420px, 68%);
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.mobile-parcel-workspace > * {
+  width: 100%;
+}
+
+@media (max-width: 959px) {
+  .map-page {
+    height: calc(100vh - 56px);
+    height: calc(100dvh - 56px);
+  }
+
+  .map-details {
+    flex-basis: 26%;
+    min-height: 128px;
+  }
 }
 </style>

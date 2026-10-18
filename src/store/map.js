@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { LatLng, Radius, Tile } from '@/assets/js/mapshot.min'
+import { useParcelStore } from '@/store/parcel'
 
 const apiUrl = process.env.VUE_APP_API_URL
 const MAP_SETTINGS_KEY = 'mapshot_map_settings'
@@ -20,6 +21,7 @@ export const useMapStore = defineStore('map', {
     bunziAddress: '',
     coor: '',
     rectangle: null,
+    parcelMarker: null,
     mapRadius: '',
     baseMap: '',
     company: '',
@@ -131,6 +133,11 @@ export const useMapStore = defineStore('map', {
     },
 
     async startCapture () {
+      if (!this.rectangle) {
+        alert('먼저 지도에서 캡처 범위를 선택해 주세요.')
+        return
+      }
+
       if (this.isEmpty(this.coor.getX()) || this.isEmpty(this.coor.getY())) {
         alert('먼저 지도를 클릭해서 좌표 설정을 진행해 주세요')
         return
@@ -281,22 +288,46 @@ export const useMapStore = defineStore('map', {
     async removeRectangle () {
       if (this.rectangle != null) {
         this.rectangle.setMap(null)
+        this.rectangle = null
       }
+    },
+
+    removeParcelMarker () {
+      if (this.parcelMarker) {
+        this.parcelMarker.setMap(null)
+        this.parcelMarker = null
+      }
+    },
+
+    placeParcelMarker (position) {
+      this.removeParcelMarker()
+      this.parcelMarker = new kakao.maps.Marker({ position, zIndex: 10 })
+      this.parcelMarker.setMap(this.map)
     },
 
     async mapOnClick (mouseEvent) {
       // 클릭한 위도, 경도 정보를 가져옵니다
       let latlng = mouseEvent.latLng
 
+      const parcelStore = useParcelStore()
+      if (parcelStore.enabled && parcelStore.isLoading) return
+
       this.lat = latlng.getLat()
       this.lng = latlng.getLng()
-      this.coor.init(this.lat, this.lng)
 
       this.searchDetailAddrFromCoords(mouseEvent.latLng, this.insertAddressStr)
 
-      if (this.rectangle != null) {
-        this.rectangle.setMap(null)
+      if (parcelStore.enabled) {
+        this.removeRectangle()
+        if (!parcelStore.isLoading) this.placeParcelMarker(latlng)
+        await parcelStore.load(this.lat, this.lng)
+        return
       }
+
+      this.removeParcelMarker()
+      this.coor.init(this.lat, this.lng)
+
+      this.removeRectangle()
 
       this.tile.setLevel(this.mapRadius)
 
@@ -314,6 +345,7 @@ export const useMapStore = defineStore('map', {
       })
 
       this.rectangle.setMap(this.map)
+
     },
 
     async insertAddressStr (result, status) {
