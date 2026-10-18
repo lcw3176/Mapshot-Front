@@ -28,6 +28,8 @@ export const useParcelStore = defineStore('parcel', {
     answerError: '',
     isAsking: false,
     selectedPoint: null,
+    parcelRequestId: 0,
+    questionRequestId: 0,
 
     // 직전에 조회한 좌표. 같은 필지 반복 클릭 시 재호출을 막는다.
     lastQueriedKey: '',
@@ -54,7 +56,11 @@ export const useParcelStore = defineStore('parcel', {
     },
 
     clear () {
+      this.parcelRequestId += 1
+      this.questionRequestId += 1
       this.parcel = null
+      this.isLoading = false
+      this.isAsking = false
       this.errorMessage = ''
       this.lastQueriedKey = ''
       this.question = ''
@@ -82,12 +88,16 @@ export const useParcelStore = defineStore('parcel', {
         return
       }
 
+      const requestId = ++this.parcelRequestId
+      this.questionRequestId += 1
+      this.isAsking = false
       this.isLoading = true
       this.errorMessage = ''
       this.selectedPoint = { lat, lng }
 
       try {
         const response = await api.get(apiUrl + '/parcel', { params: { lat, lng } })
+        if (requestId !== this.parcelRequestId || !this.enabled) return
         this.parcel = response.data
         this.lastQueriedKey = key
         this.question = ''
@@ -95,13 +105,14 @@ export const useParcelStore = defineStore('parcel', {
         this.messages = []
         this.answerError = ''
       } catch (e) {
+        if (requestId !== this.parcelRequestId || !this.enabled) return
         logParcelError('parcel-lookup', e)
         this.parcel = null
         this.lastQueriedKey = ''
         this.errorMessage = resolveErrorMessage(e)
         this.selectedPoint = null
       } finally {
-        this.isLoading = false
+        if (requestId === this.parcelRequestId) this.isLoading = false
       }
     },
     async ask (input) {
@@ -109,6 +120,7 @@ export const useParcelStore = defineStore('parcel', {
       const pnu = this.parcel?.pnu
       if (!pnu || !question || this.isAsking) return
 
+      const requestId = ++this.questionRequestId
       this.isAsking = true
       this.answer = null
       this.answerError = ''
@@ -117,18 +129,18 @@ export const useParcelStore = defineStore('parcel', {
       this.messages.push(message)
       try {
         const response = await api.post(`${apiUrl}/parcel/${encodeURIComponent(pnu)}/ask`, { question })
-        if (this.parcel?.pnu === pnu) {
+        if (requestId === this.questionRequestId && this.parcel?.pnu === pnu) {
           message.answer = response.data
           this.answer = response.data
         }
       } catch (e) {
         logParcelError('parcel-question', e)
-        if (this.parcel?.pnu === pnu) {
+        if (requestId === this.questionRequestId && this.parcel?.pnu === pnu) {
           message.error = resolveErrorMessage(e, true)
           this.answerError = message.error
         }
       } finally {
-        this.isAsking = false
+        if (requestId === this.questionRequestId) this.isAsking = false
       }
     },
   },

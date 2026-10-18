@@ -34,15 +34,15 @@
       <div v-else-if="!parcelStore.parcel" class="workspace-state">
         <v-icon size="28" color="info">mdi-map-marker-question-outline</v-icon>
         <strong>지도를 클릭해 필지를 선택해 주세요</strong>
-        <span>필지 정보와 질문 답변이 여기에 표시됩니다.</span>
+        <span>필지 정보와 빠른 질문이 여기에 표시됩니다.</span>
       </div>
       <template v-else>
         <div class="workspace-tabs" role="tablist" aria-label="필지 화면">
           <button type="button" role="tab" :aria-selected="activeTab === 'info'"
                   :class="{ active: activeTab === 'info' }" @click="activeTab = 'info'">필지 정보
           </button>
-          <!--          <button type="button" role="tab" :aria-selected="activeTab === 'question'"-->
-          <!--                  :class="{ active: activeTab === 'question' }" @click="activeTab = 'question'">질문하기</button>-->
+          <button type="button" role="tab" :aria-selected="activeTab === 'question'"
+                  :class="{ active: activeTab === 'question' }" @click="activeTab = 'question'">빠른 질문</button>
         </div>
         <div v-if="activeTab === 'info'" class="workspace-body" role="tabpanel">
           <div v-for="row in rows" :key="row.label" class="info-row">
@@ -69,17 +69,36 @@
               :href="`https://www.eum.go.kr/web/ar/lu/luLandDet.jsp?mode=search&pnu=${encodeURIComponent(parcelStore.parcel.pnu)}`"
               target="_blank" rel="noopener noreferrer">토지이음에서 확인 ↗</a>
           </p>
+          <button type="button" class="briefing-entry" @click="activeTab = 'question'">
+            <span>이 필지 빠르게 살펴보기</span>
+            <small>핵심 요약과 자주 묻는 질문 <v-icon size="14">mdi-arrow-right</v-icon></small>
+          </button>
         </div>
         <div v-else class="question-layout" role="tabpanel">
-          <div class="workspace-body" aria-live="polite">
-            <template v-if="!parcelStore.messages.length">
-              <p class="question-intro">필지 정보와 공공데이터를 질문에 맞춰 확인해 보세요.</p>
+          <div ref="conversationBody" class="workspace-body" aria-live="polite">
+            <div class="briefing-card">
+              <strong>이 필지 핵심 정보</strong>
+              <p v-for="(line, index) in briefingLines" :key="index">{{ line }}</p>
+              <small>출처: 국토교통부 · 브이월드. 인허가 가능 여부는 별도 확인이 필요합니다.
+                <a :href="`https://www.eum.go.kr/web/ar/lu/luLandDet.jsp?mode=search&pnu=${encodeURIComponent(parcelStore.parcel.pnu)}`"
+                   target="_blank" rel="noopener noreferrer">토지이음에서 확인 ↗</a>
+              </small>
+            </div>
+            <div class="quick-questions">
+              <p class="question-intro">더 확인하고 싶은 내용을 선택해 보세요.</p>
               <div class="suggestions">
                 <button v-for="prompt in suggestions" :key="prompt" type="button"
                         :disabled="parcelStore.isAsking" @click="askSuggested(prompt)">{{ prompt }}
                 </button>
               </div>
-            </template>
+            </div>
+            <div v-if="newsRegion" class="regional-news">
+              <strong>{{ newsRegion }} 관련 소식</strong>
+              <p>지명으로 검색한 기사입니다. 이 필지와 직접 관련된 소식인지는 원문에서 확인해 주세요.</p>
+              <a :href="newsSearchUrl" target="_blank" rel="noopener noreferrer">
+                네이버 뉴스에서 검색하기 <v-icon size="14">mdi-open-in-new</v-icon>
+              </a>
+            </div>
             <div v-for="message in parcelStore.messages" :key="message.id" class="conversation-turn">
               <p class="user-question">{{ message.question }}</p>
               <p v-if="!message.answer && !message.error" class="answer-status">자료를 확인하고 있어요…</p>
@@ -185,6 +204,34 @@ export default {
     visibleLandUses () {
       return this.showAllLandUses ? this.landUses : this.landUses.slice(0, 6)
     },
+    briefingLines () {
+      const parcel = this.parcelStore.parcel
+      if (!parcel) return []
+      const lines = []
+      const category = parcel.landInfo?.category
+      const area = parcel.landInfo?.area
+      if (category || area) {
+        if (category) lines.push(`지목은 ${category}입니다.`)
+        if (area) lines.push(`면적은 ${formatArea(area)}입니다.`)
+      }
+      const included = this.landUses.filter(use => use.conflictType === '1').map(use => use.name)
+      if (included.length) {
+        lines.push(`포함된 용도지역·지구: ${included.slice(0, 2).join(', ')}${included.length > 2 ? ` 외 ${included.length - 2}개` : ''}.`)
+      }
+      if (parcel.landPrice?.pricePerSquareMeter) {
+        lines.push(`개별공시지가: ${formatPrice(parcel.landPrice)}. 시세와는 다릅니다.`)
+      }
+      return lines.length ? lines : ['조회된 핵심 정보가 없습니다. 필지 정보의 항목별 결과를 확인해 주세요.']
+    },
+    newsRegion () {
+      const parts = this.parcelStore.parcel?.address?.trim().split(/\s+/) || []
+      if (parts.length < 2) return ''
+      const count = parts[1].endsWith('시') && parts[2]?.endsWith('구') ? 3 : 2
+      return parts.slice(0, count).join(' ')
+    },
+    newsSearchUrl () {
+      return `https://search.naver.com/search.naver?where=news&query=${encodeURIComponent(`${this.newsRegion} 도시계획`)}`
+    },
     rows () {
       const parcel = this.parcelStore.parcel
       if (!parcel) return []
@@ -210,6 +257,15 @@ export default {
       this.showAllLandUses = false
       if (this.mobile && this.parcelStore.parcel) this.expanded = true
     },
+    'parcelStore.messages': {
+      deep: true,
+      handler () {
+        this.$nextTick(() => {
+          const body = this.$refs.conversationBody
+          if (body) body.scrollTop = body.scrollHeight
+        })
+      }
+    }
   },
   methods: {
     formatArea,
@@ -474,6 +530,85 @@ export default {
 .source-note a {
   color: #087e92;
   font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.briefing-entry {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid #cfe3e7;
+  border-radius: 10px;
+  background: #f4fafb;
+  color: #17444d;
+  text-align: left;
+}
+
+.briefing-entry span, .briefing-card strong, .regional-news strong {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.briefing-entry small {
+  color: #58717a;
+  font-size: 11px;
+}
+
+.briefing-card, .regional-news {
+  padding: 11px 12px;
+  border: 1px solid #dcebee;
+  border-radius: 10px;
+  background: #f7fbfc;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.briefing-card p, .regional-news p {
+  margin: 5px 0 0;
+  font-size: 12px !important;
+  line-height: 1.55;
+}
+
+.briefing-card small {
+  display: block;
+  margin-top: 8px;
+  color: #718089;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.briefing-card small a {
+  color: #087e92;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.quick-questions {
+  margin: 14px 0;
+}
+
+.regional-news {
+  margin-bottom: 16px;
+  background: #fff;
+}
+
+.regional-news p {
+  color: #657780;
+}
+
+.regional-news a {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 8px;
+  color: #087e92;
+  font-size: 12px;
+  font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
