@@ -34,6 +34,11 @@
         <div id="pagination"></div>
       </div>
       <ParcelInfoCard v-if="parcelStore.enabled" class="desktop-parcel-workspace"/>
+      <!-- 광고 ①: 검색 패널 하단. 필지 모드에선 카드가 공간을 다 써야 해서 숨긴다.
+           v-if 가 아니라 v-show — 토글할 때마다 새 광고 요청이 나가지 않게 (AdSlot 주석 참고) -->
+      <div v-if="leftAd" v-show="!parcelStore.enabled" class="side-ad">
+        <AdSlot slot-id="3631787426" :width="300" :height="leftAd.height"/>
+      </div>
     </div>
 
     <v-btn v-if="!display.mdAndUp" class="mobile-parcel-toggle" size="small"
@@ -96,8 +101,10 @@
     permanent
     :touchless="true"
     :location="display.mdAndUp ? 'right' : 'bottom'"
-    width="280"
+    :width="rightAd ? 324 : 280"
   >
+    <div :class="{ 'drawer-body': rightAd }">
+    <div :class="{ 'drawer-scroll': rightAd }">
     <v-expansion-panels variant="accordion" multiple v-model="openPanels" class="settings-panels">
 
       <!-- 반경 설정 -->
@@ -226,6 +233,7 @@
       </v-expansion-panel>
 
     </v-expansion-panels>
+    </div>
 
     <!-- 템플릿 제작 버튼 - 패널 외부 고정 -->
     <div class="capture-btn-wrap">
@@ -242,6 +250,13 @@
       </v-btn>
     </div>
 
+    <!-- 광고 ②: 설정 패널 맨 아래 고정. 템플릿 제작 버튼과 붙이지 말 것 —
+         버튼 옆 광고는 오클릭을 유도해 애드센스 정책 위반이 된다 (간격 + 구분선 유지) -->
+    <div v-if="rightAd" class="panel-ad">
+      <AdSlot slot-id="2318705751" :width="300" :height="250"/>
+    </div>
+    </div>
+
   </component>
 
 </template>
@@ -250,9 +265,27 @@
 import { useMapStore } from '@/store/map'
 import { useParcelStore } from '@/store/parcel'
 import ParcelInfoCard from '@/components/map/ParcelInfoCard'
+import AdSlot from '@/components/ads/AdSlot'
 import '../assets/css/map.css'
 import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
+
+// 광고 슬롯을 띄울지는 첫 진입 시 창 크기로 한 번만 정한다.
+// 창 크기 바뀔 때마다 다시 그리면 그게 곧 광고 재요청(새로고침)이라 하지 않는다.
+//
+// 왼쪽 패널(#menu_wrap)은 지도 위에 떠 있어서 높이 = 지도 높이 ≈ (창높이-64)*0.85-40.
+//   검색폼+필지버튼 ≈ 130px 을 빼고 남는 자리에 광고가 들어가야 한다.
+//   1366x768 노트북은 남는 자리가 ~430px → 300x600 은 안 들어가서 300x250.
+// 오른쪽 패널은 광고를 바닥에 고정하는 대신 설정 목록이 스크롤된다.
+//   창이 낮으면 설정이 너무 눌려서 900px 이상일 때만 띄운다.
+function pickAds (display) {
+  if (!display.mdAndUp) return { leftAd: null, rightAd: false }
+  const h = window.innerHeight
+  return {
+    leftAd: h >= 1100 ? { height: 600 } : h >= 640 ? { height: 250 } : null,
+    rightAd: h >= 900,
+  }
+}
 
 const STORAGE_KEY = 'mapshot_open_panels'
 const DEFAULT_OPEN = [0, 1, 2, 3]
@@ -269,7 +302,7 @@ function loadPanels () {
 export default {
   name: 'MapView',
 
-  components: { ParcelInfoCard },
+  components: { ParcelInfoCard, AdSlot },
 
   setup () {
     const mapStore = useMapStore()
@@ -280,6 +313,7 @@ export default {
   data () {
     const display = ref(useDisplay())
     return {
+      ...pickAds(display.value),
       overlay: null,
       display,
       openPanels: loadPanels(),
@@ -361,8 +395,39 @@ export default {
 }
 
 .place-results {
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+}
+
+/* 검색 결과가 길어져도 광고가 #menu_wrap(overflow:hidden) 밖으로 밀려나지 않게
+   결과 목록만 스크롤시키고 광고는 바닥에 붙인다 */
+.side-ad {
+  flex: 0 0 auto;
+  margin-top: auto;
+  padding-top: 8px;
+  text-align: center;
+}
+
+/* 오른쪽 광고가 있을 때: 설정 목록만 스크롤, 버튼+광고는 바닥 고정 */
+.drawer-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.drawer-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.panel-ad {
+  flex: 0 0 auto;
+  margin-top: 12px;
+  padding: 12px;
+  border-top: 1px solid rgba(128, 128, 128, 0.2);
+  text-align: center;
 }
 
 .desktop-parcel-workspace {
