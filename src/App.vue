@@ -39,7 +39,12 @@
 
     <v-main>
       <router-view></router-view>
-      <AdsView v-if="display.mdAndUp"/>
+      <!-- 하단 multiplex 광고는 글 페이지(뉴스·사용법·FAQ…)에만. 지도 화면은 한 화면에 꽉 차서
+           이 광고가 첫 화면 밖(스크롤해야 보임)에 깔려 노출이 거의 없었고, 안 보이는 광고는 사이트 전체
+           viewability 를 깎아 단가를 떨어뜨린다. 지도 화면 광고는 MapView 의 패널 슬롯이 담당. -->
+      <!-- matched.length 체크: 첫 로드 때 라우트가 정해지기 전(name 이 undefined)에 잠깐 마운트돼
+           지도 화면에서 광고 요청이 한 번 새어 나가는 걸 막는다 -->
+      <AdsView v-if="display.mdAndUp && $route.matched.length && $route.name !== 'map'"/>
     </v-main>
 
   </v-layout>
