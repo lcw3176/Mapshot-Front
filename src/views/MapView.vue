@@ -64,7 +64,21 @@
   <!-- 지도 끝 -->
 
 
-  <v-container fluid class="map-details">
+  <!-- 광고 ③: 지도 아래 좌표 줄 오른쪽 728x90. 화면 높이와 상관없이 늘 보이는 유일한 자리라
+       노트북(오른쪽 광고가 안 뜨는 화면)에서도 노출된다. 좌표·주소는 왼쪽에 3줄로 압축. -->
+  <div v-if="bottomAd" class="map-details map-details--ad">
+    <div class="coord-compact">
+      <p class="coord-line"><span class="coord-label">위도</span>{{ mapStore.lat }}
+        <span class="coord-label ml-3">경도</span>{{ mapStore.lng }}</p>
+      <p class="coord-line" :title="mapStore.roadAddress"><span class="coord-label">도로명</span>{{ mapStore.roadAddress }}</p>
+      <p class="coord-line" :title="mapStore.bunziAddress"><span class="coord-label">지번</span>{{ mapStore.bunziAddress }}</p>
+    </div>
+    <div class="bottom-ad">
+      <AdSlot slot-id="8974567267" :width="728" :height="90"/>
+    </div>
+  </div>
+
+  <v-container v-else fluid class="map-details">
     <v-row>
       <v-col cols="6" md="3">
         <div>
@@ -278,12 +292,15 @@ import { useDisplay } from 'vuetify'
 //   1366x768 노트북은 남는 자리가 ~430px → 300x600 은 안 들어가서 300x250.
 // 오른쪽 패널은 광고를 바닥에 고정하는 대신 설정 목록이 스크롤된다.
 //   창이 낮으면 설정이 너무 눌려서 900px 이상일 때만 띄운다.
+// 하단 좌표 줄(지도 폭 = 창폭 - 오른쪽 패널 280~324)에 728x90 + 좌표 텍스트(~220px)가 들어가려면
+//   창폭 ≥ 324 + 32(여백) + 728 + 16 + 200 ≈ 1300. 그보다 좁으면 기존 4칸 레이아웃 유지.
 function pickAds (display) {
-  if (!display.mdAndUp) return { leftAd: null, rightAd: false }
+  if (!display.mdAndUp) return { leftAd: null, rightAd: false, bottomAd: false }
   const h = window.innerHeight
   return {
     leftAd: h >= 1100 ? { height: 600 } : h >= 640 ? { height: 250 } : null,
     rightAd: h >= 900,
+    bottomAd: window.innerWidth >= 1300,
   }
 }
 
@@ -373,6 +390,42 @@ export default {
 
 .map-details .v-col {
   overflow-wrap: anywhere;
+}
+
+/* 하단 광고 모드: 90px 광고가 잘리지 않게 위아래 여백을 줄이고 최소 높이를 맞춘다
+   (기존 v-container 여백 16px 이면 90+32 > 1366x768 에서의 줄 높이 106px) */
+.map-details--ad {
+  min-height: 102px;
+  padding: 6px 16px;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.coord-compact {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.coord-line {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.coord-label {
+  display: inline-block;
+  min-width: 3.2em;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.bottom-ad {
+  flex: 0 0 728px;
+  height: 90px;
 }
 
 .settings-panels {
