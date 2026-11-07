@@ -127,21 +127,20 @@
           <v-icon size="small" class="mr-2" color="info">mdi-radius-outline</v-icon>
           반경 설정
         </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-list nav density="compact" class="pa-0">
-            <v-list-item
+        <v-expansion-panel-text class="choice-text">
+          <div class="choice-row">
+            <v-btn
               v-for="(value, key) in mapStore.radiusArr"
               :key="key"
-              :value="value"
-              color="info"
+              size="small"
               rounded="lg"
+              :color="value === mapStore.mapRadius ? 'info' : undefined"
+              :variant="value === mapStore.mapRadius ? 'flat' : 'tonal'"
               @click="mapStore.changeRadius(value, $event)"
-              density="compact"
-              :active="value === mapStore.mapRadius"
             >
               {{ key }}km
-            </v-list-item>
-          </v-list>
+            </v-btn>
+          </div>
         </v-expansion-panel-text>
       </v-expansion-panel>
 
@@ -151,21 +150,20 @@
           <v-icon size="small" class="mr-2" color="info">mdi-layers-outline</v-icon>
           지도 종류
         </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-list nav density="compact" class="pa-0">
-            <v-list-item
+        <v-expansion-panel-text class="choice-text">
+          <div class="choice-row">
+            <v-btn
               v-for="(value, key) in mapStore.baseMapArr"
               :key="key"
-              :value="value"
-              color="info"
+              size="small"
               rounded="lg"
+              :color="value === mapStore.baseMap ? 'info' : undefined"
+              :variant="value === mapStore.baseMap ? 'flat' : 'tonal'"
               @click="mapStore.changeBaseMap(value, $event)"
-              density="compact"
-              :active="value === mapStore.baseMap"
             >
               {{ key }}
-            </v-list-item>
-          </v-list>
+            </v-btn>
+          </div>
         </v-expansion-panel-text>
       </v-expansion-panel>
 
@@ -175,21 +173,20 @@
           <v-icon size="small" class="mr-2" color="info">mdi-office-building-outline</v-icon>
           출력 회사
         </v-expansion-panel-title>
-        <v-expansion-panel-text>
-          <v-list nav density="compact" class="pa-0">
-            <v-list-item
+        <v-expansion-panel-text class="choice-text">
+          <div class="choice-row">
+            <v-btn
               v-for="(value, key) in mapStore.companyArr"
               :key="key"
-              :value="value"
-              color="info"
+              size="small"
               rounded="lg"
+              :color="value === mapStore.company ? 'info' : undefined"
+              :variant="value === mapStore.company ? 'flat' : 'tonal'"
               @click="mapStore.changeCompany(value, $event)"
-              density="compact"
-              :active="value === mapStore.company"
             >
               {{ key }}
-            </v-list-item>
-          </v-list>
+            </v-btn>
+          </div>
         </v-expansion-panel-text>
       </v-expansion-panel>
 
@@ -291,7 +288,8 @@ import { useDisplay } from 'vuetify'
 //   검색폼+필지버튼 ≈ 130px 을 빼고 남는 자리에 광고가 들어가야 한다.
 //   1366x768 노트북은 남는 자리가 ~430px → 300x600 은 안 들어가서 300x250.
 // 오른쪽 패널은 광고를 바닥에 고정하는 대신 설정 목록이 스크롤된다.
-//   창이 낮으면 설정이 너무 눌려서 900px 이상일 때만 띄운다.
+//   처음엔 세로 목록이라 900px 이상에서만 띄웠는데 노트북에선 거의 노출이 안 됐다.
+//   선택지를 가로 버튼 줄로 압축해서 700px 이상(1366x768 등)에서도 띄운다.
 // 하단 좌표 줄(지도 폭 = 창폭 - 오른쪽 패널 280~324)에 728x90 + 좌표 텍스트(~220px)가 들어가려면
 //   창폭 ≥ 324 + 32(여백) + 728 + 16 + 200 ≈ 1300. 그보다 좁으면 기존 4칸 레이아웃 유지.
 function pickAds (display) {
@@ -299,7 +297,7 @@ function pickAds (display) {
   const h = window.innerHeight
   return {
     leftAd: h >= 1100 ? { height: 600 } : h >= 640 ? { height: 250 } : null,
-    rightAd: h >= 900,
+    rightAd: h >= 700,
     bottomAd: window.innerWidth >= 1300,
   }
 }
@@ -436,6 +434,27 @@ export default {
   font-size: 0.85rem !important;
   font-weight: 700 !important;
   min-height: 40px !important;
+}
+
+/* 반경·지도 종류·출력 회사: 세로 목록(항목당 ~36px) 대신 가로 버튼 한 줄.
+   오른쪽 광고를 노트북 화면(높이 ~700px)에서도 띄우려고 설정 영역 높이를 줄인 것 —
+   세로 목록으로 되돌리면 광고가 다시 스크롤 아래로 밀린다. */
+.choice-text :deep(.v-expansion-panel-text__wrapper) {
+  padding: 4px 12px 10px;
+}
+
+.choice-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 6px;
+}
+
+.choice-row .v-btn {
+  min-width: 0;
+  padding: 0 4px;
+  letter-spacing: 0;
+  text-transform: none; /* v-btn 기본 대문자 변환 때문에 '2km' 가 '2KM' 로 보임 */
 }
 
 .capture-btn-wrap {
