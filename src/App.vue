@@ -38,6 +38,7 @@
     </v-bottom-navigation>
 
     <v-main>
+      <MaintenanceBanner/>
       <router-view></router-view>
       <!-- 하단 multiplex 광고는 글 페이지(뉴스·사용법·FAQ…)에만. 지도 화면은 한 화면에 꽉 차서
            이 광고가 첫 화면 밖(스크롤해야 보임)에 깔려 노출이 거의 없었고, 안 보이는 광고는 사이트 전체
@@ -52,6 +53,7 @@
 
 <script>
 import AdsView from './views/AdsView'
+import MaintenanceBanner from './components/MaintenanceBanner'
 import { useLoaderStore } from '@/store/loader'
 import { useDisplay } from 'vuetify'
 import { ref } from 'vue'
@@ -60,6 +62,7 @@ import MoonLoader from 'vue-spinner/src/MoonLoader.vue'
 export default {
   components: {
     AdsView,
+    MaintenanceBanner,
     MoonLoader,
   },
 
