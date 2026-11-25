@@ -7,14 +7,33 @@
  */
 export function createPressOverlays (map, onSelect) {
   let overlays = []
+  let pendingFrame = null
 
   function clear () {
+    if (pendingFrame !== null) {
+      cancelAnimationFrame(pendingFrame)
+      pendingFrame = null
+    }
     overlays.forEach(o => o.setMap(null))
     overlays = []
   }
 
+  /**
+   * 같은 순간에 여러 번 불려도(켤 때 + 데이터 도착 + 선택 변경) 다음 프레임에 한 번만 그린다.
+   * 카카오가 아직 지도에 붙이는 중인 CustomOverlay 를 같은 틱에 setMap(null) 로 떼면 내부에 지도 없는
+   * 오버레이가 남아, 드래그할 때마다 'Cannot read properties of null' 이 나며 지도가 움직이지 않았다.
+   */
   function render (markers, selectedKey) {
-    clear()
+    if (pendingFrame !== null) cancelAnimationFrame(pendingFrame)
+    pendingFrame = requestAnimationFrame(() => {
+      pendingFrame = null
+      draw(markers, selectedKey)
+    })
+  }
+
+  function draw (markers, selectedKey) {
+    overlays.forEach(o => o.setMap(null))
+    overlays = []
     for (const m of markers) {
       const el = document.createElement('button')
       el.type = 'button'

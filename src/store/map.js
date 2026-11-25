@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
+import { markRaw } from 'vue'
 import { LatLng, Radius, Tile } from '@/assets/js/mapshot.min'
+import { usePressMapStore } from '@/store/pressMap'
 
 const apiUrl = process.env.VUE_APP_API_URL
 const MAP_SETTINGS_KEY = 'mapshot_map_settings'
@@ -73,7 +75,10 @@ export const useMapStore = defineStore('map', {
           level: 7
         }
 
-      this.map = new kakao.maps.Map(mapContainer, mapOption)
+      // 카카오 객체는 markRaw 로 넣는다. Pinia 상태에 그냥 넣으면 반응형 프록시로 감싸져서, 카카오 내부 배열이
+      // 프록시로 바뀌고 이벤트 처리 중 'Cannot read properties of null' 이 난다(도시소식을 켜고 드래그하면
+      // 지도가 안 움직였다). 지도 객체는 바뀌는지 추적할 필요가 없으니 반응성을 끈다.
+      this.map = markRaw(new kakao.maps.Map(mapContainer, mapOption))
       this.geocoder = new kakao.maps.services.Geocoder()
       this.markers = []
       this.ps = new kakao.maps.services.Places()
@@ -291,6 +296,12 @@ export const useMapStore = defineStore('map', {
     },
 
     async mapOnClick (mouseEvent) {
+      // 도시소식을 보는 동안에는 지도 클릭이 캡처 범위(분홍 사각형)를 잡지 않게 한다.
+      // 라벨을 누르거나 지도를 옮기다 실수로 클릭해도 범위가 바뀌지 않아야 소식 보기에 집중할 수 있다.
+      if (usePressMapStore().enabled) {
+        return
+      }
+
       // 클릭한 위도, 경도 정보를 가져옵니다
       let latlng = mouseEvent.latLng
 
@@ -438,7 +449,10 @@ export const useMapStore = defineStore('map', {
     },
 
     addMarker (position, idx, title) {
-      var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+      // 카카오 공식 장소 검색 예제의 번호 마커 이미지(map.css 의 목록 아이콘도 같은 출처).
+      // 카카오맵 API 리소스의 *.daumcdn.net 제공이 2026-11-30 에 끝나서 예제가 쓰는 kakaocdn 주소로 맞췄다.
+      // SDK 내부 리소스 주소를 직접 쓰는 게 아니라 공식 예제 이미지라 괜찮다. 예제 주소가 바뀌면 같이 바꾼다.
+      var imageSrc = 'https://t1.kakaocdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
         imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
         imgOptions = {
           spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기

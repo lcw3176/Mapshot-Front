@@ -100,6 +100,7 @@ import 'dayjs/locale/ko'
 import PressItem from '@/components/map/PressItem'
 import { PERIODS, usePressMapStore } from '@/store/pressMap'
 import { useMapStore } from '@/store/map'
+import { toRaw } from 'vue'
 
 dayjs.locale('ko')
 
@@ -148,18 +149,44 @@ export default {
       if (diff === 1) return `어제, ${d.format('M월 D일')}`
       return d.format('M월 D일 dddd')
     },
-    /** 보도자료의 첫 지역으로 지도를 옮기고 그 지역 마커를 고른다 */
+    /**
+     * 보도자료 지역으로 지도를 옮기고 그 지역 마커를 고른다.
+     * 지역이 여럿인 소식은 지금 고른 지역(라벨)을 우선한다. 예전엔 무조건 첫 지역으로 가서,
+     * 강남구를 골라 연 소식이 '세종·해운대·강남' 순이면 세종으로 튀고 선택까지 바뀌었다.
+     * 고른 라벨이 시도 묶음이면 그 시도 코드로 시작하는 지역을 고른다.
+     */
     locate (item) {
-      const code = item.regions?.[0]?.code
+      const regions = item.regions ?? []
+      const selectedKey = this.press.selected?.key
+      const preferred = selectedKey
+        ? regions.find(r => r.code === selectedKey) ?? regions.find(r => r.code?.startsWith(selectedKey))
+        : null
+      const code = (preferred ?? regions[0])?.code
       const region = this.press.data?.regions?.find(r => r.code === code)
-      const map = this.mapStore.map
+      const map = toRaw(this.mapStore.map)
       if (!region || !map) return
       if (map.getLevel() >= 10) map.setLevel(9)
-      map.panTo(new window.kakao.maps.LatLng(region.lat, region.lng))
+      map.panTo(this.visibleCenterFor(map, new window.kakao.maps.LatLng(region.lat, region.lng)))
+      const keepSelected = this.press.selected?.itemIds?.includes(item.id)
       const marker = this.press.markers.find(m => m.itemIds.includes(item.id) && m.key === code) ??
-        this.press.markers.find(m => m.itemIds.includes(item.id))
+        (keepSelected ? null : this.press.markers.find(m => m.itemIds.includes(item.id)))
       if (marker && this.press.selected?.key !== marker.key) this.press.select(marker)
       this.press.expandedId = item.id
+    },
+    /**
+     * 데스크톱에서는 왼쪽 패널(#menu_wrap)이 지도 위에 떠 있다. 지역을 지도 한가운데로 옮기면
+     * 패널 밑에 가려져 라벨이 안 보인다. 패널 오른쪽에 남은 영역의 가운데로 오도록 중심을 왼쪽으로 민다.
+     * 모바일은 패널이 아래 시트라 그대로 둔다.
+     */
+    visibleCenterFor (map, target) {
+      const panel = document.getElementById('menu_wrap')
+      const container = document.getElementById('map')
+      if (!panel || !container) return target
+      const covered = panel.getBoundingClientRect().right - container.getBoundingClientRect().left
+      if (covered <= 0) return target
+      const proj = map.getProjection()
+      const p = proj.containerPointFromCoords(target)
+      return proj.coordsFromContainerPoint(new window.kakao.maps.Point(p.x - covered / 2, p.y))
     },
   },
 }

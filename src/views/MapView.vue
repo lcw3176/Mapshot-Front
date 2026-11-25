@@ -25,7 +25,7 @@
                :variant="press.enabled ? 'flat' : 'tonal'"
                :prepend-icon="press.enabled ? 'mdi-check' : 'mdi-newspaper-variant-outline'"
                block size="small" @click="press.toggle()">
-          {{ press.enabled ? '도시소식 끄기' : '지도에서 도시소식 보기' }}
+          {{ press.enabled ? '도시소식 끄기' : '도시소식 보기' }}
         </v-btn>
       </div>
       <v-divider/>
@@ -279,7 +279,7 @@ import PressPanel from '@/components/map/PressPanel'
 import { createPressOverlays } from '@/components/map/pressOverlays'
 import AdSlot from '@/components/ads/AdSlot'
 import '../assets/css/map.css'
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 import { useDisplay } from 'vuetify'
 
 // 광고 슬롯을 띄울지는 첫 진입 시 창 크기로 한 번만 정한다.
@@ -376,9 +376,13 @@ export default {
   mounted () {
     this.mapStore.init()
     this.mapStore.addListeners()
-    this.pressOverlays = createPressOverlays(this.mapStore.map, marker => this.press.select(marker))
+    // 카카오 지도 객체는 Pinia 상태에 들어 있어 반응형 프록시로 감싸져 나온다. 프록시를 CustomOverlay.setMap 에
+    // 넘기면 카카오 내부의 지도 비교가 어긋나, 도시소식을 켠 채 드래그할 때 'Cannot read properties of null'
+    // 오류가 나며 지도가 움직이지 않았다. 카카오 API 에는 toRaw 로 원본 객체를 넘긴다.
+    const rawMap = toRaw(this.mapStore.map)
+    this.pressOverlays = createPressOverlays(rawMap, marker => this.press.select(marker))
     // 지도를 움직이거나 확대/축소가 끝날 때마다 목록 범위를 다시 계산한다
-    window.kakao.maps.event.addListener(this.mapStore.map, 'idle', this.syncPressView)
+    window.kakao.maps.event.addListener(rawMap, 'idle', this.syncPressView)
     if (this.press.enabled) {
       this.syncPressView()
       this.renderPressMarkers()
@@ -390,7 +394,7 @@ export default {
   beforeUnmount () {
     this.mapResizeObserver?.disconnect()
     this.pressOverlays?.clear()
-    window.kakao.maps.event.removeListener(this.mapStore.map, 'idle', this.syncPressView)
+    window.kakao.maps.event.removeListener(toRaw(this.mapStore.map), 'idle', this.syncPressView)
     this.mapStore.removeListeners()
   },
 }
