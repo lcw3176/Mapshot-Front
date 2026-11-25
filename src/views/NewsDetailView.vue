@@ -140,7 +140,12 @@ export default {
       return (this.newsStore.post && this.newsStore.post.sources) || []
     },
     backLink () {
-      return this.newsStore.post?.track === 'press' ? '/news?track=press' : '/news'
+      // 같은 갈래 목록에서 들어왔으면 보던 페이지로 돌아간다(새 탭으로 바로 열었으면 1페이지)
+      const track = this.newsStore.post?.track === 'press' ? 'press' : 'briefing'
+      const query = {}
+      if (track === 'press') query.track = 'press'
+      if (this.newsStore.track === track && this.newsStore.page > 1) query.page = String(this.newsStore.page)
+      return { path: '/news', query }
     },
   },
 

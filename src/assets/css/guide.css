@@ -30,6 +30,16 @@
   margin: 0 0 10px;
 }
 
+/* 문장 안의 링크·강조는 주변 글자 크기를 따른다. public/index.html 의 전역 규칙(* { font-size: ... })이
+   모든 요소에 크기를 박아서, 그냥 두면 a·em·strong 이 주변보다 커져 줄이 어긋나고 글자가 겹쳐 보였다. */
+.guide a,
+.guide em,
+.guide strong,
+.guide span,
+.guide br {
+  font-size: inherit;
+}
+
 .guide ul,
 .guide ol {
   margin: 0 0 12px;
@@ -143,5 +153,30 @@
 
 .guide .guide-table th {
   color: #4a5560;
+  font-weight: 700;
+}
+
+.guide .guide-tools {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+
+.guide .guide-tool {
+  padding: 14px 16px;
+  border: 1px solid #e3e7ea;
+  border-radius: 10px;
+}
+
+.guide .guide-tool p {
+  margin: 4px 0 10px;
+  color: #4a5560;
+  font-size: 0.88rem;
+}
+
+.guide .guide-tool-name {
+  display: block;
+  font-size: 1rem;
   font-weight: 700;
 }

@@ -7,10 +7,29 @@
     </p>
 
     <h3>방법 1. 캡처 확장 프로그램</h3>
-    <p>
-      크롬 웹 스토어의 <strong>GoFullPage</strong>나 <strong>FireShot</strong> 같은 전체 페이지 캡처 확장 프로그램을 쓰면 버튼 한 번으로 저장돼요.
-      엣지·웨일 등 크롬 계열 브라우저에서도 쓸 수 있어요. 설치 링크는 <router-link to="/faq">FAQ</router-link>에 있어요.
-    </p>
+    <p>설치해 두면 버튼 한 번으로 페이지 전체가 저장돼요. 엣지·웨일 등 크롬 계열 브라우저에서도 쓸 수 있어요.</p>
+    <div class="guide-tools">
+      <div class="guide-tool">
+        <span class="guide-tool-name">GoFullPage (BETA)</span>
+        <p>
+          화질이 좋고 사용법 자료가 많아 먼저 권해요. 정식 버전이 2026년 8월부터 웹 스토어에서 내려가 있어서,
+          같은 개발사가 올려 둔 BETA 버전을 안내해 드려요. 기능은 같아요.
+        </p>
+        <v-btn :href="links.gofullpage" target="_blank" rel="noopener noreferrer"
+               size="small" variant="tonal" color="success" prepend-icon="mdi-open-in-new">
+          크롬 웹 스토어에서 설치
+        </v-btn>
+      </div>
+      <div class="guide-tool">
+        <span class="guide-tool-name">FireShot</span>
+        <p>전체 페이지를 PNG·JPG·PDF 로 저장할 수 있어요. GoFullPage 가 잘 안 될 때 써 보세요.</p>
+        <v-btn :href="links.fireshot" target="_blank" rel="noopener noreferrer"
+               size="small" variant="tonal" color="success" prepend-icon="mdi-open-in-new">
+          크롬 웹 스토어에서 설치
+        </v-btn>
+      </div>
+    </div>
+    <p>설치한 뒤 템플릿 탭에서 지도가 다 그려지면 확장 프로그램 아이콘을 눌러 저장하면 돼요.</p>
 
     <h3>방법 2. 크롬 내장 기능 (설치 없이)</h3>
     <ol>
@@ -28,7 +47,16 @@
 </template>
 
 <script>
+// 설치 링크는 FAQ(components/faq/HowToCapture.vue)와 같은 것을 쓴다. 바뀌면 두 곳을 같이 고친다.
 export default {
   name: 'GuideCapture',
+  data () {
+    return {
+      links: {
+        gofullpage: 'https://chromewebstore.google.com/detail/kehafhfdnkhdgbnpeofmhmbibmpnjaof',
+        fireshot: 'https://chromewebstore.google.com/detail/take-webpage-screenshots/mcbpblocgmgfnpjjppndjkmgjaogfceg',
+      },
+    }
+  },
 }
 </script>
