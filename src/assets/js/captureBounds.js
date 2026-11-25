@@ -1,14 +1,15 @@
 /**
- * 미리보기(분홍) 사각형을 실제로 출력되는 땅 범위와 같게 그리기 위한 계산.
+ * 미리보기(분홍) 사각형 계산. 서버 템플릿(mapshot-api src/main/resources/templates/*.html)의 줌·캔버스 크기와 짝이다.
+ * 템플릿의 줌·크기를 바꾸면 여기 SPEC 도 같이 바꾼다.
  *
- * 서버 템플릿(mapshot-api src/main/resources/templates/*.html)과 1:1로 대응한다. 템플릿의 줌·크기를 바꾸면 여기도 같이 바꾼다.
- *   - 네이버·구글: 웹 메르카토르(256px 타일), 줌 18/17/16/15, 캔버스 5000/4000/5000/5000px. 북쪽이 위인 정사각형.
- *   - 카카오·레이어만 출력: 카카오 TM(EPSG:5181), level 2/3/4/5 = 0.5/1/2/4 m/px.
- *     캔버스는 네이버·구글과 같은 땅 길이가 되도록 줄여 그린다(kakao.html 의 1.19432 * cos(위도)).
- *     TM 은 중앙경선 127°E 에서 멀어질수록 진북과 어긋나, 부산·강릉은 약 1.2°, 울릉은 약 2.4° 기울어 나온다.
- *     그래서 카카오 출력 범위는 위경도 사각형이 아니라 카카오 지도 화면에서 똑바른 정사각형이다.
+ * - 한 변 길이: 세 회사 모두 같다. 네이버·구글(웹 메르카토르)의 땅 길이에 카카오 캔버스를 맞춰 두었다
+ *   (kakao.html 의 1.19432 * cos(위도)).
+ * - 모양: 미리보기 지도(카카오) 화면에 반듯한 정사각형으로 그린다. 카카오 출력과는 정확히 같다.
+ *   네이버·구글 출력은 화면 위가 진북이라, 카카오 TM 화면(중앙경선 127°E)에 옮기면 동쪽에서 조금 기운다
+ *   (부산·강릉 약 1.2°, 울릉 약 2.4°). 기운 칸이 더 어색하다고 판단해(2026-11-26) 반듯하게 그리고 이 차이는 감수한다.
+ *   그 대신 동쪽 지역 네이버·구글 칸은 모서리가 조금 어긋난다(울릉 10km 약 560m, 1km 약 70m).
  *
- * 예전에는 mapshot.min.js 의 Tile 이 회사와 무관한 고정 위경도 폭을 써서 실제 출력과 2~10% 어긋났다(2026-11-25 실측).
+ * 예전에는 mapshot.min.js 의 Tile 이 고정 위경도 폭을 써서 실제 출력과 2~10% 어긋났다(2026-11-25 실측).
  */
 
 const SPEC = {
@@ -23,18 +24,6 @@ const DEG = Math.PI / 180
 // 웹 메르카토르 기준 출력 한 변의 땅 길이(m). 템플릿의 1.19432 * cos(위도) 와 같은 값이다.
 function sideMeters (spec, lat) {
   return spec.goalWidth * 156543.03392804097 * Math.cos(lat * DEG) / Math.pow(2, spec.mercatorZoom)
-}
-
-// 네이버·구글: 메르카토르 픽셀 공간에서 중심 ± 반 변.
-function mercatorCorners (spec, lat, lng) {
-  const world = 256 * Math.pow(2, spec.mercatorZoom)
-  const half = spec.goalWidth / 2
-  const y = (1 - Math.log(Math.tan(Math.PI / 4 + lat * DEG / 2)) / Math.PI) / 2 * world
-  const toLat = (py) => (2 * Math.atan(Math.exp((1 - 2 * py / world) * Math.PI)) - Math.PI / 2) / DEG
-  const dLng = half / world * 360
-  const n = toLat(y - half)
-  const s = toLat(y + half)
-  return [[n, lng - dLng], [n, lng + dLng], [s, lng + dLng], [s, lng - dLng]]
 }
 
 // ---- 카카오 TM(EPSG:5181: GRS80, 중앙경선 127°E, 원점위도 38°N, k=1) 변환. Snyder, Map Projections (1987) 8장 ----
@@ -92,7 +81,7 @@ function tmInverse (x, y) {
   return [lat / DEG, lng / DEG]
 }
 
-// 카카오: TM 평면에서 중심 ± 반 변인 정사각형(카카오 화면에서 똑바른 사각형).
+// TM 평면에서 중심 ± 반 변인 정사각형 = 카카오 화면에서 반듯한 사각형.
 function kakaoCorners (spec, lat, lng) {
   const [x, y] = tmForward(lat, lng)
   const h = sideMeters(spec, lat) / 2
@@ -100,16 +89,11 @@ function kakaoCorners (spec, lat, lng) {
 }
 
 /**
- * 출력될 범위의 네 모서리(북서, 북동, 남동, 남서 순, [lat, lng])를 돌려준다.
- * @param {string} company 'kakao' | 'naver' | 'google' | 'layer' | '' (미선택이면 카카오와 같게)
+ * 미리보기 칸의 네 모서리(북서, 북동, 남동, 남서 순, [lat, lng])를 돌려준다.
  * @param {number} radiusLevel Radius.level (1 | 2 | 5 | 10)
  */
-export function captureCorners (company, radiusLevel, lat, lng) {
+export function captureCorners (radiusLevel, lat, lng) {
   const spec = SPEC[radiusLevel]
   if (!spec || !Number.isFinite(lat) || !Number.isFinite(lng)) return null
-
-  if (company === 'naver' || company === 'google') {
-    return mercatorCorners(spec, lat, lng)
-  }
   return kakaoCorners(spec, lat, lng)
 }

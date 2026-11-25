@@ -324,9 +324,8 @@ export const useMapStore = defineStore('map', {
       this.drawCaptureArea()
     },
 
-    // 분홍 사각형 = 실제로 출력될 땅 범위. 출력 회사마다 투영법이 달라 범위가 다르니(captureBounds.js)
-    // 위치뿐 아니라 반경·출력 회사·레이어만 출력이 바뀔 때도 다시 그린다.
-    // 카카오 출력은 TM 이라 동쪽 지역에서 조금 기울어 있어 Rectangle(위경도 사각형) 대신 Polygon 으로 그린다.
+    // 분홍 사각형 = 출력될 땅 범위(captureBounds.js). 반경이 바뀌면 다시 그린다.
+    // 미리보기 지도(카카오 TM)에서 반듯한 사각형이 되도록 Rectangle(위경도 사각형) 대신 Polygon 으로 그린다.
     drawCaptureArea () {
       this.removeRectangle()
 
@@ -334,8 +333,7 @@ export const useMapStore = defineStore('map', {
         return
       }
 
-      const company = this.onlyLayers ? 'layer' : this.company
-      const corners = captureCorners(company, this.mapRadius.level, this.lat, this.lng)
+      const corners = captureCorners(this.mapRadius.level, this.lat, this.lng)
       if (!corners) {
         return
       }
@@ -378,7 +376,6 @@ export const useMapStore = defineStore('map', {
 
     async changeCompany (company, event) {
       this.company = company
-      this.redrawCaptureArea()
     },
 
     async changeMapStyle (mapStyle) {
