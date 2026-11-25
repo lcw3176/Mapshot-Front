@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { markRaw } from 'vue'
-import { LatLng, Radius, Tile } from '@/assets/js/mapshot.min'
+import { LatLng, Radius } from '@/assets/js/mapshot.min'
+import { captureCorners } from '@/assets/js/captureBounds'
 import { usePressMapStore } from '@/store/pressMap'
 
 const apiUrl = process.env.VUE_APP_API_URL
@@ -93,7 +94,6 @@ export const useMapStore = defineStore('map', {
       this.ps = new kakao.maps.services.Places()
       this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 })
 
-      this.tile = new Tile()
       this.coor = new LatLng()
       this.mapRadius = Radius.Two
       this.baseMap = ''
@@ -285,8 +285,8 @@ export const useMapStore = defineStore('map', {
     },
 
     async makeTrace () {
-      let traceRec = new kakao.maps.Rectangle({
-        bounds: this.rectangle.getBounds(),
+      let traceRec = new kakao.maps.Polygon({
+        path: this.rectangle.getPath(),
         strokeWeight: 4,
         strokeColor: '#000000',
         strokeOpacity: 1,
@@ -321,15 +321,27 @@ export const useMapStore = defineStore('map', {
 
       this.coor.init(this.lat, this.lng)
 
+      this.drawCaptureArea()
+    },
+
+    // 분홍 사각형 = 실제로 출력될 땅 범위. 출력 회사마다 투영법이 달라 범위가 다르니(captureBounds.js)
+    // 위치뿐 아니라 반경·출력 회사·레이어만 출력이 바뀔 때도 다시 그린다.
+    // 카카오 출력은 TM 이라 동쪽 지역에서 조금 기울어 있어 Rectangle(위경도 사각형) 대신 Polygon 으로 그린다.
+    drawCaptureArea () {
       this.removeRectangle()
 
-      this.tile.setLevel(this.mapRadius)
+      if (this.isEmpty(this.lat) || this.isEmpty(this.lng) || this.isEmpty(this.mapRadius)) {
+        return
+      }
 
-      let sw = this.tile.getSW(this.mapRadius, this.coor)
-      let ne = this.tile.getNE(this.mapRadius, this.coor)
+      const company = this.onlyLayers ? 'layer' : this.company
+      const corners = captureCorners(company, this.mapRadius.level, this.lat, this.lng)
+      if (!corners) {
+        return
+      }
 
-      this.rectangle = new kakao.maps.Rectangle({
-        bounds: new kakao.maps.LatLngBounds(new kakao.maps.LatLng(sw.getY(), sw.getX()), new kakao.maps.LatLng(ne.getY(), ne.getX())),
+      this.rectangle = new kakao.maps.Polygon({
+        path: corners.map(([lat, lng]) => new kakao.maps.LatLng(lat, lng)),
         strokeWeight: 4,
         strokeColor: '#FF3DE5',
         strokeOpacity: 1,
@@ -339,7 +351,13 @@ export const useMapStore = defineStore('map', {
       })
 
       this.rectangle.setMap(this.map)
+    },
 
+    // 설정이 바뀌면 이미 잡아 둔 범위만 다시 그린다(우클릭으로 지운 범위를 되살리지 않게).
+    redrawCaptureArea () {
+      if (this.rectangle) {
+        this.drawCaptureArea()
+      }
     },
 
     async insertAddressStr (result, status) {
@@ -351,6 +369,7 @@ export const useMapStore = defineStore('map', {
 
     async changeRadius (rad, event) {
       this.mapRadius = rad
+      this.redrawCaptureArea()
     },
 
     async changeBaseMap (map, event) {
@@ -359,6 +378,7 @@ export const useMapStore = defineStore('map', {
 
     async changeCompany (company, event) {
       this.company = company
+      this.redrawCaptureArea()
     },
 
     async changeMapStyle (mapStyle) {

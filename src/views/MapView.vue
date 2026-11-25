@@ -236,7 +236,7 @@
           <v-switch density="compact" color="info" v-if="mapStore.company === 'google'" v-model="mapStore.noLabel"
                     label="명칭 없애기" hide-details class="mb-1"/>
           <v-switch density="compact" color="info" v-model="mapStore.onlyLayers" label="레이어만 출력" hide-details
-                    class="mb-1"/>
+                    @update:model-value="mapStore.redrawCaptureArea()" class="mb-1"/>
           <v-switch density="compact" color="info" v-model="mapStore.addTopography" label="지형도 덧입히기" hide-details
                     class="mb-1"/>
           <v-switch density="compact" color="info" v-model="mapStore.traceMode" label="흔적 남기기" hide-details/>
