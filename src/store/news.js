@@ -8,10 +8,19 @@ const api = axios.create({
 
 const apiUrl = process.env.VUE_APP_API_URL
 
-async function getRecent () {
-  // LLM이 요약해 발행한 '도시뉴스' 게시글 목록(경량).
-  // 형식: [{ id, title, preview, createdDate }] — 본문/출처는 상세에서 받음
-  const response = await api.get(apiUrl + '/news/recent')
+/**
+ * 도시뉴스는 두 갈래다(mapshot-planning plans/2026-11-city-news-map/explainer.md).
+ *  - briefing: 하루 1편, 뉴스 기사를 LLM 이 묶어 요약한 브리핑
+ *  - press: 국토부 보도자료 1건 = 글 1편인 '보도자료 풀이'
+ */
+export const TRACKS = [
+  { value: 'briefing', label: '브리핑', desc: '도시공학·도시계획 뉴스를 모아 AI가 하루 한 편으로 요약해 드려요' },
+  { value: 'press', label: '보도자료 풀이', desc: '국토교통부 보도자료를 한 건씩 핵심만 정리해 드려요' },
+]
+
+async function getRecent (track) {
+  // 게시글 목록(경량). 형식: [{ id, title, preview, createdDate, track }] — 본문/출처는 상세에서 받음
+  const response = await api.get(apiUrl + '/news/recent', { params: { track } })
   return response.data
 }
 
@@ -24,6 +33,7 @@ async function getDetail (id) {
 export const useNewsStore = defineStore('newsStore', {
 
   state: () => ({
+    track: 'briefing',
     posts: [],
     post: null,
     isLoading: false,
@@ -33,11 +43,12 @@ export const useNewsStore = defineStore('newsStore', {
   }),
 
   actions: {
-    async loadRecent () {
+    async loadRecent (track) {
+      if (track) this.track = track
       this.isLoading = true
       this.isError = false
       try {
-        this.posts = await getRecent()
+        this.posts = await getRecent(this.track)
       } catch (e) {
         this.isError = true
         this.posts = []

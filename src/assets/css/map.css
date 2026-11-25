@@ -123,82 +123,45 @@
     color: #8a8a8a;
 }
 
-#placesList .info .jibun {
-    padding-left: 26px;
-    background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;
+/* 카카오 예제 이미지(places_jibun.png) 대신 CSS 배지. 카카오 리소스를 직접 부르거나 저장하지 않으려고 바꿨다 */
+#placesList .info .jibun::before {
+    content: '지번';
+    display: inline-block;
+    margin-right: 4px;
+    padding: 0 4px;
+    border: 1px solid #b9c2c9;
+    border-radius: 3px;
+    color: #6b7680;
+    font-size: 10px;
+    line-height: 15px;
+    vertical-align: 1px;
 }
 
 #placesList .info .tel {
     color: #009900;
 }
 
+/* 카카오 예제 스프라이트(marker_number_blue.png) 대신 CSS 로 그린 번호 표시. 지도 위 마커(map.js numberedMarkerSrc)와 같은 색 */
 #placesList .item .markerbg {
     float: left;
     position: absolute;
-    width: 36px;
-    height: 37px;
-    margin: 10px 0 0 10px;
-    background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;
+    width: 26px;
+    height: 26px;
+    margin: 14px 0 0 15px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    background: #1e88e5;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-#placesList .item .marker_1 {
-    background-position: 0 -10px;
-}
-
-#placesList .item .marker_2 {
-    background-position: 0 -56px;
-}
-
-#placesList .item .marker_3 {
-    background-position: 0 -102px
-}
-
-#placesList .item .marker_4 {
-    background-position: 0 -148px;
-}
-
-#placesList .item .marker_5 {
-    background-position: 0 -194px;
-}
-
-#placesList .item .marker_6 {
-    background-position: 0 -240px;
-}
-
-#placesList .item .marker_7 {
-    background-position: 0 -286px;
-}
-
-#placesList .item .marker_8 {
-    background-position: 0 -332px;
-}
-
-#placesList .item .marker_9 {
-    background-position: 0 -378px;
-}
-
-#placesList .item .marker_10 {
-    background-position: 0 -423px;
-}
-
-#placesList .item .marker_11 {
-    background-position: 0 -470px;
-}
-
-#placesList .item .marker_12 {
-    background-position: 0 -516px;
-}
-
-#placesList .item .marker_13 {
-    background-position: 0 -562px;
-}
-
-#placesList .item .marker_14 {
-    background-position: 0 -608px;
-}
-
-#placesList .item .marker_15 {
-    background-position: 0 -654px;
+#placesList .item .markerbg span {
+    display: block;
+    transform: rotate(45deg);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 26px;
+    text-align: center;
 }
 
 #pagination {
@@ -228,4 +191,66 @@
     font-size: 12px;
     font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
     display: inline-block;
+}
+
+/* 지도 안 오버레이(도시소식 마커 등)의 z-index 가 #map 밖으로 새서 왼쪽 패널(#menu_wrap, z-index 1)
+   위로 올라오지 않게, #map 을 독립된 쌓임 맥락으로 묶는다. */
+.map_wrap #map {
+    isolation: isolate;
+}
+
+/* 도시소식 마커(카카오 CustomOverlay). 지도 안 요소라 scoped 스타일이 닿지 않아 여기 둔다.
+   '.map_wrap #map *' 리셋(여백 0, 12px)보다 우선하도록 같은 접두로 쓴다. */
+.map_wrap #map .press-marker {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 3px 3px 9px;
+    font-family: 'NanumSquareNeo', 'Malgun Gothic', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    color: #1b3a4b;
+    white-space: nowrap;
+    background: #fff;
+    border: 1.5px solid #1b3a4b;
+    border-radius: 999px;
+    box-shadow: 0 1px 4px rgba(27, 58, 75, 0.28);
+    cursor: pointer;
+}
+
+.map_wrap #map .press-marker:hover {
+    border-color: #0277bd;
+    color: #0277bd;
+}
+
+.map_wrap #map .press-marker:focus-visible {
+    outline: 2px solid #039be5;
+    outline-offset: 2px;
+}
+
+.map_wrap #map .press-marker__name {
+    font-size: 12px;
+}
+
+.map_wrap #map .press-marker__count {
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+    color: #fff;
+    background: #1b3a4b;
+    border-radius: 9px;
+}
+
+.map_wrap #map .press-marker.is-selected {
+    color: #fff;
+    background: #1b3a4b;
+}
+
+.map_wrap #map .press-marker.is-selected .press-marker__count {
+    color: #1b2a35;
+    background: #f2c14e;
 }

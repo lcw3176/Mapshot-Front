@@ -11,7 +11,7 @@
               도시뉴스
             </h1>
             <p class="text-body-2 text-medium-emphasis mb-0">
-              도시공학·도시계획 뉴스를 모아 AI가 한 편으로 요약해 드려요
+              {{ currentTrack.desc }}
             </p>
           </div>
           <v-btn
@@ -24,6 +24,17 @@
             새로고침
           </v-btn>
         </div>
+
+        <!-- 갈래: 브리핑 / 보도자료 풀이. URL(?track=press)에 남겨 지도·상세에서 돌아올 때 같은 갈래로 연다 -->
+        <v-tabs
+          :model-value="newsStore.track"
+          color="success"
+          density="comfortable"
+          class="mb-4"
+          @update:model-value="changeTrack"
+        >
+          <v-tab v-for="t in tracks" :key="t.value" :value="t.value">{{ t.label }}</v-tab>
+        </v-tabs>
 
         <!-- 로딩 -->
         <div v-if="newsStore.isLoading" class="text-center py-16">
@@ -45,7 +56,7 @@
           v-else-if="!newsStore.posts.length"
           class="text-center text-medium-emphasis py-16"
         >
-          아직 발행된 도시뉴스 요약이 없어요.
+          아직 발행된 {{ currentTrack.label }} 글이 없어요.
         </div>
 
         <!-- 게시글 목록 (클릭 → 상세) -->
@@ -79,24 +90,42 @@
 </template>
 
 <script>
-import { useNewsStore } from '@/store/news'
+import { TRACKS, useNewsStore } from '@/store/news'
 
 export default {
   name: 'NewsView',
 
   setup () {
     const newsStore = useNewsStore()
-    return { newsStore }
+    return { newsStore, tracks: TRACKS }
+  },
+
+  computed: {
+    currentTrack () {
+      return TRACKS.find(t => t.value === this.newsStore.track) ?? TRACKS[0]
+    },
+  },
+
+  watch: {
+    '$route.query.track' (track) {
+      this.newsStore.loadRecent(this.normalize(track))
+    },
   },
 
   methods: {
+    normalize (track) {
+      return TRACKS.some(t => t.value === track) ? track : 'briefing'
+    },
+    changeTrack (track) {
+      this.$router.replace({ query: track === 'briefing' ? {} : { track } })
+    },
     refresh () {
       this.newsStore.loadRecent()
     },
   },
 
   created () {
-    this.newsStore.loadRecent()
+    this.newsStore.loadRecent(this.normalize(this.$route.query.track))
   },
 }
 </script>

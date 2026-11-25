@@ -4,8 +4,8 @@
   <div class="map_wrap">
     <div id="map" ref="mapElement" @contextmenu.prevent style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
 
-    <div id="menu_wrap" v-if="display.mdAndUp" :class="{ 'parcel-active': parcelStore.enabled }">
-      <v-form v-if="!parcelStore.enabled" id="searchPlaces" @submit.prevent="mapStore.searchPlaces" class="pa-2">
+    <div id="menu_wrap" v-if="display.mdAndUp" :class="{ 'press-active': press.enabled }">
+      <v-form v-show="!press.enabled" id="searchPlaces" @submit.prevent="mapStore.searchPlaces" class="pa-2">
         <v-text-field
           id="keyword"
           label="장소 검색"
@@ -20,35 +20,35 @@
           검색하기
         </v-btn>
       </v-form>
-      <div class="parcel-mode-control">
-        <v-btn :color="parcelStore.enabled ? 'info' : undefined"
-               :variant="parcelStore.enabled ? 'flat' : 'tonal'"
-               :prepend-icon="parcelStore.enabled ? 'mdi-check' : 'mdi-vector-square'"
-               block size="small" @click="parcelStore.toggle()">
-          {{ parcelStore.enabled ? '필지 선택 중 · 종료' : '필지 선택하기' }}
+      <div class="press-mode-control" :class="{ 'pt-2': press.enabled }">
+        <v-btn :color="press.enabled ? 'info' : undefined"
+               :variant="press.enabled ? 'flat' : 'tonal'"
+               :prepend-icon="press.enabled ? 'mdi-check' : 'mdi-newspaper-variant-outline'"
+               block size="small" @click="press.toggle()">
+          {{ press.enabled ? '도시소식 끄기' : '도시소식 보기' }}
         </v-btn>
       </div>
       <v-divider/>
-      <div v-show="!parcelStore.enabled" class="place-results">
+      <div v-show="!press.enabled" class="place-results">
         <ul id="placesList"></ul>
         <div id="pagination"></div>
       </div>
-      <ParcelInfoCard v-if="parcelStore.enabled" class="desktop-parcel-workspace"/>
-      <!-- 광고 ①: 검색 패널 하단. 필지 모드에선 카드가 공간을 다 써야 해서 숨긴다.
+      <PressPanel v-if="press.enabled" class="desktop-press-panel"/>
+      <!-- 광고 ①: 검색 패널 하단. 도시소식을 켜면 목록이 패널 높이를 다 써야 해서 숨긴다
+           (같이 두면 900px 화면에서도 목록이 2건밖에 안 보였다. 오른쪽·하단 광고는 그대로 노출).
            v-if 가 아니라 v-show — 토글할 때마다 새 광고 요청이 나가지 않게 (AdSlot 주석 참고) -->
-      <div v-if="leftAd" v-show="!parcelStore.enabled" class="side-ad">
+      <div v-if="leftAd" v-show="!press.enabled" class="side-ad">
         <AdSlot slot-id="3631787426" :width="300" :height="leftAd.height"/>
       </div>
     </div>
 
-    <v-btn v-if="!display.mdAndUp" class="mobile-parcel-toggle" size="small"
-           :color="parcelStore.enabled ? 'info' : 'surface'"
-           :prepend-icon="parcelStore.enabled ? 'mdi-check' : 'mdi-vector-square'"
-           @click="parcelStore.toggle()">
-      {{ parcelStore.enabled ? '필지 선택 중' : '필지 선택' }}
+    <v-btn v-if="!display.mdAndUp && !press.enabled" class="mobile-press-toggle" size="small"
+           color="surface" prepend-icon="mdi-newspaper-variant-outline"
+           @click="press.toggle()">
+      도시소식
     </v-btn>
-    <div v-if="!display.mdAndUp && parcelStore.enabled" class="mobile-parcel-workspace">
-      <ParcelInfoCard mobile/>
+    <div v-if="!display.mdAndUp && press.enabled" class="mobile-press-sheet">
+      <PressPanel mobile/>
     </div>
     <div class="custom_typecontrol">
       <v-list theme="dark">
@@ -274,18 +274,20 @@
 
 <script>
 import { useMapStore } from '@/store/map'
-import { useParcelStore } from '@/store/parcel'
-import ParcelInfoCard from '@/components/map/ParcelInfoCard'
+import { usePressMapStore } from '@/store/pressMap'
+import PressPanel from '@/components/map/PressPanel'
+import { createPressOverlays } from '@/components/map/pressOverlays'
+import { visibleCenterFor } from '@/components/map/visibleCenter'
 import AdSlot from '@/components/ads/AdSlot'
 import '../assets/css/map.css'
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 import { useDisplay } from 'vuetify'
 
 // 광고 슬롯을 띄울지는 첫 진입 시 창 크기로 한 번만 정한다.
 // 창 크기 바뀔 때마다 다시 그리면 그게 곧 광고 재요청(새로고침)이라 하지 않는다.
 //
 // 왼쪽 패널(#menu_wrap)은 지도 위에 떠 있어서 높이 = 지도 높이 ≈ (창높이-64)*0.85-40.
-//   검색폼+필지버튼 ≈ 130px 을 빼고 남는 자리에 광고가 들어가야 한다.
+//   검색폼+도시소식 버튼 ≈ 130px 을 빼고 남는 자리에 광고가 들어가야 한다.
 //   1366x768 노트북은 남는 자리가 ~430px → 300x600 은 안 들어가서 300x250.
 // 오른쪽 패널은 광고를 바닥에 고정하는 대신 설정 목록이 스크롤된다.
 //   처음엔 세로 목록이라 900px 이상에서만 띄웠는데 노트북에선 거의 노출이 안 됐다.
@@ -317,12 +319,12 @@ function loadPanels () {
 export default {
   name: 'MapView',
 
-  components: { ParcelInfoCard, AdSlot },
+  components: { PressPanel, AdSlot },
 
   setup () {
     const mapStore = useMapStore()
-    const parcelStore = useParcelStore()
-    return { mapStore, parcelStore }
+    const press = usePressMapStore()
+    return { mapStore, press }
   },
 
   data () {
@@ -333,6 +335,7 @@ export default {
       display,
       openPanels: loadPanels(),
       mapResizeObserver: null,
+      pressOverlays: null,
     }
   },
 
@@ -340,25 +343,86 @@ export default {
     openPanels (val) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
     },
-    'parcelStore.enabled' (enabled) {
-      if (enabled) this.mapStore.removeRectangle()
-      else this.mapStore.removeParcelMarker()
+    'press.enabled' (enabled) {
+      if (enabled) {
+        this.syncPressView()
+        this.renderPressMarkers()
+      } else {
+        this.pressOverlays?.clear()
+      }
     },
-    'parcelStore.parcel' (parcel) {
-      if (!parcel) this.mapStore.removeParcelMarker()
+    'press.markers' () {
+      this.syncPressView()
+      this.renderPressMarkers()
+    },
+    'press.selected' () {
+      this.renderPressMarkers()
+    },
+  },
+
+  methods: {
+    renderPressMarkers () {
+      if (!this.press.enabled || !this.pressOverlays) return
+      this.pressOverlays.render(this.press.markers, this.press.selected?.key)
+    },
+    /**
+     * 도시뉴스 풀이 글의 '맵샷 지도에서 ○○ 보기'로 들어온 경우(/?press=코드&lat=&lng=):
+     * 도시소식을 켜고(기간은 넉넉히 90일) 그 지역으로 옮겨 라벨을 고른다. 처리 후 쿼리는 지운다.
+     */
+    async openPressFromQuery () {
+      const { press: code, lat, lng } = this.$route.query
+      if (!code || !lat || !lng) return
+      if (this.press.enabled) {
+        await this.press.changeDays(90)
+      } else {
+        this.press.days = 90
+        await this.press.toggle()
+      }
+      // 도시소식을 켜면 왼쪽 패널 폭이 바뀌고 지도 크기도 다시 잡힌다. 그 전에 중심을 계산하면 라벨이
+      // 엉뚱한 곳(오른쪽 끝)에 놓여서, 화면이 자리 잡은 다음 프레임에 옮긴다.
+      await this.$nextTick()
+      await new Promise(resolve => requestAnimationFrame(resolve))
+      const map = toRaw(this.mapStore.map)
+      map.relayout()
+      map.setLevel(9)
+      map.setCenter(visibleCenterFor(map, new window.kakao.maps.LatLng(Number(lat), Number(lng))))
+      this.syncPressView()
+      const marker = this.press.markers.find(m => m.key === code)
+      if (marker && this.press.selected?.key !== marker.key) this.press.select(marker)
+      this.$router.replace({ query: {} })
+    },
+    /** 줌 레벨과 지도 범위를 스토어에 반영한다(마커 묶음 단위·목록 필터에 쓰임) */
+    syncPressView () {
+      const map = this.mapStore.map
+      if (!map || !this.pressOverlays || !this.press.enabled) return
+      this.press.mapLevel = map.getLevel()
+      this.press.visibleKeys = this.pressOverlays.visibleKeys(this.press.markers)
     },
   },
 
   mounted () {
     this.mapStore.init()
     this.mapStore.addListeners()
+    // 카카오 지도 객체는 Pinia 상태에 들어 있어 반응형 프록시로 감싸져 나온다. 프록시를 CustomOverlay.setMap 에
+    // 넘기면 카카오 내부의 지도 비교가 어긋나, 도시소식을 켠 채 드래그할 때 'Cannot read properties of null'
+    // 오류가 나며 지도가 움직이지 않았다. 카카오 API 에는 toRaw 로 원본 객체를 넘긴다.
+    const rawMap = toRaw(this.mapStore.map)
+    this.pressOverlays = createPressOverlays(rawMap, marker => this.press.select(marker))
+    // 지도를 움직이거나 확대/축소가 끝날 때마다 목록 범위를 다시 계산한다
+    window.kakao.maps.event.addListener(rawMap, 'idle', this.syncPressView)
+    if (this.press.enabled) {
+      this.syncPressView()
+      this.renderPressMarkers()
+    }
+    this.openPressFromQuery()
     this.mapResizeObserver = new ResizeObserver(() => this.mapStore.map?.relayout?.())
     this.mapResizeObserver.observe(this.$refs.mapElement)
   },
 
   beforeUnmount () {
     this.mapResizeObserver?.disconnect()
-    this.mapStore.removeParcelMarker()
+    this.pressOverlays?.clear()
+    window.kakao.maps.event.removeListener(toRaw(this.mapStore.map), 'idle', this.syncPressView)
     this.mapStore.removeListeners()
   },
 }
@@ -462,7 +526,7 @@ export default {
   border-top: 1px solid rgba(128, 128, 128, 0.2);
 }
 
-.parcel-mode-control {
+.press-mode-control {
   padding: 0 8px 10px;
 }
 
@@ -502,35 +566,34 @@ export default {
   text-align: center;
 }
 
-.desktop-parcel-workspace {
+.desktop-press-panel {
   flex: 1;
   min-height: 0;
 }
 
-#menu_wrap.parcel-active {
+#menu_wrap.press-active {
   width: 360px;
 }
 
-.mobile-parcel-toggle {
+.mobile-press-toggle {
   position: absolute;
   top: 12px;
   left: 12px;
   z-index: 3;
 }
 
-.mobile-parcel-workspace {
+/* 모바일: 지도 아래쪽을 덮는 시트. 위쪽 지도는 그대로 움직일 수 있게 남긴다 */
+.mobile-press-sheet {
   position: absolute;
   left: 8px;
   right: 8px;
   bottom: 8px;
   z-index: 3;
-  height: min(420px, 68%);
+  height: min(440px, 62%);
   display: flex;
-  align-items: flex-end;
-  pointer-events: none;
 }
 
-.mobile-parcel-workspace > * {
+.mobile-press-sheet > * {
   width: 100%;
 }
 

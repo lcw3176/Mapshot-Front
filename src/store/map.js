@@ -1,11 +1,21 @@
 import { defineStore } from 'pinia'
+import { markRaw } from 'vue'
 import { LatLng, Radius, Tile } from '@/assets/js/mapshot.min'
-import { useParcelStore } from '@/store/parcel'
+import { usePressMapStore } from '@/store/pressMap'
 
 const apiUrl = process.env.VUE_APP_API_URL
 const MAP_SETTINGS_KEY = 'mapshot_map_settings'
 
 const SAVEABLE_KEYS = ['baseMap', 'company', 'layers', 'layerMode', 'traceMode', 'noLabel', 'onlyLayers', 'addTopography']
+
+/** 장소 검색 결과 번호 마커(파란 핀 + 흰 숫자) SVG data URI. 목록의 번호 표시(map.css .markerbg)와 같은 색 */
+function numberedMarkerSrc (n) {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="40" viewBox="0 0 30 40">' +
+    '<path d="M15 39C15 39 2 24.5 2 14.5a13 13 0 0 1 26 0C28 24.5 15 39 15 39z" fill="#1e88e5" stroke="#fff" stroke-width="2"/>' +
+    '<text x="15" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fff">' +
+    n + '</text></svg>'
+  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg)
+}
 
 export const useMapStore = defineStore('map', {
 
@@ -21,7 +31,6 @@ export const useMapStore = defineStore('map', {
     bunziAddress: '',
     coor: '',
     rectangle: null,
-    parcelMarker: null,
     mapRadius: '',
     baseMap: '',
     company: '',
@@ -75,7 +84,10 @@ export const useMapStore = defineStore('map', {
           level: 7
         }
 
-      this.map = new kakao.maps.Map(mapContainer, mapOption)
+      // 카카오 객체는 markRaw 로 넣는다. Pinia 상태에 그냥 넣으면 반응형 프록시로 감싸져서, 카카오 내부 배열이
+      // 프록시로 바뀌고 이벤트 처리 중 'Cannot read properties of null' 이 난다(도시소식을 켜고 드래그하면
+      // 지도가 안 움직였다). 지도 객체는 바뀌는지 추적할 필요가 없으니 반응성을 끈다.
+      this.map = markRaw(new kakao.maps.Map(mapContainer, mapOption))
       this.geocoder = new kakao.maps.services.Geocoder()
       this.markers = []
       this.ps = new kakao.maps.services.Places()
@@ -292,39 +304,21 @@ export const useMapStore = defineStore('map', {
       }
     },
 
-    removeParcelMarker () {
-      if (this.parcelMarker) {
-        this.parcelMarker.setMap(null)
-        this.parcelMarker = null
-      }
-    },
-
-    placeParcelMarker (position) {
-      this.removeParcelMarker()
-      this.parcelMarker = new kakao.maps.Marker({ position, zIndex: 10 })
-      this.parcelMarker.setMap(this.map)
-    },
-
     async mapOnClick (mouseEvent) {
+      // 도시소식을 보는 동안에는 지도 클릭이 캡처 범위(분홍 사각형)를 잡지 않게 한다.
+      // 라벨을 누르거나 지도를 옮기다 실수로 클릭해도 범위가 바뀌지 않아야 소식 보기에 집중할 수 있다.
+      if (usePressMapStore().enabled) {
+        return
+      }
+
       // 클릭한 위도, 경도 정보를 가져옵니다
       let latlng = mouseEvent.latLng
-
-      const parcelStore = useParcelStore()
-      if (parcelStore.enabled && parcelStore.isLoading) return
 
       this.lat = latlng.getLat()
       this.lng = latlng.getLng()
 
       this.searchDetailAddrFromCoords(mouseEvent.latLng, this.insertAddressStr)
 
-      if (parcelStore.enabled) {
-        this.removeRectangle()
-        if (!parcelStore.isLoading) this.placeParcelMarker(latlng)
-        await parcelStore.load(this.lat, this.lng)
-        return
-      }
-
-      this.removeParcelMarker()
       this.coor.init(this.lat, this.lng)
 
       this.removeRectangle()
@@ -443,7 +437,7 @@ export const useMapStore = defineStore('map', {
     getListItem (index, places) {
 
       var el = document.createElement('li'),
-        itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
+        itemStr = '<span class="markerbg"><span>' + (index + 1) + '</span></span>' +
           '<div class="info">' +
           '   <h5>' + places.place_name + '</h5>'
 
@@ -464,14 +458,13 @@ export const useMapStore = defineStore('map', {
     },
 
     addMarker (position, idx, title) {
-      var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
-        imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
-        imgOptions = {
-          spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
-          spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-          offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
-        },
-        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+      // 예전엔 카카오 공식 장소 검색 예제의 번호 마커 스프라이트(t1.daumcdn.net/.../marker_number_blue.png)를 썼다.
+      // 2026-11 카카오가 SDK 외 리소스 직접 호출·저장을 제한한다고 공지해서, 예제 이미지도 쓰지 않고 직접 그린 SVG 로 바꿨다.
+      const markerImage = new kakao.maps.MarkerImage(
+          numberedMarkerSrc(idx + 1),
+          new kakao.maps.Size(30, 40),
+          { offset: new kakao.maps.Point(15, 40) } // 핀 끝이 좌표에 오게
+        ),
         marker = new kakao.maps.Marker({
           position: position, // 마커의 위치
           image: markerImage
