@@ -1,0 +1,147 @@
+/*
+ * 사용법(ManualView) 공용 스타일. 섹션 컴포넌트들이 같은 모양을 쓰도록 여기 모았다.
+ * public/index.html 의 전역 글자 크기 규칙 때문에 글자 크기가 상속되지 않아서 요소마다 크기를 준다.
+ */
+.guide {
+  color: #1f2a33;
+  line-height: 1.7;
+}
+
+.guide h2 {
+  margin: 0 0 6px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.guide h3 {
+  margin: 24px 0 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.guide p,
+.guide li,
+.guide td,
+.guide th {
+  font-size: 0.95rem;
+}
+
+.guide p {
+  margin: 0 0 10px;
+}
+
+.guide ul,
+.guide ol {
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.guide li {
+  margin-bottom: 4px;
+}
+
+.guide .guide-lead {
+  margin-bottom: 18px;
+  color: #4a5560;
+  font-size: 1rem;
+}
+
+.guide .guide-steps {
+  list-style: none;
+  padding: 0;
+  counter-reset: step;
+}
+
+.guide .guide-steps > li {
+  position: relative;
+  margin-bottom: 16px;
+  padding: 14px 16px 14px 56px;
+  border: 1px solid #e3e7ea;
+  border-radius: 10px;
+  counter-increment: step;
+}
+
+.guide .guide-steps > li::before {
+  content: counter(step);
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #43a047;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 26px;
+  text-align: center;
+}
+
+/* 단계 제목(각 항목의 첫 strong)만 블록으로. 본문 속 강조까지 블록이 되면 문장이 끊긴다 */
+.guide .guide-steps > li > strong:first-child {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.guide strong {
+  font-weight: 700;
+}
+
+.guide .guide-note {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-left: 3px solid #039be5;
+  border-radius: 0 8px 8px 0;
+  background: #f1f8fd;
+  font-size: 0.9rem;
+}
+
+.guide .guide-warn {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-left: 3px solid #fb8c00;
+  border-radius: 0 8px 8px 0;
+  background: #fff8ef;
+  font-size: 0.9rem;
+}
+
+.guide .guide-new {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 0.75rem;
+  font-weight: 700;
+  vertical-align: 3px;
+}
+
+.guide .guide-kbd {
+  padding: 1px 6px;
+  border: 1px solid #c9d1d8;
+  border-radius: 4px;
+  background: #f6f8fa;
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.guide .guide-table {
+  width: 100%;
+  margin: 8px 0 12px;
+  border-collapse: collapse;
+}
+
+.guide .guide-table th,
+.guide .guide-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e3e7ea;
+  text-align: left;
+}
+
+.guide .guide-table th {
+  color: #4a5560;
+  font-weight: 700;
+}
