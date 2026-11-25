@@ -437,7 +437,7 @@ export const useMapStore = defineStore('map', {
     getListItem (index, places) {
 
       var el = document.createElement('li'),
-        itemStr = '<span class="markerbg"><span>' + (index + 1) + '</span></span>' +
+        itemStr = '<img class="markerbg" alt="" src="' + numberedMarkerSrc(index + 1) + '">' +
           '<div class="info">' +
           '   <h5>' + places.place_name + '</h5>'
 

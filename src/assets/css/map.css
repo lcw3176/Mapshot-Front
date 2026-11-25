@@ -141,27 +141,15 @@
     color: #009900;
 }
 
-/* 카카오 예제 스프라이트(marker_number_blue.png) 대신 CSS 로 그린 번호 표시. 지도 위 마커(map.js numberedMarkerSrc)와 같은 색 */
+/* 목록 번호: 지도 위 마커와 같은 SVG 핀(map.js numberedMarkerSrc)을 img 로 쓴다.
+   예전엔 CSS 로 원을 45도 돌려 핀 모양을 냈는데, 회전한 상자가 기준선에서 어긋나 장소 이름 줄과 정렬이 틀어졌다.
+   핀 머리 가운데가 첫 줄(장소 이름) 가운데에 오도록 top 을 맞췄다. */
 #placesList .item .markerbg {
-    float: left;
     position: absolute;
-    width: 26px;
-    height: 26px;
-    margin: 14px 0 0 15px;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    background: #1e88e5;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-#placesList .item .markerbg span {
-    display: block;
-    transform: rotate(45deg);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 26px;
-    text-align: center;
+    top: 8px;
+    left: 18px;
+    width: 22px;
+    height: 29px;
 }
 
 #pagination {
