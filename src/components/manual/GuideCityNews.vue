@@ -1,7 +1,7 @@
 <template>
   <section class="guide">
     <h2>도시뉴스</h2>
-    <p class="guide-lead">상단 메뉴의 <em>도시뉴스</em>에서 두 가지 글을 볼 수 있어요.</p>
+    <p class="guide-lead">상단 메뉴의 <strong>도시뉴스</strong>에서 두 가지 글을 볼 수 있어요.</p>
 
     <h3>브리핑</h3>
     <p>
@@ -15,8 +15,8 @@
       길고 어려운 보도자료 원문(PDF)을 다 읽지 않아도 무슨 내용인지 바로 알 수 있어요.
     </p>
     <ul>
-      <li>대상 지역이 있는 소식은 <em>맵샷 지도에서 ○○ 보기</em>로 그 지역을 지도에서 바로 열 수 있어요.</li>
-      <li>글 아래 <em>원문 보기</em>로 국토교통부 원문을 확인할 수 있어요.</li>
+      <li>대상 지역이 있는 소식은 <strong>맵샷 지도에서 ○○ 보기</strong>로 그 지역을 지도에서 바로 열 수 있어요.</li>
+      <li>글 아래 <strong>원문 보기</strong>로 국토교통부 원문을 확인할 수 있어요.</li>
     </ul>
 
     <p class="guide-warn">

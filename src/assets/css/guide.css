@@ -31,13 +31,20 @@
 }
 
 /* 문장 안의 링크·강조는 주변 글자 크기를 따른다. public/index.html 의 전역 규칙(* { font-size: ... })이
-   모든 요소에 크기를 박아서, 그냥 두면 a·em·strong 이 주변보다 커져 줄이 어긋나고 글자가 겹쳐 보였다. */
+   모든 요소에 크기를 박아서, 그냥 두면 a·em·strong 이 주변보다 커져 줄이 어긋나고 글자가 겹쳐 보였다.
+   강조는 <strong>(굵게)만 쓴다. <em> 기울임은 한글 폰트에 기울인 글꼴이 없어 브라우저가 억지로 기울여 그리는데,
+   그러면 옆 글자를 침범해 겹쳐 보였다(2026-11-26). 혹시 em 이 들어와도 기울이지 않고 굵게 보이게 막아 둔다. */
 .guide a,
 .guide em,
 .guide strong,
 .guide span,
 .guide br {
   font-size: inherit;
+}
+
+.guide em {
+  font-style: normal;
+  font-weight: 700;
 }
 
 .guide ul,
