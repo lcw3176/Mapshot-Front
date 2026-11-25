@@ -12,7 +12,7 @@ module.exports = defineConfig({
   devServer: {
     port: 8081,
     proxy: Object.fromEntries(
-      ['/parcel', '/map', '/news', '/notice', '/post', '/admin']
+      ['/map', '/news', '/notice', '/post', '/admin']
         .map(path => [path, apiProxy])
     )
   }

@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { LatLng, Radius, Tile } from '@/assets/js/mapshot.min'
-import { useParcelStore } from '@/store/parcel'
 
 const apiUrl = process.env.VUE_APP_API_URL
 const MAP_SETTINGS_KEY = 'mapshot_map_settings'
@@ -21,7 +20,6 @@ export const useMapStore = defineStore('map', {
     bunziAddress: '',
     coor: '',
     rectangle: null,
-    parcelMarker: null,
     mapRadius: '',
     baseMap: '',
     company: '',
@@ -292,39 +290,15 @@ export const useMapStore = defineStore('map', {
       }
     },
 
-    removeParcelMarker () {
-      if (this.parcelMarker) {
-        this.parcelMarker.setMap(null)
-        this.parcelMarker = null
-      }
-    },
-
-    placeParcelMarker (position) {
-      this.removeParcelMarker()
-      this.parcelMarker = new kakao.maps.Marker({ position, zIndex: 10 })
-      this.parcelMarker.setMap(this.map)
-    },
-
     async mapOnClick (mouseEvent) {
       // 클릭한 위도, 경도 정보를 가져옵니다
       let latlng = mouseEvent.latLng
-
-      const parcelStore = useParcelStore()
-      if (parcelStore.enabled && parcelStore.isLoading) return
 
       this.lat = latlng.getLat()
       this.lng = latlng.getLng()
 
       this.searchDetailAddrFromCoords(mouseEvent.latLng, this.insertAddressStr)
 
-      if (parcelStore.enabled) {
-        this.removeRectangle()
-        if (!parcelStore.isLoading) this.placeParcelMarker(latlng)
-        await parcelStore.load(this.lat, this.lng)
-        return
-      }
-
-      this.removeParcelMarker()
       this.coor.init(this.lat, this.lng)
 
       this.removeRectangle()
