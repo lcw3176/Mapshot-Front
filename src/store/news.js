@@ -18,9 +18,10 @@ export const TRACKS = [
   { value: 'press', label: '보도자료 풀이', desc: '국토교통부 보도자료를 한 건씩 핵심만 정리해 드려요' },
 ]
 
-async function getRecent (track) {
-  // 게시글 목록(경량). 형식: [{ id, title, preview, createdDate, track }] — 본문/출처는 상세에서 받음
-  const response = await api.get(apiUrl + '/news/recent', { params: { track } })
+async function getPage (track, page) {
+  // 게시글 목록 한 페이지(10건). 형식: { posts: [{ id, title, preview, createdDate, track }], page, totalPages, totalElements }
+  // 예전 /news/recent 는 최신 30건만 줘서 그보다 오래된 글을 볼 수 없었다.
+  const response = await api.get(apiUrl + '/news/list', { params: { track, page } })
   return response.data
 }
 
@@ -34,6 +35,8 @@ export const useNewsStore = defineStore('newsStore', {
 
   state: () => ({
     track: 'briefing',
+    page: 1,
+    totalPages: 0,
     posts: [],
     post: null,
     isLoading: false,
@@ -43,15 +46,19 @@ export const useNewsStore = defineStore('newsStore', {
   }),
 
   actions: {
-    async loadRecent (track) {
+    async loadRecent (track, page = 1) {
       if (track) this.track = track
+      this.page = page
       this.isLoading = true
       this.isError = false
       try {
-        this.posts = await getRecent(this.track)
+        const data = await getPage(this.track, this.page)
+        this.posts = data.posts
+        this.totalPages = data.totalPages
       } catch (e) {
         this.isError = true
         this.posts = []
+        this.totalPages = 0
       } finally {
         this.isLoading = false
       }

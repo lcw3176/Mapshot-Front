@@ -84,6 +84,18 @@
           </v-list>
         </v-card>
 
+        <!-- 페이지 넘김. 페이지도 URL(?page=)에 남겨 상세에서 '목록으로' 돌아올 때 같은 페이지로 온다 -->
+        <v-pagination
+          v-if="!newsStore.isLoading && !newsStore.isError && newsStore.totalPages > 1"
+          :model-value="newsStore.page"
+          :length="newsStore.totalPages"
+          :total-visible="7"
+          color="success"
+          density="comfortable"
+          class="mt-4"
+          @update:model-value="changePage"
+        />
+
       </v-col>
     </v-row>
   </v-container>
@@ -107,8 +119,9 @@ export default {
   },
 
   watch: {
-    '$route.query.track' (track) {
-      this.newsStore.loadRecent(this.normalize(track))
+    '$route.query' (query) {
+      if (this.$route.name !== 'news') return
+      this.newsStore.loadRecent(this.normalize(query.track), this.toPage(query.page))
     },
   },
 
@@ -116,16 +129,31 @@ export default {
     normalize (track) {
       return TRACKS.some(t => t.value === track) ? track : 'briefing'
     },
+    toPage (page) {
+      const n = parseInt(page, 10)
+      return Number.isFinite(n) && n > 0 ? n : 1
+    },
+    query (track, page) {
+      const q = {}
+      if (track !== 'briefing') q.track = track
+      if (page > 1) q.page = String(page)
+      return q
+    },
     changeTrack (track) {
-      this.$router.replace({ query: track === 'briefing' ? {} : { track } })
+      // 갈래를 바꾸면 1페이지부터
+      this.$router.replace({ query: this.query(track, 1) })
+    },
+    changePage (page) {
+      this.$router.push({ query: this.query(this.newsStore.track, page) })
+      window.scrollTo({ top: 0 })
     },
     refresh () {
-      this.newsStore.loadRecent()
+      this.newsStore.loadRecent(this.newsStore.track, this.newsStore.page)
     },
   },
 
   created () {
-    this.newsStore.loadRecent(this.normalize(this.$route.query.track))
+    this.newsStore.loadRecent(this.normalize(this.$route.query.track), this.toPage(this.$route.query.page))
   },
 }
 </script>
