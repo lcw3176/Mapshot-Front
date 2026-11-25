@@ -16,8 +16,13 @@
       <p v-else class="press-item__empty">요약이 없는 보도자료예요. 원문에서 내용을 확인해 주세요.</p>
 
       <div class="press-item__actions">
+        <!-- 우리 풀이 글이 있으면 그쪽이 주 링크. 새 탭으로 열어 지도 위치·선택을 잃지 않게 한다 -->
+        <a v-if="item.postId" :href="`/news/${item.postId}`" target="_blank" rel="noopener"
+           class="press-item__link press-item__link--primary">
+          <v-icon size="14" class="mr-1">mdi-newspaper-variant-outline</v-icon>도시뉴스에서 읽기
+        </a>
         <a :href="item.url" target="_blank" rel="noopener" class="press-item__link">
-          <v-icon size="14" class="mr-1">mdi-open-in-new</v-icon>{{ item.sourceName }} 원문 보기
+          <v-icon size="14" class="mr-1">mdi-open-in-new</v-icon>원문
         </a>
         <button v-if="item.regions?.length" type="button" class="press-item__link" @click="$emit('locate')">
           <v-icon size="14" class="mr-1">mdi-crosshairs-gps</v-icon>지도에서 보기
@@ -173,5 +178,8 @@ export default {
 .press-item__link:focus-visible {
   outline: 2px solid #039be5;
   outline-offset: 2px;
+}
+.press-item__link--primary {
+  font-weight: 700;
 }
 </style>

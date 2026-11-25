@@ -277,6 +277,7 @@ import { useMapStore } from '@/store/map'
 import { usePressMapStore } from '@/store/pressMap'
 import PressPanel from '@/components/map/PressPanel'
 import { createPressOverlays } from '@/components/map/pressOverlays'
+import { visibleCenterFor } from '@/components/map/visibleCenter'
 import AdSlot from '@/components/ads/AdSlot'
 import '../assets/css/map.css'
 import { ref, toRaw } from 'vue'
@@ -364,6 +365,32 @@ export default {
       if (!this.press.enabled || !this.pressOverlays) return
       this.pressOverlays.render(this.press.markers, this.press.selected?.key)
     },
+    /**
+     * 도시뉴스 풀이 글의 '맵샷 지도에서 ○○ 보기'로 들어온 경우(/?press=코드&lat=&lng=):
+     * 도시소식을 켜고(기간은 넉넉히 90일) 그 지역으로 옮겨 라벨을 고른다. 처리 후 쿼리는 지운다.
+     */
+    async openPressFromQuery () {
+      const { press: code, lat, lng } = this.$route.query
+      if (!code || !lat || !lng) return
+      if (this.press.enabled) {
+        await this.press.changeDays(90)
+      } else {
+        this.press.days = 90
+        await this.press.toggle()
+      }
+      // 도시소식을 켜면 왼쪽 패널 폭이 바뀌고 지도 크기도 다시 잡힌다. 그 전에 중심을 계산하면 라벨이
+      // 엉뚱한 곳(오른쪽 끝)에 놓여서, 화면이 자리 잡은 다음 프레임에 옮긴다.
+      await this.$nextTick()
+      await new Promise(resolve => requestAnimationFrame(resolve))
+      const map = toRaw(this.mapStore.map)
+      map.relayout()
+      map.setLevel(9)
+      map.setCenter(visibleCenterFor(map, new window.kakao.maps.LatLng(Number(lat), Number(lng))))
+      this.syncPressView()
+      const marker = this.press.markers.find(m => m.key === code)
+      if (marker && this.press.selected?.key !== marker.key) this.press.select(marker)
+      this.$router.replace({ query: {} })
+    },
     /** 줌 레벨과 지도 범위를 스토어에 반영한다(마커 묶음 단위·목록 필터에 쓰임) */
     syncPressView () {
       const map = this.mapStore.map
@@ -387,6 +414,7 @@ export default {
       this.syncPressView()
       this.renderPressMarkers()
     }
+    this.openPressFromQuery()
     this.mapResizeObserver = new ResizeObserver(() => this.mapStore.map?.relayout?.())
     this.mapResizeObserver.observe(this.$refs.mapElement)
   },

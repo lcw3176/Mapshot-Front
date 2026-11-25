@@ -9,7 +9,7 @@
           variant="text"
           color="success"
           prepend-icon="mdi-arrow-left"
-          to="/news"
+          :to="backLink"
           class="mb-3 px-2"
         >
           목록으로
@@ -50,8 +50,14 @@
           <v-card-text>
             <!-- digest 가 있으면 풍부 UI, 없으면 기존 HTML 본문으로 폴백 -->
             <!-- relatedPosts 는 응답에 오지만 그리지 않는다: 제목이 전부 "도시뉴스 브리핑 (날짜)"라 고를 정보가 없다 -->
+            <PressExplainer
+              v-if="newsStore.post.track === 'press' && newsStore.post.explainer"
+              :explainer="newsStore.post.explainer"
+              :press="newsStore.post.press"
+            />
+
             <NewsDigest
-              v-if="newsStore.post.digest"
+              v-else-if="newsStore.post.digest"
               :digest="newsStore.post.digest"
               :sources="sources"
             />
@@ -94,11 +100,31 @@
 <script>
 import { useNewsStore } from '@/store/news'
 import NewsDigest from '@/components/news/NewsDigest.vue'
+import PressExplainer from '@/components/news/PressExplainer.vue'
+
+// 보도자료 풀이 글은 처음엔 검색에 노출하지 않는다. 자동 생성 글을 대량으로 색인시키면 검색엔진 스팸 정책·
+// 애드센스 저품질 판정 위험이 있어서, 품질을 본 뒤 운영자가 빌드 환경변수로 연다.
+// (mapshot-planning plans/2026-11-city-news-map/explainer.md)
+const PRESS_INDEXABLE = process.env.VUE_APP_PRESS_INDEXABLE === 'true'
+
+function setRobots (content) {
+  let meta = document.querySelector('meta[name="robots"]')
+  if (!content) {
+    meta?.remove()
+    return
+  }
+  if (!meta) {
+    meta = document.createElement('meta')
+    meta.setAttribute('name', 'robots')
+    document.head.appendChild(meta)
+  }
+  meta.setAttribute('content', content)
+}
 
 export default {
   name: 'NewsDetailView',
 
-  components: { NewsDigest },
+  components: { NewsDigest, PressExplainer },
 
   props: {
     id: [Number, String],
@@ -113,6 +139,19 @@ export default {
     sources () {
       return (this.newsStore.post && this.newsStore.post.sources) || []
     },
+    backLink () {
+      return this.newsStore.post?.track === 'press' ? '/news?track=press' : '/news'
+    },
+  },
+
+  watch: {
+    'newsStore.post' (post) {
+      setRobots(post?.track === 'press' && !PRESS_INDEXABLE ? 'noindex' : null)
+    },
+  },
+
+  beforeUnmount () {
+    setRobots(null)
   },
 
   created () {

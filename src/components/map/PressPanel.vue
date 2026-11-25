@@ -65,29 +65,16 @@
           </ul>
         </section>
 
-        <section v-if="press.nationalItems.length" class="press-panel__national">
-          <button type="button" class="press-panel__national-head" :aria-expanded="press.showNational"
-                  @click="press.showNational = !press.showNational">
-            <span>전국 단위 소식 {{ press.nationalItems.length }}건</span>
-            <v-icon size="18">{{ press.showNational ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-          </button>
-          <p v-if="!press.showNational" class="press-panel__national-hint">
-            특정 지역이 아닌 제도·통계·전국 정책 소식이에요.
-          </p>
-          <ul v-else class="press-panel__list">
-            <PressItem
-              v-for="item in press.nationalItems"
-              :key="item.id"
-              :item="item"
-              :open="press.expandedId === item.id"
-              :is-new="press.isNew(item)"
-              @toggle="press.toggleExpanded(item.id)"
-            />
-          </ul>
-        </section>
+        <!-- 지역이 없는 소식(제도·통계·전국 정책)은 지도와 상관없어서 패널에 늘어놓지 않고 도시뉴스로 보낸다.
+             (mapshot-planning plans/2026-11-city-news-map/explainer.md) -->
+        <a v-if="press.nationalItems.length" class="press-panel__national-link"
+           href="/news?track=press" target="_blank" rel="noopener">
+          지역이 없는 전국 소식 {{ press.nationalItems.length }}건은 도시뉴스에서 볼 수 있어요
+          <v-icon size="16">mdi-arrow-right</v-icon>
+        </a>
 
         <p class="press-panel__note">
-          위치는 시군구 단위의 대략적인 위치예요. 보도자료는 공공누리 제1유형(출처표시)에 따라 국토교통부 원문으로 연결돼요.
+          위치는 시군구 단위의 대략적인 위치예요. 국토교통부 보도자료(공공누리 제1유형, 출처표시)를 정리해 보여드려요.
         </p>
       </template>
     </div>
@@ -101,6 +88,7 @@ import PressItem from '@/components/map/PressItem'
 import { PERIODS, usePressMapStore } from '@/store/pressMap'
 import { useMapStore } from '@/store/map'
 import { toRaw } from 'vue'
+import { visibleCenterFor } from '@/components/map/visibleCenter'
 
 dayjs.locale('ko')
 
@@ -166,27 +154,12 @@ export default {
       const map = toRaw(this.mapStore.map)
       if (!region || !map) return
       if (map.getLevel() >= 10) map.setLevel(9)
-      map.panTo(this.visibleCenterFor(map, new window.kakao.maps.LatLng(region.lat, region.lng)))
+      map.panTo(visibleCenterFor(map, new window.kakao.maps.LatLng(region.lat, region.lng)))
       const keepSelected = this.press.selected?.itemIds?.includes(item.id)
       const marker = this.press.markers.find(m => m.itemIds.includes(item.id) && m.key === code) ??
         (keepSelected ? null : this.press.markers.find(m => m.itemIds.includes(item.id)))
       if (marker && this.press.selected?.key !== marker.key) this.press.select(marker)
       this.press.expandedId = item.id
-    },
-    /**
-     * 데스크톱에서는 왼쪽 패널(#menu_wrap)이 지도 위에 떠 있다. 지역을 지도 한가운데로 옮기면
-     * 패널 밑에 가려져 라벨이 안 보인다. 패널 오른쪽에 남은 영역의 가운데로 오도록 중심을 왼쪽으로 민다.
-     * 모바일은 패널이 아래 시트라 그대로 둔다.
-     */
-    visibleCenterFor (map, target) {
-      const panel = document.getElementById('menu_wrap')
-      const container = document.getElementById('map')
-      if (!panel || !container) return target
-      const covered = panel.getBoundingClientRect().right - container.getBoundingClientRect().left
-      if (covered <= 0) return target
-      const proj = map.getProjection()
-      const p = proj.containerPointFromCoords(target)
-      return proj.coordsFromContainerPoint(new window.kakao.maps.Point(p.x - covered / 2, p.y))
     },
   },
 }
@@ -299,6 +272,24 @@ export default {
 
 .press-panel__state p {
   margin: 0 0 10px;
+}
+
+.press-panel__national-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin: 8px 12px 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(var(--v-theme-info), 0.08);
+  color: rgb(var(--v-theme-info));
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.press-panel__national-link:hover {
+  background: rgba(var(--v-theme-info), 0.14);
 }
 
 .press-panel__national {
