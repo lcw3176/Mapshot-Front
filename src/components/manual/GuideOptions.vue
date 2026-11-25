@@ -1,11 +1,11 @@
 <template>
   <section class="guide">
     <h2>부가 설정</h2>
-    <p class="guide-lead">오른쪽 패널 맨 아래 <em>부가 설정</em>을 펼치면 나와요. 필요한 것만 켜서 쓰세요.</p>
+    <p class="guide-lead">오른쪽 패널 맨 아래 <strong>부가 설정</strong>을 펼치면 나와요. 필요한 것만 켜서 쓰세요.</p>
 
     <h3>도시 계획 레이어</h3>
     <p>
-      <em>도시 계획 레이어</em>를 누르면 <strong>도로 · 토지이용계획도 · 연속지적도</strong> 중에서 덧입힐 레이어를 고를 수 있어요.
+      <strong>도시 계획 레이어</strong>를 누르면 <strong>도로 · 토지이용계획도 · 연속지적도</strong> 중에서 덧입힐 레이어를 고를 수 있어요.
       브이월드(공간정보 오픈플랫폼)가 제공하는 정보를 써요.
     </p>
     <ul>

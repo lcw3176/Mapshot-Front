@@ -35,7 +35,7 @@
     <ol>
       <li><span class="guide-kbd">F12</span> (맥은 <span class="guide-kbd">Cmd</span> + <span class="guide-kbd">Option</span> + <span class="guide-kbd">I</span>)로 개발자 도구를 열어요.</li>
       <li><span class="guide-kbd">Ctrl</span> + <span class="guide-kbd">Shift</span> + <span class="guide-kbd">P</span> (맥은 <span class="guide-kbd">Cmd</span> + <span class="guide-kbd">Shift</span> + <span class="guide-kbd">P</span>)를 눌러요.</li>
-      <li><em>screenshot</em>을 입력하고 <strong>Capture full size screenshot</strong>을 골라요.</li>
+      <li><strong>screenshot</strong>을 입력하고 <strong>Capture full size screenshot</strong>을 골라요.</li>
       <li>전체 페이지가 PNG 파일로 다운로드 폴더에 저장돼요.</li>
     </ol>
 
