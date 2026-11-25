@@ -8,6 +8,15 @@ const MAP_SETTINGS_KEY = 'mapshot_map_settings'
 
 const SAVEABLE_KEYS = ['baseMap', 'company', 'layers', 'layerMode', 'traceMode', 'noLabel', 'onlyLayers', 'addTopography']
 
+/** 장소 검색 결과 번호 마커(파란 핀 + 흰 숫자) SVG data URI. 목록의 번호 표시(map.css .markerbg)와 같은 색 */
+function numberedMarkerSrc (n) {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="40" viewBox="0 0 30 40">' +
+    '<path d="M15 39C15 39 2 24.5 2 14.5a13 13 0 0 1 26 0C28 24.5 15 39 15 39z" fill="#1e88e5" stroke="#fff" stroke-width="2"/>' +
+    '<text x="15" y="19" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#fff">' +
+    n + '</text></svg>'
+  return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg)
+}
+
 export const useMapStore = defineStore('map', {
 
   state: () => ({
@@ -428,7 +437,7 @@ export const useMapStore = defineStore('map', {
     getListItem (index, places) {
 
       var el = document.createElement('li'),
-        itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
+        itemStr = '<span class="markerbg"><span>' + (index + 1) + '</span></span>' +
           '<div class="info">' +
           '   <h5>' + places.place_name + '</h5>'
 
@@ -449,17 +458,13 @@ export const useMapStore = defineStore('map', {
     },
 
     addMarker (position, idx, title) {
-      // 카카오 공식 장소 검색 예제의 번호 마커 이미지(map.css 의 목록 아이콘도 같은 출처).
-      // 카카오맵 API 리소스의 *.daumcdn.net 제공이 2026-11-30 에 끝나서 예제가 쓰는 kakaocdn 주소로 맞췄다.
-      // SDK 내부 리소스 주소를 직접 쓰는 게 아니라 공식 예제 이미지라 괜찮다. 예제 주소가 바뀌면 같이 바꾼다.
-      var imageSrc = 'https://t1.kakaocdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
-        imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
-        imgOptions = {
-          spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
-          spriteOrigin: new kakao.maps.Point(0, (idx * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-          offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
-        },
-        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+      // 예전엔 카카오 공식 장소 검색 예제의 번호 마커 스프라이트(t1.daumcdn.net/.../marker_number_blue.png)를 썼다.
+      // 2026-11 카카오가 SDK 외 리소스 직접 호출·저장을 제한한다고 공지해서, 예제 이미지도 쓰지 않고 직접 그린 SVG 로 바꿨다.
+      const markerImage = new kakao.maps.MarkerImage(
+          numberedMarkerSrc(idx + 1),
+          new kakao.maps.Size(30, 40),
+          { offset: new kakao.maps.Point(15, 40) } // 핀 끝이 좌표에 오게
+        ),
         marker = new kakao.maps.Marker({
           position: position, // 마커의 위치
           image: markerImage

@@ -123,82 +123,45 @@
     color: #8a8a8a;
 }
 
-#placesList .info .jibun {
-    padding-left: 26px;
-    background: url(https://t1.kakaocdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;
+/* 카카오 예제 이미지(places_jibun.png) 대신 CSS 배지. 카카오 리소스를 직접 부르거나 저장하지 않으려고 바꿨다 */
+#placesList .info .jibun::before {
+    content: '지번';
+    display: inline-block;
+    margin-right: 4px;
+    padding: 0 4px;
+    border: 1px solid #b9c2c9;
+    border-radius: 3px;
+    color: #6b7680;
+    font-size: 10px;
+    line-height: 15px;
+    vertical-align: 1px;
 }
 
 #placesList .info .tel {
     color: #009900;
 }
 
+/* 카카오 예제 스프라이트(marker_number_blue.png) 대신 CSS 로 그린 번호 표시. 지도 위 마커(map.js numberedMarkerSrc)와 같은 색 */
 #placesList .item .markerbg {
     float: left;
     position: absolute;
-    width: 36px;
-    height: 37px;
-    margin: 10px 0 0 10px;
-    background: url(https://t1.kakaocdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;
+    width: 26px;
+    height: 26px;
+    margin: 14px 0 0 15px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    background: #1e88e5;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-#placesList .item .marker_1 {
-    background-position: 0 -10px;
-}
-
-#placesList .item .marker_2 {
-    background-position: 0 -56px;
-}
-
-#placesList .item .marker_3 {
-    background-position: 0 -102px
-}
-
-#placesList .item .marker_4 {
-    background-position: 0 -148px;
-}
-
-#placesList .item .marker_5 {
-    background-position: 0 -194px;
-}
-
-#placesList .item .marker_6 {
-    background-position: 0 -240px;
-}
-
-#placesList .item .marker_7 {
-    background-position: 0 -286px;
-}
-
-#placesList .item .marker_8 {
-    background-position: 0 -332px;
-}
-
-#placesList .item .marker_9 {
-    background-position: 0 -378px;
-}
-
-#placesList .item .marker_10 {
-    background-position: 0 -423px;
-}
-
-#placesList .item .marker_11 {
-    background-position: 0 -470px;
-}
-
-#placesList .item .marker_12 {
-    background-position: 0 -516px;
-}
-
-#placesList .item .marker_13 {
-    background-position: 0 -562px;
-}
-
-#placesList .item .marker_14 {
-    background-position: 0 -608px;
-}
-
-#placesList .item .marker_15 {
-    background-position: 0 -654px;
+#placesList .item .markerbg span {
+    display: block;
+    transform: rotate(45deg);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 26px;
+    text-align: center;
 }
 
 #pagination {
